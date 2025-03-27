@@ -44,15 +44,11 @@ Scene.prototype.update = function(deltaTime)
 
 
 
-const textObject = new Text("Hello, Hero!", 160, 144, color='black', font='20px Arial');
-const _sphere = new Sphere(320, 288, 100, "yellow");
+// const textObject = new Text("Hello, Hero!", 160, 144, color='black', font='20px Arial');
+// const _sphere = new Sphere(320, 288, 100, "yellow");
 
 Scene.prototype.draw = function ()
 {
-	// Get canvas object, then its context
-	// var canvas = document.getElementById("game-layer");
-	// var context = canvas.getContext("2d");
-
 	// Clear background
 	this.context.fillStyle = "rgb(224, 224, 240)";
 	this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
@@ -62,7 +58,6 @@ Scene.prototype.draw = function ()
 		element.draw(this.context);
 	});
 
-	textObject.draw(this.context);
 
 	if(keyboard[32])
 	{
