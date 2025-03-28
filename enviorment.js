@@ -16,7 +16,7 @@ class BackgroundElement {
     draw(context) {
         let pos = transform(this.x, this.y, context);
         let size = transform(this.width, this.height, context);
-
+        
         if (this.texture) {
             // Draw the texture if it exists
             context.drawImage(this.texture.img, pos.x, pos.y, size.x, size.y);
@@ -74,19 +74,16 @@ class Player {
         this.frameDuration = 200; // Time in milliseconds for each frame
         // Sprites
         this.sprites = {
-            idle_walk_0: { start: { x: 1, y: 11 }, end: { x: 16, y: 26 } }, // facing down
-            idle_walk_1: { start: { x: 18, y: 11 }, end: { x: 33, y: 26 } }, // facing up
-            idle_walk_2_1: { start: { x: 35, y: 11 }, end: { x: 50, y: 26 } }, // facing left
-            idle_walk_2_2: { start: { x: 52, y: 11 }, end: { x: 67, y: 26 } }  // facing left 2
+            idle_walk_0: { start: { x: 1, y: 11 }, end: { x: 16, y: 27 } }, // facing down
+            idle_walk_1: { start: { x: 18, y: 11 }, end: { x: 33, y: 27 } }, // facing up
+            idle_walk_2_1: { start: { x: 35, y: 11 }, end: { x: 50, y: 27 } }, // facing left
+            idle_walk_2_2: { start: { x: 52, y: 11 }, end: { x: 67, y: 27 } }  // facing left 2
         };
     }
 
     draw(context) {
         let pos = transform(this.x, this.y, context);
         let size = transform(this.width, this.height, context);
-    
-        // Draw the player
-        context.imageSmoothingEnabled = false;
     
         // Determine the sprite based on direction
         let spriteKey;

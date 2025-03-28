@@ -1,7 +1,6 @@
 canvas {
     display: block;
     margin: 0 auto;
-    background-color: #000;
     width: 80vw;
     height: auto;
     max-height: 100vh;
@@ -18,4 +17,10 @@ body {
     align-items: center;
     height: 100vh;
     width: 100vw;
+} 
+
+
+@font-face {
+    font-family: 'Pixelify Sans';
+    src: url('./Pixelify_Sans/static/PixelifySans-Regular.ttf') format('truetype');
 }

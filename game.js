@@ -1,7 +1,8 @@
 
 // Main class. Executes the game loop, redrawing the scene as needed.
 
-const FRAME_RATE = 60;
+const FRAME_RATE = 120;
+const TARGET_FPS = FRAME_RATE;
 const TIME_PER_FRAME = 1000 / FRAME_RATE;
 
 var scene = new Scene();
@@ -14,7 +15,6 @@ let lastFrameTime = 0;
 let frameCount = 0;
 let fps = 0;
 let lag = 0;
-const TARGET_FPS = 60;
 
 // Control keyboard events
 
@@ -62,6 +62,7 @@ function calculateFPS(timestamp) {
         frameCount = 0;
         lastFrameTime = timestamp;
 		scene.frameCount = fps;
+
     }
 }
 
@@ -69,26 +70,28 @@ function calculateFPS(timestamp) {
 function calculateLag(timestamp) {
     let deltaTime = timestamp - previousTimestamp;
     lag += deltaTime;
-
+	
     // Update game state for this frame if lag exceeds TIME_PER_FRAME
     while (lag >= TIME_PER_FRAME) {
-        lag -= TIME_PER_FRAME;
-        scene.update(TIME_PER_FRAME);
+		lag -= TIME_PER_FRAME;
+		scene.update(TIME_PER_FRAME);
     }
+	scene.lag = lag;
 
     previousTimestamp = timestamp;
 }
 
 // Game loop: Update, draw, and request a new frame
 function frameUpdate(timestamp) {
-    calculateFPS(timestamp);  // Calculate FPS
-    calculateLag(timestamp);   // Calculate Lag
 
-    // Draw the scene
-    scene.draw();
+	calculateFPS(timestamp);  // Calculate FPS
+	calculateLag(timestamp);  // Calculate Lag
 
-    // Request the next frame
-    window.requestAnimationFrame(frameUpdate);
+	// Draw the scene
+	scene.draw();
+
+	// Request the next frame
+	window.requestAnimationFrame(frameUpdate);
 }
 
 

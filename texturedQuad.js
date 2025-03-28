@@ -25,7 +25,7 @@ TexturedQuad.prototype.draw = function ()
 	var context = canvas.getContext("2d");
 
 	// Draw the rectangle
-	context.imageSmoothingEnabled = this.smoothing;
+	// context.imageSmoothingEnabled = this.smoothing;
 	context.drawImage(this.texture.img, this.sx, this.sy, this.sWidth, this.sHeight, this.x, this.y, this.width, this.height);
 }
 

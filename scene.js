@@ -12,29 +12,25 @@ function Scene()
 	this.canvas = document.getElementById("game-layer");
 	this.context = this.canvas.getContext("2d");
 	
-	this.size_multiply = 2;
+	this.size_multiply = 4;
 	this.canvas.width = 160*this.size_multiply;
 	this.canvas.height = 144*this.size_multiply;
 
 	this.frameCount=0;
-
-	// Loading texture to use in a TexturedQuad
-	var img = new Texture("imgs/varied.png");
-
-
-	// Prepare all quads
-	this.quads = new Array();
-	this.quads.push(new Quad(64, 32, 128, 128, "red"));
-	this.quads.push(new Quad(320, 32, 128, 128, "green"));
-	this.quads.push(new Quad(64, 288, 128, 128, "blue"));
-	this.quads.push(new Sphere(320, 288, 100, "yellow"));
+	this.lag=0;
 
 	this.UI = new UI();
 	
-	this.texQuad = new TexturedQuad(0, 0, 32, 32, 320, 288, 128, 128, img);
-	
 	// Store current time
 	this.currentTime = 0
+
+
+	this.player = new Player(0.5, 0.5, 1/10, 1/9);
+	this.debug_text = new Text("Debug: ", 0.0, 0.05, color="white",  fontSize=6, fontFamily="'Pixelify Sans'", ctx=this.context);
+	this.debug_background = new BackgroundElement(0, 0, 0.29, 0.8, "ground", false, texture=null, color="rgba(0, 0, 0, 0.5)");
+	
+	this.context.imageSmoothingEnabled = false;
+
 }
 
 
@@ -44,11 +40,8 @@ Scene.prototype.update = function(deltaTime)
 	this.currentTime += deltaTime;
 
 	// Update Player
-	player.update(deltaTime);
+	this.player.update(deltaTime);
 }
-const player = new Player(0.5, 0.5, 1/10, 1/9);
-const debug_text = new Text("Debug: ", 0.0, 0.05, "white", font = "12px 'Press Start 2P'");
-const debug_background = new BackgroundElement(0, 0, 0.29, 0.8, "ground", false, texture=null, color="rgba(0, 0, 0, 0.5)");
 
 
 Scene.prototype.draw = function ()
@@ -63,7 +56,8 @@ Scene.prototype.draw = function ()
 	});
 
 	// Draw player
-	player.draw(this.context);
+	// this.context.imageSmoothingEnabled = false;
+	this.player.draw(this.context);
 
 	if(keyboard[32])
 	{
@@ -80,18 +74,20 @@ Scene.prototype.draw = function ()
 	if (keyboard[38]) direction.y += -1; // Up arrow
 	if (keyboard[40]) direction.y += 1;  // Down arrow
 
-	player.setDirection(direction.x, direction.y);
+	this.player.setDirection(direction.x, direction.y);
 
 	// reset direction if no key is pressed
-	if(!keyboard[37] && !keyboard[39] && !keyboard[38] && !keyboard[40]) player.setDirection(0, 0);
+	if(!keyboard[37] && !keyboard[39] && !keyboard[38] && !keyboard[40]) this.player.setDirection(0, 0);
 
 	// Draw debug
-	debug_background.draw(this.context);
-	debug_text.update("Debug:\n" + 
-					  "  X: " + player.x.toFixed(1) + "\n" + 
-					  "  Y: " + player.y.toFixed(1) + "\n" + 
-					  "  FrameCount: " + this.frameCount);
-	debug_text.draw(this.context);
+	this.debug_background.draw(this.context);
+	this.debug_text.update("Debug:\n" + 
+					  "  X: " + this.player.x.toFixed(1) + "\n" + 
+					  "  Y: " + this.player.y.toFixed(1) + "\n" + 
+					  "  FrameCount: " + this.frameCount + "\n" +
+					  "  lag: " + this.lag.toFixed(3) + " ms" + "\n" 
+					);
+	this.debug_text.draw(this.context);
 }
 
 // Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
