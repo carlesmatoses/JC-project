@@ -1,5 +1,5 @@
 class BackgroundElement {
-    constructor(x, y, width, height, type, isWalkable, texture = null) {
+    constructor(x, y, width, height, type, isWalkable, texture = null, color = null) {
         this.x = x; // X position
         this.y = y; // Y position
         this.width = width; // Width of the element
@@ -7,6 +7,8 @@ class BackgroundElement {
         this.type = type; // Type of the element (e.g., "ground", "wall", "rock")
         this.isWalkable = isWalkable; // Whether the user can walk on this element
         
+        if (color)
+        this.color = color; // Optional color for the element
         if (texture)
         this.texture = new Texture(texture); // Optional texture (image) for the element
     }
@@ -18,10 +20,11 @@ class BackgroundElement {
         if (this.texture) {
             // Draw the texture if it exists
             context.drawImage(this.texture.img, pos.x, pos.y, size.x, size.y);
-
         } else {
             // Draw the element based on its type
-            if (this.type === "ground") {
+            if (this.color) {
+                context.fillStyle = this.color;
+            } else if (this.type === "ground") {
                 context.fillStyle = "green"; // Example color for ground
             } else if (this.type === "wall") {
                 context.fillStyle = "gray"; // Example color for wall
@@ -183,7 +186,7 @@ let size_y = 1/9;
 background_rock = "imgs/brick.png";
 
 function createBasicTail(x, y) {
-    const basicTail = new BackgroundElement(x, y, size_x, size_y, "ground", false, background_rock);
+    const basicTail = new BackgroundElement(x, y, size_x, size_y, "ground", false, texture=background_rock);
     return basicTail;
 }
 

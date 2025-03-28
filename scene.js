@@ -12,10 +12,11 @@ function Scene()
 	this.canvas = document.getElementById("game-layer");
 	this.context = this.canvas.getContext("2d");
 	
-	this.size_multiply = 4;
+	this.size_multiply = 2;
 	this.canvas.width = 160*this.size_multiply;
 	this.canvas.height = 144*this.size_multiply;
 
+	this.frameCount=0;
 
 	// Loading texture to use in a TexturedQuad
 	var img = new Texture("imgs/varied.png");
@@ -46,6 +47,9 @@ Scene.prototype.update = function(deltaTime)
 	player.update(deltaTime);
 }
 const player = new Player(0.5, 0.5, 1/10, 1/9);
+const debug_text = new Text("Debug: ", 0.0, 0.05, "white", font = "12px 'Press Start 2P'");
+const debug_background = new BackgroundElement(0, 0, 0.29, 0.8, "ground", false, texture=null, color="rgba(0, 0, 0, 0.5)");
+
 
 Scene.prototype.draw = function ()
 {
@@ -80,6 +84,14 @@ Scene.prototype.draw = function ()
 
 	// reset direction if no key is pressed
 	if(!keyboard[37] && !keyboard[39] && !keyboard[38] && !keyboard[40]) player.setDirection(0, 0);
+
+	// Draw debug
+	debug_background.draw(this.context);
+	debug_text.update("Debug:\n" + 
+					  "  X: " + player.x.toFixed(1) + "\n" + 
+					  "  Y: " + player.y.toFixed(1) + "\n" + 
+					  "  FrameCount: " + this.frameCount);
+	debug_text.draw(this.context);
 }
 
 // Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates

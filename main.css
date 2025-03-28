@@ -6,9 +6,10 @@ canvas {
     height: auto;
     max-height: 100vh;
     max-width: calc(100vh * (160 / 144));
+    image-rendering: pixelated;
 }
 
-body{
+body {
     margin: 0;
     padding: 0;
     background-color: #000;

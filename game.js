@@ -10,6 +10,12 @@ var keyboard = [];
 var interacted;
 
 
+let lastFrameTime = 0;
+let frameCount = 0;
+let fps = 0;
+let lag = 0;
+const TARGET_FPS = 60;
+
 // Control keyboard events
 
 function keyDown(keycode)
@@ -42,24 +48,49 @@ function init()
 	interacted = false;
 }
 
-// Game loop: Update, draw, and request a new frame
+// Calculate FPS
+function calculateFPS(timestamp) {
+    frameCount++;
+    if (lastFrameTime === 0) {
+        lastFrameTime = timestamp;
+        return;
+    }
 
-function frameUpdate(timestamp)
-{
-	var bUpdated = false;
-	var deltaTime = timestamp - previousTimestamp;
-	
-	while(deltaTime > TIME_PER_FRAME)
-	{
-		bUpdated = true;
-		scene.update(TIME_PER_FRAME);
-		previousTimestamp += TIME_PER_FRAME;
-		deltaTime = timestamp - previousTimestamp;
-	}
-	if(bUpdated)
-		scene.draw();
-	window.requestAnimationFrame(frameUpdate)
+    const deltaTime = timestamp - lastFrameTime;
+    if (deltaTime >= 1000) {  // Update FPS every 1 second
+        fps = frameCount;
+        frameCount = 0;
+        lastFrameTime = timestamp;
+		scene.frameCount = fps;
+    }
 }
+
+// Calculate lag
+function calculateLag(timestamp) {
+    let deltaTime = timestamp - previousTimestamp;
+    lag += deltaTime;
+
+    // Update game state for this frame if lag exceeds TIME_PER_FRAME
+    while (lag >= TIME_PER_FRAME) {
+        lag -= TIME_PER_FRAME;
+        scene.update(TIME_PER_FRAME);
+    }
+
+    previousTimestamp = timestamp;
+}
+
+// Game loop: Update, draw, and request a new frame
+function frameUpdate(timestamp) {
+    calculateFPS(timestamp);  // Calculate FPS
+    calculateLag(timestamp);   // Calculate Lag
+
+    // Draw the scene
+    scene.draw();
+
+    // Request the next frame
+    window.requestAnimationFrame(frameUpdate);
+}
+
 
 // Init and launch game loop
 init();
