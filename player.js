@@ -117,5 +117,10 @@ class Player {
         // Check if the player is colliding with the specified element
         return element.isColliding(this.x, this.y);
     }
+
+    setPosition(x, y) {
+        this.x = x;
+        this.y = y;
+    }
 }
 
