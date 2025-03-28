@@ -5,13 +5,14 @@
 // - (0, 0) represents the top-left corner of the screen.
 // - (1, 1) represents the bottom-right corner of the screen.
 // All elements are positioned and scaled relative to this normalized space.
+// The scene is responsible for updating and drawing all elements in the game.
 function Scene()
 {
 	// Set canvas dimensions 
 	this.canvas = document.getElementById("game-layer");
 	this.context = this.canvas.getContext("2d");
 	
-	this.size_multiply = 2;
+	this.size_multiply = 4;
 	this.canvas.width = 160*this.size_multiply;
 	this.canvas.height = 144*this.size_multiply;
 
@@ -40,12 +41,11 @@ Scene.prototype.update = function(deltaTime)
 {
 	// Keep track of time
 	this.currentTime += deltaTime;
+
+	// Update Player
+	player.update(deltaTime);
 }
-
-
-
-// const textObject = new Text("Hello, Hero!", 160, 144, color='black', font='20px Arial');
-// const _sphere = new Sphere(320, 288, 100, "yellow");
+const player = new Player(0.5, 0.5, 1/10, 1/9);
 
 Scene.prototype.draw = function ()
 {
@@ -58,6 +58,8 @@ Scene.prototype.draw = function ()
 		element.draw(this.context);
 	});
 
+	// Draw player
+	player.draw(this.context);
 
 	if(keyboard[32])
 	{
@@ -65,6 +67,19 @@ Scene.prototype.draw = function ()
 		var textSize = context.measureText(text);
 		context.fillText(text, 0, 0);
 	}
+
+	// Player movement
+	let direction = { x: 0, y: 0 };
+
+	if (keyboard[37]) direction.x += -1; // Left arrow
+	if (keyboard[39]) direction.x += 1;  // Right arrow
+	if (keyboard[38]) direction.y += -1; // Up arrow
+	if (keyboard[40]) direction.y += 1;  // Down arrow
+
+	player.setDirection(direction.x, direction.y);
+
+	// reset direction if no key is pressed
+	if(!keyboard[37] && !keyboard[39] && !keyboard[38] && !keyboard[40]) player.setDirection(0, 0);
 }
 
 // Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
