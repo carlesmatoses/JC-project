@@ -7,15 +7,15 @@ Pixelify Sans is a variable font with this axis:
   wght
 
 This means all the styles are contained in a single file:
-  PixelifySans-VariableFont_wght.ttf
+  Pixelify_Sans/PixelifySans-VariableFont_wght.ttf
 
 If your app fully supports variable fonts, you can now pick intermediate styles
 that aren’t available as static fonts. Not all apps support variable fonts, and
 in those cases you can use the static font files for Pixelify Sans:
-  static/PixelifySans-Regular.ttf
-  static/PixelifySans-Medium.ttf
-  static/PixelifySans-SemiBold.ttf
-  static/PixelifySans-Bold.ttf
+  Pixelify_Sans/static/PixelifySans-Regular.ttf
+  Pixelify_Sans/static/PixelifySans-Medium.ttf
+  Pixelify_Sans/static/PixelifySans-SemiBold.ttf
+  Pixelify_Sans/static/PixelifySans-Bold.ttf
 
 Get started
 -----------

@@ -26,7 +26,7 @@ function Scene()
 
 
 	this.player = new Player(0.5, 0.5, 1/10, 1/9);
-	this.debug_text = new Text("Debug: ", 0.0, 0.05, color="white",  fontSize=6, fontFamily="'Pixelify Sans'", ctx=this.context);
+	this.debug_text = new Text("Debug: ", 0.0, 0.05, color="white",  fontSize=6, fontFamily="'tiny5'", ctx=this.context);
 	this.debug_background = new BackgroundElement(0, 0, 0.29, 0.8, "ground", false, texture=null, color="rgba(0, 0, 0, 0.5)");
 	
 	this.context.imageSmoothingEnabled = false;
@@ -85,7 +85,7 @@ Scene.prototype.draw = function ()
 					  "  X: " + this.player.x.toFixed(1) + "\n" + 
 					  "  Y: " + this.player.y.toFixed(1) + "\n" + 
 					  "  FrameCount: " + this.frameCount + "\n" +
-					  "  lag: " + this.lag.toFixed(3) + " ms" + "\n" 
+					  "  lag: " + this.lag.toFixed(1) + " ms" + "\n" 
 					);
 	this.debug_text.draw(this.context);
 }

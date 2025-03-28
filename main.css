@@ -22,5 +22,20 @@ body {
 
 @font-face {
     font-family: 'Pixelify Sans';
-    src: url('./Pixelify_Sans/static/PixelifySans-Regular.ttf') format('truetype');
+    src: url('./fonts/Pixelify_Sans/static/PixelifySans-SemiBold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Pixelify Sans Bold';
+    src: url('./fonts/Pixelify_Sans/static/PixelifySans-Bold.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'Pixelify Sans Light';
+    src: url('./fonts/Pixelify_Sans/static/PixelifySans-Light.ttf') format('truetype');
+}
+
+@font-face {
+    font-family: 'tiny5';
+    src: url('./fonts/Tiny5/Tiny5-Regular.ttf') format('truetype');
 }
