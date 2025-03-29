@@ -6,7 +6,7 @@ function transform(x, y, ctx) {
 }
 
 function getAdjacentLevels(id) {
-    const gridSize = 3; // 3x3 grid
+    const gridSize = 10; // 3x3 grid
 
     // Calculate row and column based on index
     const row = Math.floor(id / gridSize);

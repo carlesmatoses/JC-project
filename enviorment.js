@@ -306,8 +306,21 @@ const level_002_elements = [
 // x x x
 // We start at 0, they are counted from 0 to 8 where the spawn is at 4
 
-const map = {
-    0: level_001_elements, 1: level_002_elements, 2: level_001_elements, 
-    3: level_002_elements, 4: level_001_elements, 5: level_002_elements, 
-    6: level_001_elements, 7: level_002_elements, 8: level_001_elements, 
+function generateMap(x, y) {
+    const map = {};
+    for (let i = 0; i < y; i++) {
+        for (let j = 0; j < x; j++) {
+            const index = i * x + j;
+            map[index] = level_001_elements;
+        }
+    }
+    return map;
 }
+
+const map = generateMap(10, 10); // Example: 3x3 grid
+
+// const map = {
+//     0: level_001_elements, 1: level_002_elements, 2: level_001_elements, 
+//     3: level_002_elements, 4: level_001_elements, 5: level_002_elements, 
+//     6: level_001_elements, 7: level_002_elements, 8: level_001_elements, 
+// }

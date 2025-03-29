@@ -26,7 +26,7 @@ function Scene()
 	// Store current time
 	this.currentTime = 0
 
-	this.levelID = 4; // Current level ID
+	this.levelID = 0; // Current level ID
 	this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
 	this.levelContent = new Array().concat(map[this.levelID]); // Current level content
 
@@ -87,6 +87,7 @@ Scene.prototype.level = function(deltaTime)
 	if(this.switching)	{
 		// move the caracter to the correspnding margin
 		var lev = getAdjacentLevels(this.levelID);
+		console.log("Switching to level: " + this.levelID + ""+lev);
 		if (!this.switchStartTime) {
 			this.switchStartTime = this.currentTime; // Record the time when switching started
 		}
@@ -127,9 +128,9 @@ Scene.prototype.level = function(deltaTime)
 
 	// check if the user is trying to leave the screen on one of the sides
 	if(this.player.x < 0.0) this.switching = 1;  // left side
-	if(this.player.x > 1.0) this.switching = 2;  // right side
+	if(this.player.x > (1.0-1/10)) this.switching = 2;  // right side
 	if(this.player.y < 0.0) this.switching = 3;  // up side
-	if(this.player.y > 1.0) this.switching = 4;  // down side
+	if(this.player.y > (1.0-1/9)) this.switching = 4;  // down side
 
 	// udpate elements in the scene
 
