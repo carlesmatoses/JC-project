@@ -41,20 +41,19 @@ function Scene()
 
 Scene.prototype.update = function(deltaTime)
 {
-
+	// game is stopped, we need to stop the time updates
+	if(this.stop) {
+		return;
+	}
 	// level time update
 	this.level(deltaTime);
-
 }
 
 // This function is responsible for updating the level content and checking for level transitions
 // It can stop the time updates for the scene (transitions, menu screen, etc.)
 Scene.prototype.level = function(deltaTime)
 {
-	// game is stopped, we need to stop the time updates
-	if(this.stop) {
-		return;
-	}
+
 	// In case we are changing levels, we need to stop udpating the level. 
 	// That is why we enter this if statement and return null.
 	if(this.switching)	{
