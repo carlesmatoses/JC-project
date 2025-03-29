@@ -25,11 +25,10 @@ function Scene()
 	// Store current time
 	this.currentTime = 0
 	
-	this.levelID = 55; // Current level ID
+	this.levelID = 4; // Current level ID
 	this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
 	this.screen_switch_time = 0.7; // seconds
 	this.levelContent = new Array().concat(map[this.levelID]); // Current level content
-
 	this.player = new Player(0.5, 0.5, 1/10, 1/9);
 	this.debug_text = new Text("Debug: ", 0.0, 0.05, color="white",  fontSize=6, fontFamily="'tiny5'", ctx=this.context);
 	this.debug_background = new BackgroundElement(0, 0, 0.29, 0.8, "ground", false, texture=null, color="rgba(0, 0, 0, 0.5)");
@@ -82,18 +81,22 @@ Scene.prototype.level = function(deltaTime)
 			switch (this.switching) {
 				case 1:
 					this.levelID = getAdjacentLevels(this.levelID).left;
+					this.levelContent = map[this.levelID].concat(this.levelContent); // Load new level content
 					this.switching = 5;
 					break;
 				case 2:
 					this.levelID = getAdjacentLevels(this.levelID).right;
+					this.levelContent = map[this.levelID].concat(this.levelContent); // Load new level content
 					this.switching = 6;
 					break;
 				case 3:
 					this.levelID = getAdjacentLevels(this.levelID).top;
+					this.levelContent = map[this.levelID].concat(this.levelContent); // Load new level content
 					this.switching = 7;
 					break;
 				case 4:
 					this.levelID = getAdjacentLevels(this.levelID).bottom;
+					this.levelContent = map[this.levelID].concat(this.levelContent); // Load new level content
 					this.switching = 8;
 					break;
 				case 5:
@@ -101,11 +104,17 @@ Scene.prototype.level = function(deltaTime)
 					this.levelContent.forEach((element) => {
 						element.translatePosition(factor, 0);
 					});
+					map[this.levelID].forEach((element) => {
+						element.translatePosition(-1,0);
+					});
 					break;
 				case 6:
 					this.player.setPosition((1 - (1.01 / 10))*(1 - factor), this.player.y);
 					this.levelContent.forEach((element) => {
 						element.translatePosition(-factor, 0);
+					});
+					map[this.levelID].forEach((element) => {
+						element.translatePosition(1,0);
 					});
 					break;
 				case 7:
@@ -113,11 +122,17 @@ Scene.prototype.level = function(deltaTime)
 					this.levelContent.forEach((element) => {
 						element.translatePosition(0, factor);
 					});
+					map[this.levelID].forEach((element) => {
+						element.translatePosition(0,-1);
+					});
 					break;
 				case 8:
 					this.player.setPosition(this.player.x, (1 - (1.01 / 9))*(1 - factor));
 					this.levelContent.forEach((element) => {
 						element.translatePosition(0, -factor);
+					});
+					map[this.levelID].forEach((element) => {
+						element.translatePosition(0,1);
 					});
 					break;
 				default:

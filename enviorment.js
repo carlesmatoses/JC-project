@@ -324,10 +324,10 @@ function generateMap(x, y) {
     return map;
 }
 
-const map = generateMap(10, 10); // Example: 3x3 grid
+// const map = generateMap(10, 10); // Example: 3x3 grid
 
-// const map = {
-//     0: level_001_elements, 1: level_002_elements, 2: level_001_elements, 
-//     3: level_002_elements, 4: level_001_elements, 5: level_002_elements, 
-//     6: level_001_elements, 7: level_002_elements, 8: level_001_elements, 
-// }
+const map = {
+    0: level_001_elements, 1: level_002_elements, 2: level_001_elements, 
+    3: level_002_elements, 4: level_001_elements, 5: level_002_elements, 
+    6: level_001_elements, 7: level_002_elements, 8: level_001_elements, 
+}

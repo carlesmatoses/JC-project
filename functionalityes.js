@@ -5,8 +5,13 @@ function transform(x, y, ctx) {
     };
 }
 
+/*
+    * Function to get adjacent levels in a grid layout.
+    * @param {number} id - The ID of the current level.
+    * @returns {object} - An object containing the IDs of the adjacent levels (top, left, bottom, right).
+*/
 function getAdjacentLevels(id) {
-    const gridSize = 10; // 3x3 grid
+    const gridSize = 3; // 3x3 grid
 
     // Calculate row and column based on index
     const row = Math.floor(id / gridSize);
