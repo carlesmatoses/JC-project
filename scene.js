@@ -62,25 +62,6 @@ Scene.prototype.update = function(deltaTime)
 
 }
 
-Scene.prototype.switchLevel = function(levelID){
-	// To switch a new level we load the new level and current level.
-	// The levels will be translated to leave and enter the screen.
-
-	let currentLevel = map[this.levelID];
-	let newLevel = map[levelID];
-	let timeTransition = 1.5; // seconds
-	let transitionSpeed = 1 / timeTransition; // pixels per second
-
-	currentLevel.forEach((element) => {
-		element.translatePosition(.01, 0);
-	});
-
-	newLevel.forEach((element) => {
-		element.translatePosition(-.01, 0);
-	});
-
-}
-
 // This function is responsible for updating the level content and checking for level transitions
 Scene.prototype.level = function(deltaTime)
 {
