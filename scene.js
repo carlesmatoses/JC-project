@@ -99,7 +99,7 @@ Scene.prototype.level = function(deltaTime)
 					return;
 				case 2:
 					this.levelID = lev.right;
-					this.player.setPosition(0 + (1 / 10), this.player.y);
+					this.player.setPosition(0.0, this.player.y);
 					this.switching = 5;
 					return;
 				case 3:
@@ -109,7 +109,7 @@ Scene.prototype.level = function(deltaTime)
 					return;
 				case 4:
 					this.levelID = lev.bottom;
-					this.player.setPosition(this.player.x, 0 + (1 / 9));
+					this.player.setPosition(this.player.x, 0.0);
 					this.switching = 5;
 					return;
 				default:
