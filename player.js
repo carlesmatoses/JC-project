@@ -83,7 +83,7 @@ class Player {
         // Normalize direction to prevent diagonal speed boost
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
-        
+
         if (this.moving) {
             // Normalize movement
             this.direction.x /= magnitude;
@@ -102,6 +102,22 @@ class Player {
         } else {
             this.frame = 0; // Reset to idle when not moving
         }
+
+
+        // Player movement control
+        let direction = { x: 0, y: 0 };
+
+        if (keyboard[37]) direction.x += -1; // Left arrow
+        if (keyboard[39]) direction.x += 1;  // Right arrow
+        if (keyboard[38]) direction.y += -1; // Up arrow
+        if (keyboard[40]) direction.y += 1;  // Down arrow
+
+        this.setDirection(direction.x, direction.y);
+
+        // reset direction if no key is pressed
+        if(!keyboard[37] && !keyboard[39] && !keyboard[38] && !keyboard[40]) this.setDirection(0, 0);
+
+
     }
 
     setDirection(dx, dy) {

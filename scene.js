@@ -41,18 +41,6 @@ function Scene()
 
 Scene.prototype.update = function(deltaTime)
 {
-	// Player movement control
-	let direction = { x: 0, y: 0 };
-
-	if (keyboard[37]) direction.x += -1; // Left arrow
-	if (keyboard[39]) direction.x += 1;  // Right arrow
-	if (keyboard[38]) direction.y += -1; // Up arrow
-	if (keyboard[40]) direction.y += 1;  // Down arrow
-
-	this.player.setDirection(direction.x, direction.y);
-
-	// reset direction if no key is pressed
-	if(!keyboard[37] && !keyboard[39] && !keyboard[38] && !keyboard[40]) this.player.setDirection(0, 0);
 
 	// level time update
 	this.level(deltaTime);
