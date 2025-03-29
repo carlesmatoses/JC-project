@@ -292,16 +292,16 @@ const level_002_elements = [
     createBasicTailRock(size_x*8, size_y*8),
     createBasicTailRock(size_x*9, size_y*8),
 
-    createBasicTailRock(0,        size_y*9),
-    createBasicTailRock(size_x,   size_y*9),
-    createBasicTailRock(size_x*2, size_y*9),
-    createBasicTailRock(size_x*3, size_y*9),
-    createBasicTailRock(size_x*4, size_y*9),
-    createBasicTailRock(size_x*5, size_y*9),
-    createBasicTailRock(size_x*6, size_y*9),
-    createBasicTailRock(size_x*7, size_y*9),
-    createBasicTailRock(size_x*8, size_y*9),
-    createBasicTailRock(size_x*9, size_y*9),
+    // createBasicTailRock(0,        size_y*9),
+    // createBasicTailRock(size_x,   size_y*9),
+    // createBasicTailRock(size_x*2, size_y*9),
+    // createBasicTailRock(size_x*3, size_y*9),
+    // createBasicTailRock(size_x*4, size_y*9),
+    // createBasicTailRock(size_x*5, size_y*9),
+    // createBasicTailRock(size_x*6, size_y*9),
+    // createBasicTailRock(size_x*7, size_y*9),
+    // createBasicTailRock(size_x*8, size_y*9),
+    // createBasicTailRock(size_x*9, size_y*9),
 ];
 
 
