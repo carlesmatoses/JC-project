@@ -81,22 +81,22 @@ Scene.prototype.level = function(deltaTime)
 			switch (this.switching) {
 				case 1:
 					this.levelID = getAdjacentLevels(this.levelID).left;
-					this.levelContent = map[this.levelID].concat(this.levelContent); // Load new level content
+					this.levelContent = map[this.levelID].concat(this.levelContent); 
 					this.switching = 5;
 					break;
 				case 2:
 					this.levelID = getAdjacentLevels(this.levelID).right;
-					this.levelContent = map[this.levelID].concat(this.levelContent); // Load new level content
+					this.levelContent = map[this.levelID].concat(this.levelContent); 
 					this.switching = 6;
 					break;
 				case 3:
 					this.levelID = getAdjacentLevels(this.levelID).top;
-					this.levelContent = map[this.levelID].concat(this.levelContent); // Load new level content
+					this.levelContent = map[this.levelID].concat(this.levelContent); 
 					this.switching = 7;
 					break;
 				case 4:
 					this.levelID = getAdjacentLevels(this.levelID).bottom;
-					this.levelContent = map[this.levelID].concat(this.levelContent); // Load new level content
+					this.levelContent = map[this.levelID].concat(this.levelContent); 
 					this.switching = 8;
 					break;
 				case 5:
