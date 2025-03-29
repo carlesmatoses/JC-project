@@ -18,12 +18,13 @@ function Scene()
 	this.canvas.width = 160*this.size_multiply;
 	this.canvas.height = 144*this.size_multiply;
 
+	// internal variables
 	this.frameCount=0;
 	this.lag=0;
+	this.currentTime = 0
+	this.stop = false; // When we talk to characters, 
 
 	this.UI = new UI();
-	// Store current time
-	this.currentTime = 0
 	
 	this.levelID = 4; // Current level ID
 	this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
@@ -40,10 +41,7 @@ function Scene()
 
 Scene.prototype.update = function(deltaTime)
 {
-	// Keep track of time
-	this.currentTime += deltaTime;
-
-	// Player movement
+	// Player movement control
 	let direction = { x: 0, y: 0 };
 
 	if (keyboard[37]) direction.x += -1; // Left arrow
@@ -62,8 +60,13 @@ Scene.prototype.update = function(deltaTime)
 }
 
 // This function is responsible for updating the level content and checking for level transitions
+// It can stop the time updates for the scene (transitions, menu screen, etc.)
 Scene.prototype.level = function(deltaTime)
 {
+	// game is stopped, we need to stop the time updates
+	if(this.stop) {
+		return;
+	}
 	// In case we are changing levels, we need to stop udpating the level. 
 	// That is why we enter this if statement and return null.
 	if(this.switching)	{
@@ -179,12 +182,10 @@ Scene.prototype.draw = function ()
 	if(keyboard[32])
 	{
 		text = "Spacebar pressed";
-		var textSize = context.measureText(text);
-		context.fillText(text, 0, 0);
+		let text_obj = new Text(text, 0.5, 0.5, color="blue",  fontSize=8, fontFamily="'tiny5'", ctx=this.context);
+		text_obj.draw(this.context);
 	}
 
-	// CONTROLS
-	
 	// Draw debug
 	this.debug_background.draw(this.context);
 	this.debug_text.update("Debug:\n" + 

@@ -1,7 +1,7 @@
 
 // Main class. Executes the game loop, redrawing the scene as needed.
 
-const FRAME_RATE = 120;
+const FRAME_RATE = 60;
 const TARGET_FPS = FRAME_RATE;
 const TIME_PER_FRAME = 1000 / FRAME_RATE;
 
@@ -10,8 +10,8 @@ var previousTimestamp;
 var keyboard = [];
 var interacted;
 
-
-let lastFrameTime = 0;
+let deltaTime = 0;
+let frameTimeCumulative = 0;
 let frameCount = 0;
 let fps = 0;
 let lag = 0;
@@ -49,46 +49,43 @@ function init()
 }
 
 // Calculate FPS
-function calculateFPS(timestamp) {
+function calculateFPS(deltaTime) {
     frameCount++;
-    if (lastFrameTime === 0) {
-        lastFrameTime = timestamp;
-        return;
-    }
-
-    const deltaTime = timestamp - lastFrameTime;
-    if (deltaTime >= 1000) {  // Update FPS every 1 second
+	frameTimeCumulative += deltaTime;
+    if (frameTimeCumulative >= 1000) {  // Update FPS every 1 second
         fps = frameCount;
-        frameCount = 0;
-        lastFrameTime = timestamp;
 		scene.frameCount = fps;
+        frameCount = 0;
+		frameTimeCumulative = 0;
 
     }
 }
 
 // Calculate lag
-function calculateLag(timestamp) {
-    let deltaTime = timestamp - previousTimestamp;
+function calculateLag(deltaTime) {
     lag += deltaTime;
 	
-    // Update game state for this frame if lag exceeds TIME_PER_FRAME
     while (lag >= TIME_PER_FRAME) {
 		lag -= TIME_PER_FRAME;
-		scene.update(TIME_PER_FRAME);
     }
 	scene.lag = lag;
-
-    previousTimestamp = timestamp;
 }
 
 // Game loop: Update, draw, and request a new frame
 function frameUpdate(timestamp) {
 
-	calculateFPS(timestamp);  // Calculate FPS
-	calculateLag(timestamp);  // Calculate Lag
+	deltaTime = timestamp - previousTimestamp;
+
+	calculateFPS(deltaTime);  // Calculate FPS
+	calculateLag(deltaTime);  // Calculate Lag
 
 	// Draw the scene
+	scene.update(deltaTime);
+	scene.currentTime = timestamp;
 	scene.draw();
+
+	// update time
+    previousTimestamp = timestamp;
 
 	// Request the next frame
 	window.requestAnimationFrame(frameUpdate);
