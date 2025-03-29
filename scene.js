@@ -22,12 +22,12 @@ function Scene()
 	this.lag=0;
 
 	this.UI = new UI();
-	
 	// Store current time
 	this.currentTime = 0
-
-	this.levelID = 0; // Current level ID
+	
+	this.levelID = 55; // Current level ID
 	this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
+	this.screen_switch_time = 0.7; // seconds
 	this.levelContent = new Array().concat(map[this.levelID]); // Current level content
 
 	this.player = new Player(0.5, 0.5, 1/10, 1/9);
@@ -68,7 +68,7 @@ Scene.prototype.switchLevel = function(levelID){
 
 	let currentLevel = map[this.levelID];
 	let newLevel = map[levelID];
-	let timeTransition = 0.5; // seconds
+	let timeTransition = 1.5; // seconds
 	let transitionSpeed = 1 / timeTransition; // pixels per second
 
 	currentLevel.forEach((element) => {
@@ -81,45 +81,74 @@ Scene.prototype.switchLevel = function(levelID){
 
 }
 
-
+// This function is responsible for updating the level content and checking for level transitions
 Scene.prototype.level = function(deltaTime)
 {
+	// In case we are changing levels, we need to stop udpating the level. 
+	// That is why we enter this if statement and return null.
 	if(this.switching)	{
-		// move the caracter to the correspnding margin
-		var lev = getAdjacentLevels(this.levelID);
-		console.log("Switching to level: " + this.levelID + ""+lev);
+		// We start the transition timer
 		if (!this.switchStartTime) {
 			this.switchStartTime = this.currentTime; // Record the time when switching started
 		}
-		if (this.currentTime - this.switchStartTime <= (0.5*1000)) { // Check if 0.5 seconds have passed
+		// Check if the time since the switch started is less than the screen switch time
+		// If so, we need to translate level content
+		if (this.currentTime - this.switchStartTime <= (this.screen_switch_time*1000)) { // Check if 0.5 seconds have passed
+			let factor = (this.currentTime - this.switchStartTime) / 1000 * (1/this.screen_switch_time); // Calculate the elapsed time in seconds
+			this.levelContent.forEach((element) => {element.resetPosition()});
+			this.player.resetPosition(); // Reset the player position
+			
 			switch (this.switching) {
 				case 1:
-					this.levelID = lev.left;
-					this.player.setPosition(1 - (1 / 10), this.player.y);
+					this.levelID = getAdjacentLevels(this.levelID).left;
 					this.switching = 5;
-					return;
+					break;
 				case 2:
-					this.levelID = lev.right;
-					this.player.setPosition(0.0, this.player.y);
-					this.switching = 5;
-					return;
+					this.levelID = getAdjacentLevels(this.levelID).right;
+					this.switching = 6;
+					break;
 				case 3:
-					this.levelID = lev.top;
-					this.player.setPosition(this.player.x, 1 - (1 / 9));
-					this.switching = 5;
-					return;
+					this.levelID = getAdjacentLevels(this.levelID).top;
+					this.switching = 7;
+					break;
 				case 4:
-					this.levelID = lev.bottom;
-					this.player.setPosition(this.player.x, 0.0);
-					this.switching = 5;
-					return;
+					this.levelID = getAdjacentLevels(this.levelID).bottom;
+					this.switching = 8;
+					break;
+				case 5:
+					this.player.setPosition((1 - (1.01 / 10))*factor, this.player.y);
+					this.levelContent.forEach((element) => {
+						element.translatePosition(factor, 0);
+					});
+					break;
+				case 6:
+					this.player.setPosition((1 - (1.01 / 10))*(1 - factor), this.player.y);
+					this.levelContent.forEach((element) => {
+						element.translatePosition(-factor, 0);
+					});
+					break;
+				case 7:
+					this.player.setPosition(this.player.x, (1 - (1.01 / 9))*factor);
+					this.levelContent.forEach((element) => {
+						element.translatePosition(0, factor);
+					});
+					break;
+				case 8:
+					this.player.setPosition(this.player.x, (1 - (1.01 / 9))*(1 - factor));
+					this.levelContent.forEach((element) => {
+						element.translatePosition(0, -factor);
+					});
+					break;
 				default:
-					return;
+					break;
 			}
+			return;
 		}
+		// Once the transition is done, we need to reset the level content
+		this.levelContent.forEach((element) => {element.resetPosition()}); // Reset the position of old screen
 		this.switching = 0; // Reset switching state
 		this.switchStartTime = null; // Reset the start time
-		this.levelContent = new Array().concat(map[this.levelID]);
+		this.levelContent = new Array().concat(map[this.levelID]); // Load new level content
 		return;
 	}
 
@@ -127,11 +156,13 @@ Scene.prototype.level = function(deltaTime)
 	this.player.update(deltaTime);
 
 	// check if the user is trying to leave the screen on one of the sides
-	if(this.player.x < 0.0) this.switching = 1;  // left side
+	if(this.player.x < 0.0) {this.switching = 1};  // left side
 	if(this.player.x > (1.0-1/10)) this.switching = 2;  // right side
 	if(this.player.y < 0.0) this.switching = 3;  // up side
 	if(this.player.y > (1.0-1/9)) this.switching = 4;  // down side
-
+	if (this.switching){
+		this.player.lastPosition = {x: this.player.x, y: this.player.y};  // save last position
+	};
 	// udpate elements in the scene
 
 }

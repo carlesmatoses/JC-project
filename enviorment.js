@@ -2,6 +2,8 @@ class BackgroundElement {
     constructor(x, y, width, height, type, isWalkable, texture = null, color = null) {
         this.x = x; // X position
         this.y = y; // Y position
+        this.defaultX = x; // Default X position
+        this.defaultY = y; // Default Y position
         this.width = width; // Width of the element
         this.height = height; // Height of the element
         this.type = type; // Type of the element (e.g., "ground", "wall", "rock")
@@ -56,6 +58,11 @@ class BackgroundElement {
     translatePosition(x, y) {
         this.x += x;
         this.y += y;
+    }
+
+    resetPosition() {
+        this.x = this.defaultX;
+        this.y = this.defaultY;
     }
 }
 
@@ -173,16 +180,16 @@ const level_001_elements = [
     createBasicTail(size_x*8, size_y*8),
     createBasicTail(size_x*9, size_y*8),
 
-    createBasicTail(0,        size_y*9),
-    createBasicTail(size_x,   size_y*9),
-    createBasicTail(size_x*2, size_y*9),
-    createBasicTail(size_x*3, size_y*9),
-    createBasicTail(size_x*4, size_y*9),
-    createBasicTail(size_x*5, size_y*9),
-    createBasicTail(size_x*6, size_y*9),
-    createBasicTail(size_x*7, size_y*9),
-    createBasicTail(size_x*8, size_y*9),
-    createBasicTail(size_x*9, size_y*9),
+    // createBasicTail(0,        size_y*9),
+    // createBasicTail(size_x,   size_y*9),
+    // createBasicTail(size_x*2, size_y*9),
+    // createBasicTail(size_x*3, size_y*9),
+    // createBasicTail(size_x*4, size_y*9),
+    // createBasicTail(size_x*5, size_y*9),
+    // createBasicTail(size_x*6, size_y*9),
+    // createBasicTail(size_x*7, size_y*9),
+    // createBasicTail(size_x*8, size_y*9),
+    // createBasicTail(size_x*9, size_y*9),
 ];
 
 const level_002_elements = [

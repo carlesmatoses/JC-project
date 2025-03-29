@@ -11,10 +11,12 @@ class Player {
         this.direction = { x: 0, y: 0 }; // Normalized movement vector
         this.lastDirection = { x: 0, y: 0 };; // Direction the player is facing
         this.moving = false; // Whether the player is moving
+        
         // Animation
         this.frame = 0; // Current frame of the player's animation (0,1)
         this.animationTimer = 0;
         this.frameDuration = 200; // Time in milliseconds for each frame
+        this.lastPosition = { x: 0, y: 0 }; // Last position of the player for collision detection
         // Sprites
         this.sprites = {
             idle_walk_0: { start: { x: 1, y: 11 }, end: { x: 16, y: 27 } }, // facing down
@@ -121,6 +123,11 @@ class Player {
     setPosition(x, y) {
         this.x = x;
         this.y = y;
+    }
+
+    resetPosition() {
+        this.x = this.lastPosition.x;
+        this.y = this.lastPosition.y;
     }
 }
 
