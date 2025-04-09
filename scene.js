@@ -26,13 +26,22 @@ function Scene()
 
 	this.UI = new UI();
 	
-	this.levelID = 4; // Current level ID
+	// player variables
+	this.player = new Player(0.5, 0.5, 1/10, 1/9);
+	this.levelID = 0; // Current level ID
+
+	// level variables
 	this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
 	this.screen_switch_time = 0.7; // seconds
-	this.levelContent = new Array().concat(map[this.levelID]); // Current level content
-	this.player = new Player(0.5, 0.5, 1/10, 1/9);
+	this.mapID = "dungeon1";
+
+	this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(this.levelID)); // Current level content
+	this.tmpLevelContent = new Array(); // Temporary level content for transitions
+
 	this.debug_text = new Text("Debug: ", 0.0, 0.05, color="white",  fontSize=6, fontFamily="'tiny5'", ctx=this.context);
 	this.debug_background = new BackgroundElement(0, 0, 0.29, 0.8, "ground", false, texture=null, color="rgba(0, 0, 0, 0.5)");
+	
+
 	
 	this.context.imageSmoothingEnabled = false;
 
@@ -53,7 +62,6 @@ Scene.prototype.update = function(deltaTime)
 // It can stop the time updates for the scene (transitions, menu screen, etc.)
 Scene.prototype.level = function(deltaTime)
 {
-
 	// In case we are changing levels, we need to stop udpating the level. 
 	// That is why we enter this if statement and return null.
 	if(this.switching)	{
@@ -65,28 +73,33 @@ Scene.prototype.level = function(deltaTime)
 		// If so, we need to translate level content
 		if (this.currentTime - this.switchStartTime <= (this.screen_switch_time*1000)) { // Check if 0.5 seconds have passed
 			let factor = (this.currentTime - this.switchStartTime) / 1000 * (1/this.screen_switch_time); // Calculate the elapsed time in seconds
+			
 			this.levelContent.forEach((element) => {element.resetPosition()});
 			this.player.resetPosition(); // Reset the player position
-			
+
 			switch (this.switching) {
 				case 1:
-					this.levelID = getAdjacentLevels(this.levelID).left;
-					this.levelContent = map[this.levelID].concat(this.levelContent); 
+					this.levelID = getAdjacentLevels(this.levelID, world.maps[this.mapID].y, world.maps[this.mapID].x).left;
+					this.tmpLevelContent = world.maps[this.mapID].getLevelElements(this.levelID); 
+					this.levelContent = this.tmpLevelContent.concat(this.levelContent); 
 					this.switching = 5;
 					break;
 				case 2:
-					this.levelID = getAdjacentLevels(this.levelID).right;
-					this.levelContent = map[this.levelID].concat(this.levelContent); 
+					this.levelID = getAdjacentLevels(this.levelID, world.maps[this.mapID].y, world.maps[this.mapID].x).right;
+					this.tmpLevelContent = world.maps[this.mapID].getLevelElements(this.levelID); 
+					this.levelContent = this.tmpLevelContent.concat(this.levelContent); 
 					this.switching = 6;
 					break;
 				case 3:
-					this.levelID = getAdjacentLevels(this.levelID).top;
-					this.levelContent = map[this.levelID].concat(this.levelContent); 
+					this.levelID = getAdjacentLevels(this.levelID, world.maps[this.mapID].y, world.maps[this.mapID].x).top;
+					this.tmpLevelContent = world.maps[this.mapID].getLevelElements(this.levelID); 
+					this.levelContent = this.tmpLevelContent.concat(this.levelContent); 
 					this.switching = 7;
 					break;
 				case 4:
-					this.levelID = getAdjacentLevels(this.levelID).bottom;
-					this.levelContent = map[this.levelID].concat(this.levelContent); 
+					this.levelID = getAdjacentLevels(this.levelID, world.maps[this.mapID].y, world.maps[this.mapID].x).bottom;
+					this.tmpLevelContent = world.maps[this.mapID].getLevelElements(this.levelID); 
+					this.levelContent = this.tmpLevelContent.concat(this.levelContent); 
 					this.switching = 8;
 					break;
 				case 5:
@@ -94,7 +107,7 @@ Scene.prototype.level = function(deltaTime)
 					this.levelContent.forEach((element) => {
 						element.translatePosition(factor, 0);
 					});
-					map[this.levelID].forEach((element) => {
+					this.tmpLevelContent.forEach((element) => {
 						element.translatePosition(-1,0);
 					});
 					break;
@@ -103,7 +116,7 @@ Scene.prototype.level = function(deltaTime)
 					this.levelContent.forEach((element) => {
 						element.translatePosition(-factor, 0);
 					});
-					map[this.levelID].forEach((element) => {
+					this.tmpLevelContent.forEach((element) => {
 						element.translatePosition(1,0);
 					});
 					break;
@@ -112,7 +125,7 @@ Scene.prototype.level = function(deltaTime)
 					this.levelContent.forEach((element) => {
 						element.translatePosition(0, factor);
 					});
-					map[this.levelID].forEach((element) => {
+					this.tmpLevelContent.forEach((element) => {
 						element.translatePosition(0,-1);
 					});
 					break;
@@ -121,7 +134,7 @@ Scene.prototype.level = function(deltaTime)
 					this.levelContent.forEach((element) => {
 						element.translatePosition(0, -factor);
 					});
-					map[this.levelID].forEach((element) => {
+					this.tmpLevelContent.forEach((element) => {
 						element.translatePosition(0,1);
 					});
 					break;
@@ -134,7 +147,7 @@ Scene.prototype.level = function(deltaTime)
 		this.levelContent.forEach((element) => {element.resetPosition()}); // Reset the position of old screen
 		this.switching = 0; // Reset switching state
 		this.switchStartTime = null; // Reset the start time
-		this.levelContent = new Array().concat(map[this.levelID]); // Load new level content
+		this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(this.levelID)); // Load new level content
 		return;
 	}
 
@@ -151,6 +164,15 @@ Scene.prototype.level = function(deltaTime)
 	};
 	// udpate elements in the scene
 
+}
+
+Scene.prototype.setLevel = function(levelID)
+{
+	// Set the level ID and load the level content
+	this.levelID = levelID;
+	this.levelContent = new Array().concat(map.getLevelElements(this.levelID)); // Load new level content
+	this.player.setPosition(0.5, 0.5); // Reset player position
+	this.player.lastPosition = {x: this.player.x, y: this.player.y};  // save last position
 }
 
 Scene.prototype.draw = function ()
