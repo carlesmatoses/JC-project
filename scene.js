@@ -54,14 +54,31 @@ Scene.prototype.update = function(deltaTime)
 	this.level(deltaTime);
 }
 
+// This function is responsible for updating the level content and checking for level transitions
+// It can stop the time updates for the scene (transitions, menu screen, etc.)
+Scene.prototype.level = function(deltaTime)
+{
+	// Update Player
+	this.player.update(deltaTime);
+
+	// level safe checks
+	this.checkSafe();
+
+	// Check for collisions with level elements
+	this.collisions();
+}
+
 Scene.prototype.collisions = function()
 {
 	// Check if the player is colliding with any of the level elements
 	this.levelContent.forEach((element) => {
 		if (element.type==="door") {
+			if (!element.isActive()) return; // Skip if the door is not active
 			if (this.player.collidesWith(element)) {
-				let destination = element.getDestination();
-				this.levelTransition(this.levelID, destination, this.currentTime);
+				this.player.setPosition(element.door.x, element.door.y); // Reset player position
+				this.levelTransition(this.levelID, element.getDestination(), this.currentTime);
+				
+				// place user on new door position 
 			}
 		}
 		// else if (element.type==="enemy") {
@@ -81,6 +98,22 @@ Scene.prototype.collisions = function()
 		this.player.lastPosition = {x: this.player.x, y: this.player.y};  // save last position
 		this.levelTransition(this.levelID, margins.destination, this.currentTime);
 	}
+}
+
+Scene.prototype.checkSafe= function()
+{
+	// Check if the player is colliding with any of the level elements
+	this.levelContent.forEach((element) => {
+		if (element.type==="door" && !element.isActive() && !element.isColliding(this.player.x, this.player.y, this.player.width, this.player.height)) {
+				element.activate(); // Activate the door if the player is not colliding with it
+		}
+		// else if (element.type==="enemy") {
+		// 	if (this.player.collidesWith(element)) {
+		// 		console.log("Collision with enemy detected!");
+		// 		this.player.die(); // Handle player death
+		// 	}
+		// }
+	});
 }
 
 /**
@@ -118,26 +151,19 @@ Scene.prototype.levelTransition = function(from, to, deltaTime)
 	this.switching = 0; // Reset switching state
 	this.levelID = to;
 	this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(to)); // Load new level content
+
+	// Initialize level contents
+	this.levelContent.forEach((element) => {
+		if (element.type==="door") { // Prevent instant teleportation when loading a level
+				element.safeCheck(this.player.x, this.player.y, this.player.width, this.player.height); 
+		}
+	});
 }
 
-// This function is responsible for updating the level content and checking for level transitions
-// It can stop the time updates for the scene (transitions, menu screen, etc.)
-Scene.prototype.level = function(deltaTime)
+// Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
+Scene.prototype.transform = function(x, y)
 {
-	// Update Player
-	this.player.update(deltaTime);
-
-	// Check for collisions with level elements
-	this.collisions();
-}
-
-Scene.prototype.setLevel = function(levelID)
-{
-	// Set the level ID and load the level content
-	this.levelID = levelID;
-	this.levelContent = new Array().concat(map.getLevelElements(this.levelID)); // Load new level content
-	this.player.setPosition(0.5, 0.5); // Reset player position
-	this.player.lastPosition = {x: this.player.x, y: this.player.y};  // save last position
+	return [x*this.canvas.width_px, y*this.canvas.height_px];
 }
 
 Scene.prototype.draw = function ()
@@ -160,12 +186,6 @@ Scene.prototype.draw = function ()
 		text_obj.draw(this.context);
 	}
 
-	if (keyboard[89]) {
-		this.levelID = 0; 
-		this.switching=20;
-	}; // Key 'Y' (89 is the keycode for 'Y')
-
-
 	// Draw debug
 	this.debug_background.draw(this.context);
 	this.debug_text.update("Debug:\n" + 
@@ -179,9 +199,4 @@ Scene.prototype.draw = function ()
 	this.debug_text.draw(this.context);
 }
 
-// Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
-Scene.prototype.transform = function(x, y)
-{
-	return [x*this.canvas.width_px, y*this.canvas.height_px];
-}
 

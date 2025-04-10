@@ -80,9 +80,13 @@ class BackgroundElement {
 }
 
 class Door extends BackgroundElement {
-    constructor(x, y, width, height, isWalkable, texture = null, color = null, drawing_settings = null, destination = null) {
+    constructor(x, y, width, height, isWalkable, texture = null, color = null, drawing_settings = null, destination = null, active = true, door = null) {
         super(x, y, width, height, "door", isWalkable, texture, color, drawing_settings);
         this.destination = destination; // Destination level or map the door leads to
+        this.active = active; // Whether the door is active or not
+        this.door = door; // Optional door object for additional functionality
+        this.wasColliding = false; // Track previous collision state
+        console.log("Door created at:", x, y, "with destination:", destination, "and active:", active);
     }
 
     setDestination(destination) {
@@ -91,6 +95,41 @@ class Door extends BackgroundElement {
 
     getDestination() {
         return this.destination; // Get the destination of the door
+    }
+
+    setDoor(door) {
+        this.door = door; // Set the door object
+    }
+
+    activate() {
+        this.active = true; // Activate the door
+    }
+
+    deactivate() {
+        this.active = false; // Deactivate the door
+    }
+
+    isActive() {
+        return this.active; // Check if the door is active
+    }
+
+    safeCheck(playerX, playerY, playerWidth, playerHeight) {
+        if (this.isColliding(playerX, playerY, playerWidth, playerHeight)){
+            this.deactivate(); // Deactivate the door if colliding on startup
+        }
+        // if (this.wasColliding && !this.isColliding(playerX, playerY, playerWidth, playerHeight)) {
+        //     this.activate();
+        //     console.log("Door activated!");
+        // } else if (this.isColliding(playerX, playerY, playerWidth, playerHeight)) {
+        //     this.deactivate();
+        //     console.log("Door deactivated!");
+        // }
+        // this.wasColliding = this.isColliding(playerX, playerY, playerWidth, playerHeight);
+        // console.log("wasColliding:", this.wasColliding, "isActive: ",this.active);
+    }
+
+    setWasColliding(value) {
+        this.wasColliding = value; // Set the previous collision state
     }
 }
 
@@ -114,7 +153,9 @@ class Level{
                 return new Door(
                     element.x, element.y, element.width, element.height,
                     element.isWalkable, element.texture, element.color,
-                    element.drawing_settings, element.destination
+                    element.drawing_settings, element.destination,
+                    element.active, 
+                    element.door,
                 );
             } else if (element instanceof BackgroundElement) {
                 // Create a new BackgroundElement instance
@@ -176,16 +217,25 @@ class World {
     }
 }
 
+//  Doors
+const door1 = new Door(1/10, 1/9, 1/10, 1/9, true, texture=null, color="yellow",drawing_settings=null,destination=2, active=true, door=null);
+const door2 = new Door(5/10, 5/9, 1/10, 1/9, true, texture=null, color="purple",drawing_settings=null,destination=0, active=true, door=null);
+
+door1.setDoor(door2); 
+door2.setDoor(door1);
+
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
 const tile1 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128}), 
-    new Door(1/10, 1/9, 1/10, 1/9, true, texture=null, color="yellow",drawing_settings=null,destination=2),
+    door1,
 ];
 const tile2 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128})];
 const tile3 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
-    drawing_settings={sx: 320+3, sy: 1, sWidth: 160, sHeight: 128})];
+    drawing_settings={sx: 320+3, sy: 1, sWidth: 160, sHeight: 128}),
+    door2,
+];
 const tile4 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 480+4, sy: 1, sWidth: 160, sHeight: 128})];
 const tile5 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
