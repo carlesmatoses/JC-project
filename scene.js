@@ -1,5 +1,3 @@
-
-
 // Scene. Updates and draws a single scene of the game.
 // This class manages the screen using a normalized coordinate system where:
 // - (0, 0) represents the top-left corner of the screen.
@@ -26,11 +24,18 @@ function Scene()
 
 	this.UI = new UI();
 	
-	this.levelID = 4; // Current level ID
+	// player variables
+	this.player = new Player(0.5, 0.5, 1/10, 1/9);
+	this.levelID = 0; // Current level ID
+
+	// level variables
 	this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
 	this.screen_switch_time = 0.7; // seconds
-	this.levelContent = new Array().concat(map[this.levelID]); // Current level content
-	this.player = new Player(0.5, 0.5, 1/10, 1/9);
+	this.mapID = "dungeon1";
+
+	this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(this.levelID)); // Current level content
+	this.tmpLevelContent = new Array(); // Temporary level content for transitions
+
 	this.debug_text = new Text("Debug: ", 0.0, 0.05, color="white",  fontSize=6, fontFamily="'tiny5'", ctx=this.context);
 	this.debug_background = new BackgroundElement(0, 0, 0.29, 0.8, "ground", false, texture=null, color="rgba(0, 0, 0, 0.5)");
 	
@@ -53,104 +58,110 @@ Scene.prototype.update = function(deltaTime)
 // It can stop the time updates for the scene (transitions, menu screen, etc.)
 Scene.prototype.level = function(deltaTime)
 {
-
-	// In case we are changing levels, we need to stop udpating the level. 
-	// That is why we enter this if statement and return null.
-	if(this.switching)	{
-		// We start the transition timer
-		if (!this.switchStartTime) {
-			this.switchStartTime = this.currentTime; // Record the time when switching started
-		}
-		// Check if the time since the switch started is less than the screen switch time
-		// If so, we need to translate level content
-		if (this.currentTime - this.switchStartTime <= (this.screen_switch_time*1000)) { // Check if 0.5 seconds have passed
-			let factor = (this.currentTime - this.switchStartTime) / 1000 * (1/this.screen_switch_time); // Calculate the elapsed time in seconds
-			this.levelContent.forEach((element) => {element.resetPosition()});
-			this.player.resetPosition(); // Reset the player position
-			
-			switch (this.switching) {
-				case 1:
-					this.levelID = getAdjacentLevels(this.levelID).left;
-					this.levelContent = map[this.levelID].concat(this.levelContent); 
-					this.switching = 5;
-					break;
-				case 2:
-					this.levelID = getAdjacentLevels(this.levelID).right;
-					this.levelContent = map[this.levelID].concat(this.levelContent); 
-					this.switching = 6;
-					break;
-				case 3:
-					this.levelID = getAdjacentLevels(this.levelID).top;
-					this.levelContent = map[this.levelID].concat(this.levelContent); 
-					this.switching = 7;
-					break;
-				case 4:
-					this.levelID = getAdjacentLevels(this.levelID).bottom;
-					this.levelContent = map[this.levelID].concat(this.levelContent); 
-					this.switching = 8;
-					break;
-				case 5:
-					this.player.setPosition((1 - (1.01 / 10))*factor, this.player.y);
-					this.levelContent.forEach((element) => {
-						element.translatePosition(factor, 0);
-					});
-					map[this.levelID].forEach((element) => {
-						element.translatePosition(-1,0);
-					});
-					break;
-				case 6:
-					this.player.setPosition((1 - (1.01 / 10))*(1 - factor), this.player.y);
-					this.levelContent.forEach((element) => {
-						element.translatePosition(-factor, 0);
-					});
-					map[this.levelID].forEach((element) => {
-						element.translatePosition(1,0);
-					});
-					break;
-				case 7:
-					this.player.setPosition(this.player.x, (1 - (1.01 / 9))*factor);
-					this.levelContent.forEach((element) => {
-						element.translatePosition(0, factor);
-					});
-					map[this.levelID].forEach((element) => {
-						element.translatePosition(0,-1);
-					});
-					break;
-				case 8:
-					this.player.setPosition(this.player.x, (1 - (1.01 / 9))*(1 - factor));
-					this.levelContent.forEach((element) => {
-						element.translatePosition(0, -factor);
-					});
-					map[this.levelID].forEach((element) => {
-						element.translatePosition(0,1);
-					});
-					break;
-				default:
-					break;
-			}
-			return;
-		}
-		// Once the transition is done, we need to reset the level content
-		this.levelContent.forEach((element) => {element.resetPosition()}); // Reset the position of old screen
-		this.switching = 0; // Reset switching state
-		this.switchStartTime = null; // Reset the start time
-		this.levelContent = new Array().concat(map[this.levelID]); // Load new level content
-		return;
-	}
-
 	// Update Player
 	this.player.update(deltaTime);
 
-	// check if the user is trying to leave the screen on one of the sides
-	if(this.player.x < 0.0) {this.switching = 1};  // left side
-	if(this.player.x > (1.0-1/10)) this.switching = 2;  // right side
-	if(this.player.y < 0.0) this.switching = 3;  // up side
-	if(this.player.y > (1.0-1/9)) this.switching = 4;  // down side
-	if (this.switching){
-		this.player.lastPosition = {x: this.player.x, y: this.player.y};  // save last position
-	};
-	// udpate elements in the scene
+	// level safe checks
+	this.checkSafe();
 
+	// Check for collisions with level elements
+	this.collisions();
+}
+
+Scene.prototype.collisions = function()
+{
+	// Check if the player is colliding with any of the level elements
+	this.levelContent.forEach((element) => {
+		if (element.type==="door") {
+			if (!element.isActive()) return; // Skip if the door is not active
+			if (this.player.collidesWith(element)) {
+				this.player.setPosition(element.door.x, element.door.y); // place user on new door position 
+				this.levelTransition(this.levelID, element.getDestination(), this.currentTime);
+			}
+		}
+		// else if (element.type==="enemy") {
+		// 	if (this.player.collidesWith(element)) {
+		// 		console.log("Collision with enemy detected!");
+		// 		this.player.die(); // Handle player death
+		// 	}
+		// }
+	});
+
+	// Check if the player is trying to leave the screen on one of the sides
+	let margins = this.checkMarginCollision(); // Check for margin collision
+	if(margins.colliding) {
+		// If the player is trying to leave the screen, transition to the adjacent level
+		// Get the adjacent level ID based on the current level ID and direction
+		this.player.setPosition(0.5, 0.5); // Reset player position
+		this.player.lastPosition = {x: this.player.x, y: this.player.y};  // save last position
+		this.levelTransition(this.levelID, margins.destination, this.currentTime);
+	}
+}
+
+Scene.prototype.checkSafe= function()
+{
+	// Check if the player is colliding with any of the level elements
+	this.levelContent.forEach((element) => {
+		if (element.type==="door" && !element.isActive() && !element.isColliding(this.player.x, this.player.y, this.player.width, this.player.height)) {
+				element.activate(); // Activate the door if the player is not colliding with it
+		}
+		// else if (element.type==="enemy") {
+		// 	if (this.player.collidesWith(element)) {
+		// 		console.log("Collision with enemy detected!");
+		// 		this.player.die(); // Handle player death
+		// 	}
+		// }
+	});
+}
+
+/**
+ * 
+ * @returns {number} adjacent level ID
+ */
+Scene.prototype.checkMarginCollision = function()
+{
+	// Check if the player is trying to leave the screen on one of the sides
+	if(this.player.x < 0.0) return {
+		colliding: true,
+		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).left
+	}  // left side
+	if(this.player.x > (1.0-1/10)) return {
+		colliding: true,
+		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).right
+	}  // right side
+	if(this.player.y < 0.0) return {
+		colliding: true,
+		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).top
+	}  // up side
+	if(this.player.y > (1.0-1/9)) return {
+		colliding: true,
+		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).bottom
+	}// down side
+	return {colliding: false, destination: -1}; // no collision
+}
+
+Scene.prototype.levelTransition = function(from, to, deltaTime)
+{
+	// Transition from one level to another
+	// This function is responsible for the transition animation between levels
+	// It can be a fade out, slide, etc.
+	// It should return when the transition is done and the new level is loaded
+	this.switching = 0; // Reset switching state
+	this.levelID = to;
+	this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(to)); // Load new level content
+
+	// Initialize level contents
+	this.levelContent.forEach((element) => {
+		if (element.type==="door") { // Prevent instant teleportation when loading a level
+				element.safeCheck(this.player.x, this.player.y, this.player.width, this.player.height); 
+		}
+	});
+}
+
+// Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
+Scene.prototype.transform = function(x, y)
+{
+	return [x*this.canvas.width_px, y*this.canvas.height_px];
 }
 
 Scene.prototype.draw = function ()
@@ -186,9 +197,4 @@ Scene.prototype.draw = function ()
 	this.debug_text.draw(this.context);
 }
 
-// Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
-Scene.prototype.transform = function(x, y)
-{
-	return [x*this.canvas.width_px, y*this.canvas.height_px];
-}
 

@@ -4,10 +4,10 @@ class Player {
         this.y = y; // Y position
         this.width = width; // Width of the player
         this.height = height; // Height of the player
-        this.texture = new Texture(texture); // Texture (image) for the player
+        this.texture = new Texture(texture); // Texture (sprites) for the player
         
         // movement
-        this.speed = 0.0005;
+        this.speed = 0.0002;
         this.direction = { x: 0, y: 0 }; // Normalized movement vector
         this.lastDirection = { x: 0, y: 0 };; // Direction the player is facing
         this.moving = false; // Whether the player is moving
@@ -15,8 +15,9 @@ class Player {
         // Animation
         this.frame = 0; // Current frame of the player's animation (0,1)
         this.animationTimer = 0;
-        this.frameDuration = 200; // Time in milliseconds for each frame
+        this.frameDuration = 100; // Time in milliseconds for each frame
         this.lastPosition = { x: 0, y: 0 }; // Last position of the player for collision detection
+        
         // Sprites
         this.sprites = {
             idle_walk_0: { start: { x: 1, y: 11 }, end: { x: 16, y: 27 } }, // facing down
@@ -74,9 +75,17 @@ class Player {
             size.x,
             size.y
         );
+
+        // Draw the bounding box of the player
+        context.strokeStyle = 'red'; // Set the color of the bounding box
+        context.lineWidth = 1; // Set the width of the bounding box lines
+        context.strokeRect(pos.x, pos.y, size.x, size.y); // Draw the bounding box
     
         // Restore context if mirrored
         if (this.lastDirection.x === 1 || this.lastDirection.y !== 0) context.restore();  // Only restore if mirrored
+
+
+
     }
 
     update(deltaTime) {
@@ -131,11 +140,11 @@ class Player {
         }
     }
 
-    isColliding(element) {
+    collidesWith(element) {
         // Check if the player is colliding with the specified element
-        return element.isColliding(this.x, this.y);
+        return element.isColliding(this.x, this.y, this.width, this.height);
     }
-
+    
     setPosition(x, y) {
         this.x = x;
         this.y = y;
