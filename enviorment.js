@@ -43,6 +43,8 @@ class BackgroundElement {
                 context.fillStyle = "gray"; // Example color for wall
             } else if (this.type === "rock") {
                 context.fillStyle = "brown"; // Example color for rock
+            } else {
+                context.fillStyle = "black"; // Default color
             }
             
 
@@ -51,13 +53,13 @@ class BackgroundElement {
         }
     }
 
-    isColliding(playerX, playerY) {
+    isColliding(playerX, playerY, playerWidth, playerHeight) {
         // Check if the player's position collides with this element
         return (
-            playerX >= this.x &&
-            playerX <= this.x + this.width &&
-            playerY >= this.y &&
-            playerY <= this.y + this.height
+            playerX < this.x + this.width &&
+            playerX + playerWidth > this.x &&
+            playerY < this.y + this.height &&
+            playerY + playerHeight > this.y
         );
     }
 
@@ -77,6 +79,21 @@ class BackgroundElement {
     }
 }
 
+class Door extends BackgroundElement {
+    constructor(x, y, width, height, isWalkable, texture = null, color = null, drawing_settings = null, destination = null) {
+        super(x, y, width, height, "door", isWalkable, texture, color, drawing_settings);
+        this.destination = destination; // Destination level or map the door leads to
+    }
+
+    setDestination(destination) {
+        this.destination = destination; // Set the destination for the door
+    }
+
+    getDestination() {
+        return this.destination; // Get the destination of the door
+    }
+}
+
 /**
  * Class representing a level in the game. Contains static elements, enemies, items...
  * @class Level
@@ -90,25 +107,28 @@ class Level{
         this.background_elements = background_elements; // Elements in the level
     }
 
-    // getElements() { 
-    //     return this.background_elements.map(element => Object.assign(
-    //         Object.create(Object.getPrototypeOf(element)), JSON.parse(JSON.stringify(element))
-    //     )); // Return a deep copy of the array
-    // }
-
     getElements() {
         return this.background_elements.map(element => {
-            // Create a new instance of BackgroundElement with the same properties
-            return new BackgroundElement(
-                element.x, element.y, element.width, element.height,
-                element.type, element.isWalkable, element.texture, element.color, element.drawing_settings
-            );
+            if (element instanceof Door) {
+                // Create a new Door instance
+                return new Door(
+                    element.x, element.y, element.width, element.height,
+                    element.isWalkable, element.texture, element.color,
+                    element.drawing_settings, element.destination
+                );
+            } else if (element instanceof BackgroundElement) {
+                // Create a new BackgroundElement instance
+                return new BackgroundElement(
+                    element.x, element.y, element.width, element.height,
+                    element.type, element.isWalkable, element.texture,
+                    element.color, element.drawing_settings
+                );
+            } else {
+                console.warn("Unknown element type:", element);
+                return null; // Handle unexpected types gracefully
+            }
         });
     }
-
-    // getElements() { 
-    //     return [...this.background_elements]; // Return a shallow copy of the array
-    // }
 }
 
 /**
@@ -138,6 +158,10 @@ class Map {
     getLevelElements(levelID) {
         return this.getLevel(levelID).getElements(); // Returns the elements of the level with the given ID
     }
+
+    getSize() {
+        return { cols: this.x, rows: this.y }; // Returns the size of the map
+    }
 }
 
 /**
@@ -155,7 +179,9 @@ class World {
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
 const tile1 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
-    drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128})];
+    drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128}), 
+    new Door(1/10, 1/9, 1/10, 1/9, true, texture=null, color="yellow",drawing_settings=null,destination=2),
+];
 const tile2 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128})];
 const tile3 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
