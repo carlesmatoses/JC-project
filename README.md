@@ -11,7 +11,7 @@
 		- [ ] Parets
 		- [ ] Objectes
 	- [ ] Enemics 
-- [ ] Espasa link
+- [ ] Espasa link - **Alberto**
 	- [ ] Fer el canvi de animacion entre base <-> espasa 
 	- [ ] Definir tecla Z -> Veure codi
 	- [ ] Fer animació
