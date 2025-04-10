@@ -75,10 +75,8 @@ Scene.prototype.collisions = function()
 		if (element.type==="door") {
 			if (!element.isActive()) return; // Skip if the door is not active
 			if (this.player.collidesWith(element)) {
-				this.player.setPosition(element.door.x, element.door.y); // Reset player position
+				this.player.setPosition(element.door.x, element.door.y); // place user on new door position 
 				this.levelTransition(this.levelID, element.getDestination(), this.currentTime);
-				
-				// place user on new door position 
 			}
 		}
 		// else if (element.type==="enemy") {
