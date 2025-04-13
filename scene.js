@@ -6,7 +6,8 @@
 // The scene is responsible for updating and drawing all elements in the game.
 // The scene is responsible from controlling the level and the player
 
-function Scene()
+class Scene{
+constructor()
 {
 	// Set canvas dimensions 
 	this.canvas = document.getElementById("game-layer");
@@ -44,7 +45,7 @@ function Scene()
 }
 
 
-Scene.prototype.update = function(deltaTime)
+update = function(deltaTime)
 {
 	// game is stopped, we need to stop the time updates
 	if(this.stop) {
@@ -56,7 +57,7 @@ Scene.prototype.update = function(deltaTime)
 
 // This function is responsible for updating the level content and checking for level transitions
 // It can stop the time updates for the scene (transitions, menu screen, etc.)
-Scene.prototype.level = function(deltaTime)
+level = function(deltaTime)
 {
 	// Update Player
 	this.player.update(deltaTime);
@@ -68,7 +69,7 @@ Scene.prototype.level = function(deltaTime)
 	this.collisions();
 }
 
-Scene.prototype.collisions = function()
+collisions = function()
 {
 	// Check if the player is colliding with any of the level elements
 	this.levelContent.forEach((element) => {
@@ -106,7 +107,7 @@ Scene.prototype.collisions = function()
 	}
 }
 
-Scene.prototype.newPositionMargins= function(side){
+newPositionMargins= function(side){
 	let margin = 0.01;
 	if (side==="left") {
 		return {x: 1-1.0/10-margin, y: this.player.y, wx:1,wy:0}; // Move to the left side of the screen
@@ -123,7 +124,7 @@ Scene.prototype.newPositionMargins= function(side){
 	return {x: this.player.x, y: this.player.y}; // No movement
 }
 
-Scene.prototype.checkSafe= function()
+checkSafe= function()
 {
 	// Check if the player is colliding with any of the level elements
 	this.levelContent.forEach((element) => {
@@ -143,7 +144,7 @@ Scene.prototype.checkSafe= function()
  * 
  * @returns {number} adjacent level ID
  */
-Scene.prototype.checkMarginCollision = function()
+checkMarginCollision = function()
 {
 	// Check if the player is trying to leave the screen on one of the sides
 	if(this.player.x < 0.0) return {
@@ -169,7 +170,7 @@ Scene.prototype.checkMarginCollision = function()
 	return {colliding: false, destination: -1}; // no collision
 }
 
-Scene.prototype.levelTransition = function(to)
+levelTransition = function(to)
 {
 	// Transition from one level to another
 	// This function is responsible for the transition animation between levels
@@ -187,7 +188,7 @@ Scene.prototype.levelTransition = function(to)
 }
 
 // Transition animation function
-Scene.prototype.levelTransitionMarginAnimation = function(currentElements, futureElements, player_old_position, player_new_position, deltaTime, newLevelID, transitionDuration = 1)
+levelTransitionMarginAnimation = function(currentElements, futureElements, player_old_position, player_new_position, deltaTime, newLevelID, transitionDuration = 1)
 {
 	// Create a loop for the specified transition duration, then return control to the main loop
 	this.stop = true; // Pause the main loop
@@ -224,7 +225,7 @@ Scene.prototype.levelTransitionMarginAnimation = function(currentElements, futur
 	}, interval);
 }
 
-Scene.prototype.levelTransitionDoorAnimation = function(newLevelID, userPosition, screen_switch_time = 1) {
+levelTransitionDoorAnimation = function(newLevelID, userPosition, screen_switch_time = 1) {
 	// Create a loop for the specified transition duration, then return control to the main loop
 	this.stop = true; // Pause the main loop
 	let elapsedTime = 0;
@@ -264,12 +265,12 @@ Scene.prototype.levelTransitionDoorAnimation = function(newLevelID, userPosition
 }
 
 // Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
-Scene.prototype.transform = function(x, y)
+transform = function(x, y)
 {
 	return [x*this.canvas.width_px, y*this.canvas.height_px];
 }
 
-Scene.prototype.draw = function ()
+draw = function ()
 {
 	// Clear background
 	this.context.fillStyle = "rgb(224, 224, 240)";
@@ -309,6 +310,7 @@ Scene.prototype.draw = function ()
 
 					);
 	this.debug_text.draw(this.context);
+}
 }
 
 
