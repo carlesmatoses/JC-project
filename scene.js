@@ -45,7 +45,7 @@ constructor()
 }
 
 
-update = function(deltaTime)
+update(deltaTime)
 {
 	// game is stopped, we need to stop the time updates
 	if(this.stop) {
@@ -57,7 +57,7 @@ update = function(deltaTime)
 
 // This function is responsible for updating the level content and checking for level transitions
 // It can stop the time updates for the scene (transitions, menu screen, etc.)
-level = function(deltaTime)
+level(deltaTime)
 {
 	// Update Player
 	this.player.update(deltaTime);
@@ -69,7 +69,7 @@ level = function(deltaTime)
 	this.collisions();
 }
 
-collisions = function()
+collisions()
 {
 	// Check if the player is colliding with any of the level elements
 	this.levelContent.forEach((element) => {
@@ -107,7 +107,7 @@ collisions = function()
 	}
 }
 
-newPositionMargins= function(side){
+newPositionMargins(side){
 	let margin = 0.01;
 	if (side==="left") {
 		return {x: 1-1.0/10-margin, y: this.player.y, wx:1,wy:0}; // Move to the left side of the screen
@@ -124,7 +124,7 @@ newPositionMargins= function(side){
 	return {x: this.player.x, y: this.player.y}; // No movement
 }
 
-checkSafe= function()
+checkSafe()
 {
 	// Check if the player is colliding with any of the level elements
 	this.levelContent.forEach((element) => {
@@ -144,7 +144,7 @@ checkSafe= function()
  * 
  * @returns {number} adjacent level ID
  */
-checkMarginCollision = function()
+checkMarginCollision()
 {
 	// Check if the player is trying to leave the screen on one of the sides
 	if(this.player.x < 0.0) return {
@@ -170,7 +170,7 @@ checkMarginCollision = function()
 	return {colliding: false, destination: -1}; // no collision
 }
 
-levelTransition = function(to)
+levelTransition(to)
 {
 	// Transition from one level to another
 	// This function is responsible for the transition animation between levels
@@ -188,7 +188,7 @@ levelTransition = function(to)
 }
 
 // Transition animation function
-levelTransitionMarginAnimation = function(currentElements, futureElements, player_old_position, player_new_position, deltaTime, newLevelID, transitionDuration = 1)
+levelTransitionMarginAnimation(currentElements, futureElements, player_old_position, player_new_position, deltaTime, newLevelID, transitionDuration = 1)
 {
 	// Create a loop for the specified transition duration, then return control to the main loop
 	this.stop = true; // Pause the main loop
@@ -225,7 +225,7 @@ levelTransitionMarginAnimation = function(currentElements, futureElements, playe
 	}, interval);
 }
 
-levelTransitionDoorAnimation = function(newLevelID, userPosition, screen_switch_time = 1) {
+levelTransitionDoorAnimation(newLevelID, userPosition, screen_switch_time = 1) {
 	// Create a loop for the specified transition duration, then return control to the main loop
 	this.stop = true; // Pause the main loop
 	let elapsedTime = 0;
@@ -265,12 +265,12 @@ levelTransitionDoorAnimation = function(newLevelID, userPosition, screen_switch_
 }
 
 // Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
-transform = function(x, y)
+transform(x, y)
 {
 	return [x*this.canvas.width_px, y*this.canvas.height_px];
 }
 
-draw = function ()
+draw()
 {
 	// Clear background
 	this.context.fillStyle = "rgb(224, 224, 240)";
