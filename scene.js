@@ -92,10 +92,34 @@ Scene.prototype.collisions = function()
 	if(margins.colliding) {
 		// If the player is trying to leave the screen, transition to the adjacent level
 		// Get the adjacent level ID based on the current level ID and direction
-		this.player.setPosition(0.5, 0.5); // Reset player position
 		this.player.lastPosition = {x: this.player.x, y: this.player.y};  // save last position
-		this.levelTransition(this.levelID, margins.destination, this.currentTime);
+		this.levelTransitionAnimation(
+			this.levelContent,
+			world.maps[this.mapID].getLevelElements(margins.destination),
+			{ x: this.player.x, y: this.player.y, wx:0,wy:0}, // old position
+			this.newPositionMargins(margins.side), // new position
+			this.currentTime,
+			margins.destination,
+			0.4
+		); // Call the transition function
 	}
+}
+
+Scene.prototype.newPositionMargins= function(side){
+	let margin = 0.01;
+	if (side==="left") {
+		return {x: 1-1.0/10-margin, y: this.player.y, wx:1,wy:0}; // Move to the left side of the screen
+	}
+	if (side==="right") {
+		return {x: margin, y: this.player.y, wx:-1,wy:0}; // Move to the right side of the screen
+	}
+	if (side==="top") {
+		return {x: this.player.x, y: 1.0 - 1.0/9-margin, wx:0, wy:1}; // Move to the top side of the screen
+	}
+	if (side==="bottom") {
+		return {x: this.player.x, y: margin, wx:0, wy:-1}; // Move to the bottom side of the screen
+	}
+	return {x: this.player.x, y: this.player.y}; // No movement
 }
 
 Scene.prototype.checkSafe= function()
@@ -123,30 +147,33 @@ Scene.prototype.checkMarginCollision = function()
 	// Check if the player is trying to leave the screen on one of the sides
 	if(this.player.x < 0.0) return {
 		colliding: true,
-		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).left
+		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).left,
+		side: "left"
 	}  // left side
 	if(this.player.x > (1.0-1/10)) return {
 		colliding: true,
-		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).right
+		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).right,
+		side: "right"
 	}  // right side
 	if(this.player.y < 0.0) return {
 		colliding: true,
-		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).top
+		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).top,
+		side: "top"
 	}  // up side
 	if(this.player.y > (1.0-1/9)) return {
 		colliding: true,
-		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).bottom
+		destination: getAdjacentLevels(this.levelID, world.maps[this.mapID].getSize().rows, world.maps[this.mapID].getSize().cols).bottom,
+		side: "bottom"
 	}// down side
 	return {colliding: false, destination: -1}; // no collision
 }
 
-Scene.prototype.levelTransition = function(from, to, deltaTime)
+Scene.prototype.levelTransition = function(to)
 {
 	// Transition from one level to another
 	// This function is responsible for the transition animation between levels
 	// It can be a fade out, slide, etc.
 	// It should return when the transition is done and the new level is loaded
-	this.switching = 0; // Reset switching state
 	this.levelID = to;
 	this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(to)); // Load new level content
 
@@ -156,6 +183,44 @@ Scene.prototype.levelTransition = function(from, to, deltaTime)
 				element.safeCheck(this.player.x, this.player.y, this.player.width, this.player.height); 
 		}
 	});
+}
+
+// Transition animation function
+Scene.prototype.levelTransitionAnimation = function(currentElements, futureElements, player_old_position, player_new_position, deltaTime, newLevelID, transitionDuration = 1)
+{
+	// Create a loop for the specified transition duration, then return control to the main loop
+	this.stop = true; // Pause the main loop
+	let elapsedTime = 0;
+	const interval = 16; // Approximate frame duration (16ms for ~60fps)
+	
+	this.levelContent = futureElements.concat(currentElements); // Set the new level content
+
+	const loop = setInterval(() => {
+		elapsedTime += interval;
+		if (elapsedTime >= transitionDuration * 1000) {
+			clearInterval(loop);
+			this.stop = false; // Resume the main loop
+			this.levelTransition(newLevelID);
+			return;
+		}
+
+		// Calculate the interpolation factor (0 to 1)
+		let t = elapsedTime / (transitionDuration * 1000);
+
+		// Interpolate player position
+		this.player.x = player_old_position.x + t * (player_new_position.x - player_old_position.x);
+		this.player.y = player_old_position.y + t * (player_new_position.y - player_old_position.y);
+
+		// Interpolate level elements
+		currentElements.forEach((element) => {
+			element.resetPosition(); // Reset to old position
+			element.translatePosition(t * (player_new_position.wx - player_old_position.wx), t * (player_new_position.wy - player_old_position.wy)); // Translate to new position
+		});
+		futureElements.forEach((element) => {
+			element.resetPosition(); // Reset to old position
+			element.translatePosition(t * (player_new_position.wx - player_old_position.wx) - player_new_position.wx, t * (player_new_position.wy - player_old_position.wy) - player_new_position.wy); // Translate to new position
+		});
+	}, interval);
 }
 
 // Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
