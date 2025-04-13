@@ -1,5 +1,5 @@
 # TODO Entrega Parcial:
-- [ ] Mapa dues pantalles on es pugui moure - **Carles**
+- [x] Mapa dues pantalles on es pugui moure - **Carles**
 - [ ] Definir mapa de tiles (objectes decortatius)
 	 - [ ] Veure com implementar capes -> Capa 1 Fons Capa 2 objectes decoratius
 	 - [ ] Seleccionar tiles decoratius
