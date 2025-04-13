@@ -75,8 +75,9 @@ Scene.prototype.collisions = function()
 		if (element.type==="door") {
 			if (!element.isActive()) return; // Skip if the door is not active
 			if (this.player.collidesWith(element)) {
-				this.player.setPosition(element.door.x, element.door.y); // place user on new door position 
-				this.levelTransition(this.levelID, element.getDestination(), this.currentTime);
+				// this.player.setPosition(element.door.x, element.door.y); // place user on new door position 
+				this.levelTransitionDoorAnimation(element.getDestination(), {x:element.door.x, y:element.door.y})
+				// this.levelTransition(this.levelID, element.getDestination(), this.currentTime);
 			}
 		}
 		// else if (element.type==="enemy") {
@@ -93,7 +94,7 @@ Scene.prototype.collisions = function()
 		// If the player is trying to leave the screen, transition to the adjacent level
 		// Get the adjacent level ID based on the current level ID and direction
 		this.player.lastPosition = {x: this.player.x, y: this.player.y};  // save last position
-		this.levelTransitionAnimation(
+		this.levelTransitionMarginAnimation(
 			this.levelContent,
 			world.maps[this.mapID].getLevelElements(margins.destination),
 			{ x: this.player.x, y: this.player.y, wx:0,wy:0}, // old position
@@ -186,7 +187,7 @@ Scene.prototype.levelTransition = function(to)
 }
 
 // Transition animation function
-Scene.prototype.levelTransitionAnimation = function(currentElements, futureElements, player_old_position, player_new_position, deltaTime, newLevelID, transitionDuration = 1)
+Scene.prototype.levelTransitionMarginAnimation = function(currentElements, futureElements, player_old_position, player_new_position, deltaTime, newLevelID, transitionDuration = 1)
 {
 	// Create a loop for the specified transition duration, then return control to the main loop
 	this.stop = true; // Pause the main loop
@@ -223,6 +224,45 @@ Scene.prototype.levelTransitionAnimation = function(currentElements, futureEleme
 	}, interval);
 }
 
+Scene.prototype.levelTransitionDoorAnimation = function(newLevelID, userPosition, screen_switch_time = 1) {
+	// Create a loop for the specified transition duration, then return control to the main loop
+	this.stop = true; // Pause the main loop
+	let elapsedTime = 0;
+	const interval = 16; // Approximate frame duration (16ms for ~60fps)
+	const halfDuration = screen_switch_time * 1000 / 2; // Half of the transition duration
+	let white_rectangle = new BackgroundElement(0, 0, 1, 1, "ground", false, texture=null, color="rgba(255, 255, 255, 0)"); // White rectangle for the transition
+	white_rectangle.render_layer = -1;
+	this.levelContent.push(white_rectangle); // Add the white rectangle to the level content
+	
+	let newContentLoaded = false; // Flag to track if new content has been loaded
+	
+	const loop = setInterval(() => {
+		elapsedTime += interval;
+
+		// Calculate the interpolation factor (0 to 1)
+		let t = elapsedTime / (screen_switch_time * 1000);
+
+		// Clear the screen with a white overlay
+		let alpha = t <= 0.5 ? t * 2 : (1 - t) * 2; // Fade to white, then fade out
+		white_rectangle.color = `rgba(255, 255, 255, ${alpha})`; // Update the color of the white rectangle
+
+		if (elapsedTime >= halfDuration && !newContentLoaded) {
+			// Load the new level content at the halfway point
+			this.levelContent = world.maps[this.mapID].getLevelElements(newLevelID);
+			this.levelContent.push(white_rectangle);
+			this.player.setPosition(userPosition.x, userPosition.y); // Set the player's position
+			newContentLoaded = true; // Mark the new content as loaded
+		}
+
+		if (elapsedTime >= screen_switch_time * 1000) {
+			clearInterval(loop);
+			this.stop = false; // Resume the main loop
+			this.levelTransition(newLevelID);
+			return;
+		}
+	}, interval);
+}
+
 // Scene function to transform (0,0) to (1,1) normalized coordinates to canvas coordinates
 Scene.prototype.transform = function(x, y)
 {
@@ -235,12 +275,21 @@ Scene.prototype.draw = function ()
 	this.context.fillStyle = "rgb(224, 224, 240)";
 	this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
-	// Draw all scene elements of level
+	// Draw all scene elements of level with layer 0
 	this.levelContent.forEach((element) => {
-		element.draw(this.context);
+		if (element.render_layer === 0) {
+			element.draw(this.context);
+		}
 	});
 	// Draw player
 	this.player.draw(this.context);
+
+	// Draw Elements on layer -1
+	this.levelContent.forEach((element) => {
+		if (element.render_layer === -1) {
+			element.draw(this.context);
+		}
+	});
 
 	if(keyboard[32])
 	{
