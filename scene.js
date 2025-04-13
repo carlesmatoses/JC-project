@@ -37,7 +37,7 @@ constructor()
 	this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(this.levelID)); // Current level content
 	this.tmpLevelContent = new Array(); // Temporary level content for transitions
 
-	this.debug_text = new Text("Debug: ", 0.0, 0.05, color="white",  fontSize=6, fontFamily="'tiny5'", ctx=this.context);
+	this.debug_text = new Text("Debug: ", 0.0, 0.05, "white",  6, "'tiny5'", this.context);
 	this.debug_background = new BackgroundElement(0, 0, 0.29, 0.8, "ground", false, texture=null, color="rgba(0, 0, 0, 0.5)");
 	
 	this.context.imageSmoothingEnabled = false;
@@ -295,7 +295,7 @@ draw()
 	if(keyboard[32])
 	{
 		text = "Spacebar pressed";
-		let text_obj = new Text(text, 0.5, 0.5, color="blue",  fontSize=8, fontFamily="'tiny5'", ctx=this.context);
+		let text_obj = new Text(text, 0.5, 0.5, "blue",  8, "'tiny5'", this.context);
 		text_obj.draw(this.context);
 	}
 
