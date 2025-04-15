@@ -28,4 +28,5 @@ const textures = {
 	brick: new Texture("imgs/brick.png"),
 	dungeon0: new Texture("imgs/dungeon0.png"),
 	dungeon1: new Texture("imgs/139216.png"),
+	chest: new Texture("imgs/chest.png"),
 }

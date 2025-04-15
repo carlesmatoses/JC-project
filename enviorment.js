@@ -133,6 +133,39 @@ class Door extends BackgroundElement {
     }
 }
 
+class Chest extends BackgroundElement {
+    constructor(x, y, width, height, isWalkable, texture = textures.chest, color = null, drawing_settings = null) {
+        super(x, y, width, height, "chest", isWalkable, texture, color, drawing_settings);
+        this.isOpen = false; // Whether the chest is open or not
+        this.content = null; // Content of the chest (e.g., items, coins)
+    }
+
+    open() {
+        this.isOpen = true; // Open the chest
+    }
+
+    close() {
+        this.isOpen = false; // Close the chest
+    }
+
+    isOpened() {
+        return this.isOpen; // Check if the chest is open
+    }
+
+    draw(context) {
+        let pos = transform(this.x, this.y, context);
+        let size = transform(this.width, this.height, context);
+
+        if (this.isOpen) {
+            // Draw the open chest texture (16x0 to 32x16)
+            context.drawImage(this.texture.img, 16, 0, 16, 16, pos.x, pos.y, size.x, size.y);
+        } else {
+            // Draw the closed chest texture (0x0 to 16x16)
+            context.drawImage(this.texture.img, 0, 0, 16, 16, pos.x, pos.y, size.x, size.y);
+        }
+    }
+}
+
 /**
  * Class representing a level in the game. Contains static elements, enemies, items...
  * @class Level
@@ -156,6 +189,13 @@ class Level{
                     element.drawing_settings, element.destination,
                     element.active, 
                     element.door,
+                );
+            } else if (element instanceof Chest) {
+                // Create a new Chest instance
+                return new Chest(
+                    element.x, element.y, element.width, element.height,
+                    element.isWalkable, element.texture, element.color,
+                    element.drawing_settings
                 );
             } else if (element instanceof BackgroundElement) {
                 // Create a new BackgroundElement instance
@@ -224,11 +264,15 @@ const door2 = new Door(5/10, 5/9, 1/10, 1/9, true, texture=null, color="purple",
 door1.setDoor(door2); 
 door2.setDoor(door1);
 
+const chest1 = new Chest(4/10, 1/9, 1/10, 1/9, true, texture=textures.chest, color="yellow",drawing_settings=null);
+
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
-const tile1 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
-    drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128}), 
+const tile1 = [
+    new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
+        drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128}), 
     door1,
+    chest1,
 ];
 const tile2 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128})];
