@@ -1,12 +1,13 @@
 # TODO Entrega Parcial:
 - [x] Mapa dues pantalles on es pugui moure - **Carles**
-- [ ] Definir mapa de tiles (objectes decortatius) **Carles**
-	 - [ ] Veure com implementar capes -> Capa 1 Fons Capa 2 objectes decoratius
-	 - [ ] Seleccionar tiles decoratius
+- [x] Definir mapa de tiles (objectes decortatius) **Carles**
+	 - [x] Veure com implementar capes -> Capa 1 Fons Capa 2 objectes decoratius
+	 - [x] Seleccionar tiles decoratius
+	 - [ ]obtindre llista d'objectes "facing player"
 - [ ] Trenclaclosques
 	- [ ] Veure qual implementem
 	- [ ] Implementar funcionalitat
-- [ ] Colisions amb link (Proxima clase)
+- [ ] Colisions amb link (Proxima clase) # implementat a mitges
 	- Amb l'escenari 
 		- [ ] Parets
 		- [ ] Objectes
