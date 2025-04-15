@@ -25,3 +25,17 @@ function getAdjacentLevels(id, rows, cols) {
 
     return { top, left, bottom, right };
 }
+
+/*
+    * Function to check the state of a button press.
+    * @param {object} event - The keyboard event object.
+    * @returns {object} - An object containing the state of the button (down, pressed, released).
+*/
+function checkButtonState(event) {
+    const state = {
+        down: event.type === 'keydown',
+        pressed: event.repeat === false && event.type === 'keydown',
+        released: event.type === 'keyup'
+    };
+    return state;
+}

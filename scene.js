@@ -62,18 +62,30 @@ level(deltaTime)
 	// Update Player
 	this.player.update(deltaTime);
 
+
+
 	// level safe checks
 	this.checkSafe();
 
 	// Check for collisions with level elements
 	this.collisions();
+
+	// if "f" pressed, check for interaction with level elements
+	if (keyboard[70]) {
+		if (!this.fKeyState || this.fKeyState.released) {
+			this.handleInteraction();
+		}
+		this.fKeyState = { down: true, pressed: false, released: false };
+	} else {
+		this.fKeyState = { down: false, pressed: false, released: true };
+	}
 }
 
 collisions()
 {
-	// Check if the player is colliding with any of the level elements
+	// Check if the player is colliding with any of the level elements of type [door, chest]
 	this.levelContent.forEach((element) => {
-		if (element.type==="door") {
+		if (element.type==="door" ) {
 			if (!element.isActive()) return; // Skip if the door is not active
 			if (this.player.collidesWith(element)) {
 				// this.player.setPosition(element.door.x, element.door.y); // place user on new door position 
@@ -105,6 +117,44 @@ collisions()
 			0.4
 		); // Call the transition function
 	}
+
+	// // Check for collisions with level elements
+	// this.levelContent.forEach((element) => {
+	// 	if (!element.isWalkable) {
+	// 		this.resolveCollision(this.player, element); // Resolve collision with enemies
+	// 	}
+	// });
+}
+
+isColliding(a, b) {
+    return (
+        a.x < b.x + b.width &&
+        a.x + a.width > b.x &&
+        a.y < b.y + b.height &&
+        a.y + a.height > b.y
+    );
+}
+resolveCollision(player, object) {
+    if (object.isWalkable || !this.isColliding(player, object)) return;
+
+    const dx = (player.x + player.width / 2) - (object.x + object.width / 2);
+    const dy = (player.y + player.height / 2) - (object.y + object.height / 2);
+    const widthOverlap = (player.width + object.width) / 2 - Math.abs(dx);
+    const heightOverlap = (player.height + object.height) / 2 - Math.abs(dy);
+
+    if (widthOverlap < heightOverlap) {
+        if (dx > 0) {
+            player.x += widthOverlap;
+        } else {
+            player.x -= widthOverlap;
+        }
+    } else {
+        if (dy > 0) {
+            player.y += heightOverlap;
+        } else {
+            player.y -= heightOverlap;
+        }
+    }
 }
 
 newPositionMargins(side){
@@ -168,6 +218,14 @@ checkMarginCollision()
 		side: "bottom"
 	}// down side
 	return {colliding: false, destination: -1}; // no collision
+}
+
+handleInteraction() {
+    this.levelContent.forEach(element => {
+        if (element.interact && this.player.collidesWith(element)) {
+            element.interact(this.player);
+        }
+    });
 }
 
 levelTransition(to)

@@ -152,6 +152,20 @@ class Chest extends BackgroundElement {
         return this.isOpen; // Check if the chest is open
     }
 
+    interact(player) {
+        if (this.isColliding(player.x, player.y, player.width, player.height)) {
+            if (!this.isOpen) {
+                this.open(); // Open the chest if it is not already open
+                console.log("Chest opened!");
+                // Add logic to give content to the player
+                // e.g., player.addItem(this.content);
+            } else {
+                this.close(); // Close the chest if it is already open
+                console.log("Chest closed!");
+            }
+        }
+    }
+
     draw(context) {
         let pos = transform(this.x, this.y, context);
         let size = transform(this.width, this.height, context);
@@ -264,79 +278,79 @@ const door2 = new Door(5/10, 5/9, 1/10, 1/9, true, texture=null, color="purple",
 door1.setDoor(door2); 
 door2.setDoor(door1);
 
-const chest1 = new Chest(4/10, 1/9, 1/10, 1/9, true, texture=textures.chest, color="yellow",drawing_settings=null);
+const chest1 = new Chest(4/10, 1/9, 1/10, 1/9, false, texture=textures.chest, color="yellow",drawing_settings=null);
 
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
 const tile1 = [
-    new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
+    new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
         drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128}), 
     door1,
     chest1,
 ];
-const tile2 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
+const tile2 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128})];
-const tile3 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
+const tile3 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 320+3, sy: 1, sWidth: 160, sHeight: 128}),
     door2,
 ];
-const tile4 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
+const tile4 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 480+4, sy: 1, sWidth: 160, sHeight: 128})];
-const tile5 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
+const tile5 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 640+5, sy: 1, sWidth: 160, sHeight: 128})];
-const tile6 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black", 
+const tile6 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 800+6, sy: 1, sWidth: 160, sHeight: 128})];
 // ROW2
-const tile7 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile7 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 0+1, sy: 128+2, sWidth: 160, sHeight: 128})];
-const tile8 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile8 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 160+2, sy: 128+2, sWidth: 160, sHeight: 128})];
-const tile9 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile9 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 128+2, sWidth: 160, sHeight: 128})];
-const tile10 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile10 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 128+2, sWidth: 160, sHeight: 128})];
-const tile11 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile11 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 128+2, sWidth: 160, sHeight: 128})];   
-const tile12 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile12 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 128+2, sWidth: 160, sHeight: 128})];
 // ROW3
-const tile13 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",    
+const tile13 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",    
     drawing_settings={sx: 0+1, sy: 256+3, sWidth: 160, sHeight: 128})];
-const tile14 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile14 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 160+2, sy: 256+3, sWidth: 160, sHeight: 128})];
-const tile15 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile15 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 256+3, sWidth: 160, sHeight: 128})];
-const tile16 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile16 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 256+3, sWidth: 160, sHeight: 128})];
-const tile17 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile17 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 256+3, sWidth: 160, sHeight: 128})];
-const tile18 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile18 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 256+3, sWidth: 160, sHeight: 128})];
 // ROW4
-const tile19 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile19 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 0+1, sy: 384+4, sWidth: 160, sHeight: 128})];
-const tile20 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile20 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 160+2, sy: 384+4, sWidth: 160, sHeight: 128})];
-const tile21 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile21 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 384+4, sWidth: 160, sHeight: 128})];
-const tile22 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile22 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 384+4, sWidth: 160, sHeight: 128})];
-const tile23 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile23 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 384+4, sWidth: 160, sHeight: 128})];
-const tile24 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile24 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 384+4, sWidth: 160, sHeight: 128})];
 // ROW5
-const tile25 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile25 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 0+1, sy: 512+5, sWidth: 160, sHeight: 128})];
-const tile26 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile26 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 160+2, sy: 512+5, sWidth: 160, sHeight: 128})];
-const tile27 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile27 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 512+5, sWidth: 160, sHeight: 128})];
-const tile28 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile28 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 512+5, sWidth: 160, sHeight: 128})];
-const tile29 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile29 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 512+5, sWidth: 160, sHeight: 128})];
-const tile30 = [new BackgroundElement(0, 0, 1, 1, "ground", false, texture=textures.dungeon1, color="black",
+const tile30 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 512+5, sWidth: 160, sHeight: 128})];
 
 
