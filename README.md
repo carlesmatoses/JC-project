@@ -3,7 +3,7 @@
 - [x] Definir mapa de tiles (objectes decortatius) **Carles**
 	 - [x] Veure com implementar capes -> Capa 1 Fons Capa 2 objectes decoratius
 	 - [x] Seleccionar tiles decoratius
-	 - [ ]obtindre llista d'objectes "facing player"
+	 - [x]obtindre llista d'objectes "facing player"
 - [ ] Trenclaclosques
 	- [ ] Veure qual implementem
 	- [ ] Implementar funcionalitat
