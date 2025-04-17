@@ -84,20 +84,24 @@ level(deltaTime)
 collisions()
 {
 	// Check if the player is colliding with any of the level elements of type [door, chest]
-	this.levelContent.forEach((element) => {
-		if (element.type==="door" ) {
-			if (!element.isActive()) return; // Skip if the door is not active
-			if (this.player.collidesWith(element)) {
-				this.levelTransitionDoorAnimation(element.getDestination(), {x:element.door.x, y:element.door.y})
+	for (let element of this.levelContent) {
+		if (element.type==="door") {
+			if (element.isActive()) {
+				if (this.player.collidesWith(element)) {
+					console.log("Door collision detected!");
+					this.levelTransitionDoorAnimation(element.getDestination(), {x:element.door.x, y:element.door.y});
+					return; // Exit the loop if a collision is detected
+				}
 			}
 		}
+	}
+
 		// else if (element.type==="enemy") {
 		// 	if (this.player.collidesWith(element)) {
 		// 		console.log("Collision with enemy detected!");
 		// 		this.player.die(); // Handle player death
 		// 	}
 		// }
-	});
 
 	// Check if the player is trying to leave the screen on one of the sides
 	let margins = this.checkMarginCollision(); // Check for margin collision
