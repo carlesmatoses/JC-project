@@ -73,7 +73,7 @@ level(deltaTime)
 	// if "f" pressed, check for interaction with level elements
 	if (keyboard[70]) {
 		if (!this.fKeyState || this.fKeyState.released) {
-			this.handleInteraction();
+			this.player.collidesWithHand(this.levelContent);
 		}
 		this.fKeyState = { down: true, pressed: false, released: false };
 	} else {
@@ -88,9 +88,7 @@ collisions()
 		if (element.type==="door" ) {
 			if (!element.isActive()) return; // Skip if the door is not active
 			if (this.player.collidesWith(element)) {
-				// this.player.setPosition(element.door.x, element.door.y); // place user on new door position 
 				this.levelTransitionDoorAnimation(element.getDestination(), {x:element.door.x, y:element.door.y})
-				// this.levelTransition(this.levelID, element.getDestination(), this.currentTime);
 			}
 		}
 		// else if (element.type==="enemy") {
@@ -118,12 +116,12 @@ collisions()
 		); // Call the transition function
 	}
 
-	// // Check for collisions with level elements
-	// this.levelContent.forEach((element) => {
-	// 	if (!element.isWalkable) {
-	// 		this.resolveCollision(this.player, element); // Resolve collision with enemies
-	// 	}
-	// });
+	// Check for collisions with level elements
+	this.levelContent.forEach((element) => {
+		if (!element.isWalkable) {
+			this.resolveCollision(this.player, element); // Resolve collision with enemies
+		}
+	});
 }
 
 isColliding(a, b) {
@@ -218,14 +216,6 @@ checkMarginCollision()
 		side: "bottom"
 	}// down side
 	return {colliding: false, destination: -1}; // no collision
-}
-
-handleInteraction() {
-    this.levelContent.forEach(element => {
-        if (element.interact && this.player.collidesWith(element)) {
-            element.interact(this.player);
-        }
-    });
 }
 
 levelTransition(to)

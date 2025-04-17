@@ -76,15 +76,39 @@ class Player {
             size.y
         );
 
+        
+        // Restore context if mirrored
+        if (this.lastDirection.x === 1 || this.lastDirection.y !== 0) context.restore();  // Only restore if mirrored
+        
+        let centerX = this.x + (this.width / 2);
+        let centerY = this.y + (this.height / 2);
+        let centerPixels = transform(centerX,centerY,context) 
+        let sizePixels = transform(this.width, this.height, context);
+
         // Draw the bounding box of the player
         context.strokeStyle = 'red'; // Set the color of the bounding box
         context.lineWidth = 1; // Set the width of the bounding box lines
-        context.strokeRect(pos.x, pos.y, size.x, size.y); // Draw the bounding box
-    
-        // Restore context if mirrored
-        if (this.lastDirection.x === 1 || this.lastDirection.y !== 0) context.restore();  // Only restore if mirrored
+        context.strokeRect(centerPixels.x-sizePixels.x/2, centerPixels.y-sizePixels.y/2, sizePixels.x, sizePixels.y); // Draw the bounding box
+        
+        // Draw a circle in the center of the player for debugging
+        context.beginPath();
+        context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
+        context.fillStyle = "red";
+        context.fill();
 
+        // Draw the hand rectangle for collision detection
+        let handRect = {
+            x: (centerX-this.width/8) + (this.lastDirection.x * (this.width/2+this.width/8)),
+            y: (centerY-this.height/8) + (this.lastDirection.y * (this.height/2+this.height/8)),
+            width: this.width/4,
+            height: this.height/4
+        };
 
+        let handRectPixels = transform(handRect.x, handRect.y, context);
+        let handRectSizePixels = transform(handRect.width, handRect.height, context);
+        context.strokeStyle = 'blue'; // Set the color of the hand rectangle
+        context.lineWidth = 1; // Set the width of the hand rectangle lines
+        context.strokeRect(handRectPixels.x, handRectPixels.y, handRectSizePixels.x, handRectSizePixels.y); // Draw the hand rectangle
 
     }
 
@@ -143,6 +167,26 @@ class Player {
     collidesWith(element) {
         // Check if the player is colliding with the specified element
         return element.isColliding(this.x, this.y, this.width, this.height);
+    }
+
+    collidesWithHand(elements) {
+        // Define the hand rectangle based on the player's direction
+        let handRect = {
+            x: (this.x + this.width / 2) + (this.lastDirection.x * (this.width / 2 + this.width / 8)),
+            y: (this.y + this.height / 2) + (this.lastDirection.y * (this.height / 2 + this.height / 8)),
+            width: this.width / 4,
+            height: this.height / 4
+        };
+
+        // Check collision with each element in the provided array
+        for (let element of elements) {
+            if (element.isColliding(handRect.x, handRect.y, handRect.width, handRect.height) && element.interact) {
+                element.interact(this); // Call the interact method of the element
+                return element; // Return the first element that collides
+            }
+        }
+
+        return null; // No collision detected
     }
     
     setPosition(x, y) {

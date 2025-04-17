@@ -1,7 +1,7 @@
 function transform(x, y, ctx) {
     return {
-        x: x * ctx.canvas.width,
-        y: y * ctx.canvas.height
+        x: Math.floor(x * ctx.canvas.width),
+        y: Math.floor(y * ctx.canvas.height)
     };
 }
 

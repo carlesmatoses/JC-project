@@ -153,16 +153,14 @@ class Chest extends BackgroundElement {
     }
 
     interact(player) {
-        if (this.isColliding(player.x, player.y, player.width, player.height)) {
-            if (!this.isOpen) {
-                this.open(); // Open the chest if it is not already open
-                console.log("Chest opened!");
-                // Add logic to give content to the player
-                // e.g., player.addItem(this.content);
-            } else {
-                this.close(); // Close the chest if it is already open
-                console.log("Chest closed!");
-            }
+        if (!this.isOpen) {
+            this.open(); // Open the chest if it is not already open
+            console.log("Chest opened!");
+            // Add logic to give content to the player
+            // e.g., player.addItem(this.content);
+        } else {
+            this.close(); // Close the chest if it is already open
+            console.log("Chest closed!");
         }
     }
 
@@ -279,6 +277,7 @@ door1.setDoor(door2);
 door2.setDoor(door1);
 
 const chest1 = new Chest(4/10, 1/9, 1/10, 1/9, false, texture=textures.chest, color="yellow",drawing_settings=null);
+const chest2 = new Chest(5/10, 1/9, 1/10, 1/9, false, texture=textures.chest, color="yellow",drawing_settings=null);
 
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
@@ -287,6 +286,7 @@ const tile1 = [
         drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128}), 
     door1,
     chest1,
+    chest2,
 ];
 const tile2 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128})];
