@@ -338,6 +338,7 @@ draw()
 			element.draw(this.context);
 		}
 	});
+
 	// Draw player
 	this.player.draw(this.context);
 

@@ -4,6 +4,7 @@ class Enemy {
         this.y = y; // Y position
         this.width = width; // Width of the player
         this.height = height; // Height of the player
+        this.render_layer = -1;
         //this.texture = new Texture(texture); // Texture (sprites) for the player //OLD
 
         //Cara a futuro
