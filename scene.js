@@ -62,8 +62,6 @@ level(deltaTime)
 	// Update Player
 	this.player.update(deltaTime);
 
-
-
 	// level safe checks
 	this.checkSafe();
 

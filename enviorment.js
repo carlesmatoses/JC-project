@@ -4,6 +4,7 @@ class BackgroundElement {
         this.y = y; // Y position
         this.defaultX = x; // Default X position
         this.defaultY = y; // Default Y position
+        
         this.width = width; // Width of the element
         this.height = height; // Height of the element
         this.type = type; // Type of the element (e.g., "ground", "wall", "rock")
@@ -18,6 +19,11 @@ class BackgroundElement {
     }
 
     draw(context) {
+        if (this.color == null && this.texture == null) {
+            // console.warn("No color or texture provided for drawing the element.");
+            return; // No color or texture to draw
+        }
+
         let pos = transform(this.x, this.y, context);
         let size = transform(this.width, this.height, context);
         
@@ -37,12 +43,6 @@ class BackgroundElement {
             // Draw the element based on its type
             if (this.color) {
                 context.fillStyle = this.color;
-            } else if (this.type === "ground") {
-                context.fillStyle = "green"; // Example color for ground
-            } else if (this.type === "wall") {
-                context.fillStyle = "gray"; // Example color for wall
-            } else if (this.type === "rock") {
-                context.fillStyle = "brown"; // Example color for rock
             } else {
                 context.fillStyle = "black"; // Default color
             }
@@ -178,6 +178,7 @@ class Chest extends BackgroundElement {
     }
 }
 
+
 /**
  * Class representing a level in the game. Contains static elements, enemies, items...
  * @class Level
@@ -276,8 +277,15 @@ const door2 = new Door(5/10, 5/9, 1/10, 1/9, true, texture=null, color="purple",
 door1.setDoor(door2); 
 door2.setDoor(door1);
 
+// Chests
 const chest1 = new Chest(4/10, 1/9, 1/10, 1/9, false, texture=textures.chest, color="yellow",drawing_settings=null);
 const chest2 = new Chest(5/10, 1/9, 1/10, 1/9, false, texture=textures.chest, color="yellow",drawing_settings=null);
+
+// Invisible walls
+const wall1 = new BackgroundElement(0, 0, 10/10, 1/9, "wall", false, texture=null, color=null, drawing_settings=null);
+const wall2 = new BackgroundElement(0, 0, 1/10, 9/9, "wall", false, texture=null, color=null, drawing_settings=null);
+const wall3 = new BackgroundElement(9/10, 0, 1/10, 9/9, "wall", false, texture=null, color=null, drawing_settings=null);
+const wall4 = new BackgroundElement(0, 8/9, 10/10, 1/9, "wall", true, texture=null, color=null, drawing_settings=null);
 
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
@@ -285,8 +293,8 @@ const tile1 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
         drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128}), 
     door1,
-    chest1,
-    chest2,
+    chest1, chest2,
+    wall1, wall2, wall3, wall4,
 ];
 const tile2 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128})];
