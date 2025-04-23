@@ -11,6 +11,7 @@ class BackgroundElement {
         this.isWalkable = isWalkable; // Whether the user can walk on this element
         this.render_layer = 0; // Render layer = z index
         this.drawing_settings = drawing_settings; // Optional drawing settings for the element
+        this.active = true; // Whether the element is active or not
         
         if (color)
         this.color = color; // Optional color for the element
@@ -77,6 +78,10 @@ class BackgroundElement {
         this.x = this.defaultX;
         this.y = this.defaultY;
     }
+
+    isActive() {
+        return this.active; // Check if the element is active
+    }
 }
 
 class Door extends BackgroundElement {
@@ -130,6 +135,16 @@ class Door extends BackgroundElement {
 
     setWasColliding(value) {
         this.wasColliding = value; // Set the previous collision state
+    }
+
+    onCollision({player, scene}) {
+        if (this.active) {
+            console.log("Door collision detected!");
+            scene.levelTransitionDoorAnimation(this.getDestination(), {x:this.door.x, y:this.door.y});
+            return; 
+        } else {
+            console.log("Door is inactive, cannot pass through.");
+        }
     }
 }
 
@@ -273,21 +288,21 @@ class World {
 }
 
 //  Doors
-const door1 = new Door(1/10, 1/9, 1/10, 1/9, true, texture=null, color="yellow",drawing_settings=null,destination=2, active=true, door=null);
-const door2 = new Door(5/10, 5/9, 1/10, 1/9, true, texture=null, color="purple",drawing_settings=null,destination=0, active=true, door=null);
+const door1 = new Door(1/10, 1/9, 1/10, 1/9, isWalkable=false, texture=null, color="yellow",drawing_settings=null,destination=2, active=true, door=null);
+const door2 = new Door(5/10, 5/9, 1/10, 1/9, isWalkable=false, texture=null, color="purple",drawing_settings=null,destination=0, active=true, door=null);
 
 door1.setDoor(door2); 
 door2.setDoor(door1);
 
 // Chests
-const chest1 = new Chest(4/10, 1/9, 1/10, 1/9, false, texture=textures.chest, color="yellow",drawing_settings=null);
-const chest2 = new Chest(5/10, 1/9, 1/10, 1/9, false, texture=textures.chest, color="yellow",drawing_settings=null);
+const chest1 = new Chest(4/10, 1/9, 1/10, 1/9, isWalkable=false, texture=textures.chest, color="yellow",drawing_settings=null);
+const chest2 = new Chest(5/10, 1/9, 1/10, 1/9, isWalkable=false, texture=textures.chest, color="yellow",drawing_settings=null);
 
 // Invisible walls
-const wall1 = new BackgroundElement(0, 0, 10/10, 1/9, "wall", false, texture=null, color=null, drawing_settings=null);
-const wall2 = new BackgroundElement(0, 0, 1/10, 9/9, "wall", false, texture=null, color=null, drawing_settings=null);
-const wall3 = new BackgroundElement(9/10, 0, 1/10, 9/9, "wall", false, texture=null, color=null, drawing_settings=null);
-const wall4 = new BackgroundElement(0, 8/9, 10/10, 1/9, "wall", true, texture=null, color=null, drawing_settings=null);
+const wall1 = new BackgroundElement(0, 0, 10/10, 1/9,   type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
+const wall2 = new BackgroundElement(0, 0, 1/10, 9/9,    type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
+const wall3 = new BackgroundElement(9/10, 0, 1/10, 9/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
+const wall4 = new BackgroundElement(0, 8/9, 10/10, 1/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
 
 //Enemies
 const enemyOcto1 = new Enemy(0.4, 0.4, 1/10, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.

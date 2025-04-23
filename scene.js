@@ -87,26 +87,6 @@ level(deltaTime)
 
 collisions()
 {
-	// Check if the player is colliding with any of the level elements of type [door, chest]
-	for (let element of this.levelContent) {
-		if (element.type==="door") {
-			if (element.isActive()) {
-				if (this.player.collidesWith(element)) {
-					console.log("Door collision detected!");
-					this.levelTransitionDoorAnimation(element.getDestination(), {x:element.door.x, y:element.door.y});
-					return; // Exit the loop if a collision is detected
-				}
-			}
-		}
-	}
-
-		// else if (element.type==="enemy") {
-		// 	if (this.player.collidesWith(element)) {
-		// 		console.log("Collision with enemy detected!");
-		// 		this.player.die(); // Handle player death
-		// 	}
-		// }
-
 	// Check if the player is trying to leave the screen on one of the sides
 	let margins = this.checkMarginCollision(); // Check for margin collision
 	if(margins.colliding) {
@@ -126,7 +106,7 @@ collisions()
 
 	// Check for collisions with level elements
 	this.levelContent.forEach((element) => {
-		if (!element.isWalkable) {
+		if (!element.isWalkable && element.isActive()) {
 			this.resolveCollision(this.player, element); // Resolve collision with enemies
 		}
 	});
@@ -161,6 +141,12 @@ resolveCollision(player, object) {
             player.y -= heightOverlap;
         }
     }
+
+	// Check if element must execute an action	
+	if (object.onCollision && object.isActive()) 
+	object.onCollision({player:this.player, scene: this}); 
+	
+
 }
 
 newPositionMargins(side){
@@ -187,6 +173,8 @@ checkSafe()
 		if (element.type==="door" && !element.isActive() && !element.isColliding(this.player.x, this.player.y, this.player.width, this.player.height)) {
 				element.activate(); // Activate the door if the player is not colliding with it
 		}
+
+		// TODO: este codi deu anar en level
 		// else if (element.type==="enemy") {
 		// 	if (this.player.collidesWith(element)) {
 		// 		console.log("Collision with enemy detected!");

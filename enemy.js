@@ -250,5 +250,9 @@ class Enemy {
         this.x = this.lastPosition.x;
         this.y = this.lastPosition.y;
     }
+
+    isActive() {
+        return this.life;
+    }
 }
 
