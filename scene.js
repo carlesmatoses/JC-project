@@ -62,6 +62,12 @@ level(deltaTime)
 	// Update Player
 	this.player.update(deltaTime);
 
+	this.levelContent.forEach((element) => {
+		if (typeof element.update === "function") {
+			element.update(deltaTime);
+		}
+	});
+
 	// level safe checks
 	this.checkSafe();
 

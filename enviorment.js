@@ -217,7 +217,9 @@ class Level{
                     element.type, element.isWalkable, element.texture,
                     element.color, element.drawing_settings
                 );
-            } else {
+            } else if (element instanceof Enemy){
+                return new Enemy(element.x, element.y, element.width, element.height, element.texture); 
+            }else {
                 console.warn("Unknown element type:", element);
                 return null; // Handle unexpected types gracefully
             }
@@ -287,6 +289,9 @@ const wall2 = new BackgroundElement(0, 0, 1/10, 9/9, "wall", false, texture=null
 const wall3 = new BackgroundElement(9/10, 0, 1/10, 9/9, "wall", false, texture=null, color=null, drawing_settings=null);
 const wall4 = new BackgroundElement(0, 8/9, 10/10, 1/9, "wall", true, texture=null, color=null, drawing_settings=null);
 
+//Enemies
+const enemyOcto1 = new Enemy(0.4, 0.4, 1/10, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
+
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
 const tile1 = [
@@ -295,6 +300,8 @@ const tile1 = [
     door1,
     chest1, chest2,
     wall1, wall2, wall3, wall4,
+    enemyOcto1
+    
 ];
 const tile2 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128})];

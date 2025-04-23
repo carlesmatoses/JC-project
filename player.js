@@ -1,157 +1,144 @@
-class Player {
+    class Player {
     constructor(x, y, width, height, texture = 'imgs/link/link_sprites.png') {
-        this.x = x; // X position
-        this.y = y; // Y position
-        this.width = width; // Width of the player
-        this.height = height; // Height of the player
-        this.texture = new Texture(texture); // Texture (sprites) for the player
-        
-        // movement
-        this.speed = 0.0002;
-        this.direction = { x: 0, y: 0 }; // Normalized movement vector
-        this.lastDirection = { x: 0, y: 0 };; // Direction the player is facing
-        this.moving = false; // Whether the player is moving
-        
-        // Animation
-        this.frame = 0; // Current frame of the player's animation (0,1)
-        this.animationTimer = 0;
-        this.frameDuration = 100; // Time in milliseconds for each frame
-        this.lastPosition = { x: 0, y: 0 }; // Last position of the player for collision detection
-        
-        // Sprites
-        this.sprites = {
-            idle_walk_0: { start: { x: 1, y: 11 }, end: { x: 16, y: 27 } }, // facing down
-            idle_walk_1: { start: { x: 18, y: 11 }, end: { x: 33, y: 27 } }, // facing up
-            idle_walk_2_1: { start: { x: 35, y: 11 }, end: { x: 50, y: 27 } }, // facing left
-            idle_walk_2_2: { start: { x: 52, y: 11 }, end: { x: 67, y: 27 } }  // facing left 2
-        };
+        this.x = x;
+		this.y = y;
+		this.width = width;
+		this.height = height;
+		this.speed = 0.0002;
+		this.direction = { x: 0, y: 0 };
+		this.lastDirection = { x: 0, y: 1 }; // mirando hacia abajo por defecto
+		this.moving = false;
+
+		// Sprite y animaciones
+		this.texture = new Texture(texture);
+		this.sprite = new Sprite(x, y, width, height, 10, this.texture);
+
+		// Creamos animaciones (puedes añadir más si tienes otras direcciones o acciones)
+		this.ANIM_DOWN = this.sprite.addAnimation(); // 0
+		this.sprite.addKeyframe(this.ANIM_DOWN, [1, 11, 15, 16]);
+		this.sprite.addKeyframe(this.ANIM_DOWN, [1, 11, 15, 16]);
+
+		this.ANIM_UP = this.sprite.addAnimation(); // 1
+		this.sprite.addKeyframe(this.ANIM_UP, [18, 11, 15, 16]); // mismo frame que antes
+		this.sprite.addKeyframe(this.ANIM_UP, [18, 11, 15, 16]); // repetir si no tienes otra imagen
+
+		this.ANIM_LEFT = this.sprite.addAnimation(); // 2
+		this.sprite.addKeyframe(this.ANIM_LEFT, [35, 11, 15, 16]);
+		this.sprite.addKeyframe(this.ANIM_LEFT, [52, 11, 15, 16]);
+
+		this.ANIM_RIGHT = this.sprite.addAnimation(); // 3 (igual que left pero reflejado)
+		this.sprite.addKeyframe(this.ANIM_RIGHT, [35, 11, 15, 16]);
+		this.sprite.addKeyframe(this.ANIM_RIGHT, [52, 11, 15, 16]);
+
     }
 
     draw(context) {
-        let pos = transform(this.x, this.y, context);
-        let size = transform(this.width, this.height, context);
-    
-        // Determine the sprite based on direction
-        let spriteKey;
-        if (this.lastDirection.x === -1) { // Left
-            // Select idle_walk_2_1 or idle_walk_2_2 based on frame
-            spriteKey = this.frame === 0 ? 'idle_walk_2_1' : 'idle_walk_2_2';
-        } else if (this.lastDirection.x === 1) { // Right
-            // Select idle_walk_2_1 or idle_walk_2_2 for right (mirroring already handled by scaling)
-            spriteKey = this.frame === 0 ? 'idle_walk_2_1' : 'idle_walk_2_2';
-            context.save();  // Save current state
-            context.scale(-1, 1); // Flip horizontally
-            pos.x = -pos.x - size.x; // Offset mirrored sprite
-        } else if (this.lastDirection.y === -1) { // Up
-            spriteKey = 'idle_walk_1'; // Same sprite for both frames
-            if (this.frame === 1) {
-                context.save();  // Save current state
-                context.scale(-1, 1); // Flip horizontally for frame 1
-                pos.x = -pos.x - size.x; // Offset mirrored sprite
-            }
-        } else if (this.lastDirection.y === 1) { // Down
-            spriteKey = 'idle_walk_0'; // Same sprite for both frames
-            if (this.frame === 1) {
-                context.save();  // Save current state
-                context.scale(-1, 1); // Flip horizontally for frame 1
-                pos.x = -pos.x - size.x; // Offset mirrored sprite
-            }
-        } else {
-            spriteKey = 'idle_walk_0'; // Default sprite (standing still)
-        }
-    
-        // Select the sprite based on the key
-        const sprite = this.sprites[spriteKey];
-    
-        // Draw the sprite to the canvas
-        context.drawImage(
-            this.texture.img,
-            sprite.start.x,
-            sprite.start.y,
-            sprite.end.x - sprite.start.x,
-            sprite.end.y - sprite.start.y,
-            pos.x,
-            pos.y,
-            size.x,
-            size.y
-        );
+        if (this.lastDirection.x === 1) {
+			// Reflejar horizontalmente para derecha
+			context.save();
+			context.scale(-1, 1);
+			this.sprite.x = -this.x - this.width;
+			this.sprite.draw();
+			context.restore();
+			this.sprite.x = this.x; // Restaurar posición original
+		} else {
+			this.sprite.draw();
+		}
 
-        
-        // Restore context if mirrored
-        if (this.lastDirection.x === 1 || this.lastDirection.y !== 0) context.restore();  // Only restore if mirrored
-        
         let centerX = this.x + (this.width / 2);
         let centerY = this.y + (this.height / 2);
         let centerPixels = transform(centerX,centerY,context) 
         let sizePixels = transform(this.width, this.height, context);
 
-        // Draw the bounding box of the player
-        context.strokeStyle = 'red'; // Set the color of the bounding box
-        context.lineWidth = 1; // Set the width of the bounding box lines
-        context.strokeRect(centerPixels.x-sizePixels.x/2, centerPixels.y-sizePixels.y/2, sizePixels.x, sizePixels.y); // Draw the bounding box
+                // Draw the bounding box of the player
+                context.strokeStyle = 'red'; // Set the color of the bounding box
+                context.lineWidth = 1; // Set the width of the bounding box lines
+                context.strokeRect(centerPixels.x-sizePixels.x/2, centerPixels.y-sizePixels.y/2, sizePixels.x, sizePixels.y); // Draw the bounding box
+                
+                // Draw a circle in the center of the player for debugging
+                context.beginPath();
+                context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
+                context.fillStyle = "red";
+                context.fill();
         
-        // Draw a circle in the center of the player for debugging
-        context.beginPath();
-        context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
-        context.fillStyle = "red";
-        context.fill();
-
-        // Draw the hand rectangle for collision detection
-        let handRect = {
-            x: (centerX-this.width/8) + (this.lastDirection.x * (this.width/2+this.width/8)),
-            y: (centerY-this.height/8) + (this.lastDirection.y * (this.height/2+this.height/8)),
-            width: this.width/4,
-            height: this.height/4
-        };
-
-        let handRectPixels = transform(handRect.x, handRect.y, context);
-        let handRectSizePixels = transform(handRect.width, handRect.height, context);
-        context.strokeStyle = 'blue'; // Set the color of the hand rectangle
-        context.lineWidth = 1; // Set the width of the hand rectangle lines
-        context.strokeRect(handRectPixels.x, handRectPixels.y, handRectSizePixels.x, handRectSizePixels.y); // Draw the hand rectangle
-
+                // Draw the hand rectangle for collision detection
+                let handRect = {
+                    x: (centerX-this.width/8) + (this.lastDirection.x * (this.width/2+this.width/8)),
+                    y: (centerY-this.height/8) + (this.lastDirection.y * (this.height/2+this.height/8)),
+                    width: this.width/4,
+                    height: this.height/4
+                };
+        
+                let handRectPixels = transform(handRect.x, handRect.y, context);
+                let handRectSizePixels = transform(handRect.width, handRect.height, context);
+                context.strokeStyle = 'blue'; // Set the color of the hand rectangle
+                context.lineWidth = 1; // Set the width of the hand rectangle lines
+                context.strokeRect(handRectPixels.x, handRectPixels.y, handRectSizePixels.x, handRectSizePixels.y); // Draw the hand rectangle
+        
+        
     }
 
     update(deltaTime) {
-        // Normalize direction to prevent diagonal speed boost
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
-
+    
         if (this.moving) {
-            // Normalize movement
+            // Normalizar dirección
             this.direction.x /= magnitude;
             this.direction.y /= magnitude;
-
-            // Move player
+    
+            // Mover personaje
             this.x += this.direction.x * this.speed * deltaTime;
             this.y += this.direction.y * this.speed * deltaTime;
-
-            // **Handle Animation Frame Switching**
-            this.animationTimer += deltaTime;
-            if (this.animationTimer > this.frameDuration) {
-                this.frame = this.frame === 0 ? 1 : 0; // Toggle between frame 0 and 1
-                this.animationTimer = 0;
+    
+            // Cambiar animación si cambia la dirección
+            if (this.direction.x === -1 && this.sprite.currentAnimation !== this.ANIM_LEFT) {
+                this.sprite.setAnimation(this.ANIM_LEFT);
+            } else if (this.direction.x === 1 && this.sprite.currentAnimation !== this.ANIM_RIGHT) {
+                this.sprite.setAnimation(this.ANIM_RIGHT);
+            } else if (this.direction.y === -1 && this.sprite.currentAnimation !== this.ANIM_UP) {
+                this.sprite.setAnimation(this.ANIM_UP);
+            } else if (this.direction.y === 1 && this.sprite.currentAnimation !== this.ANIM_DOWN) {
+                this.sprite.setAnimation(this.ANIM_DOWN);
             }
+    
+            this.lastDirection = { ...this.direction };
         } else {
-            this.frame = 0; // Reset to idle when not moving
+            // Quieto: mantener dirección anterior pero detener la animación en el primer frame
+            this.direction = { x: 0, y: 0 };
+    
+            if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_LEFT);
+            else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_RIGHT);
+            else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_UP);
+            else if (this.lastDirection.y === 1) this.sprite.setAnimation(this.ANIM_DOWN);
+    
+            // Congelar animación en primer frame
+            this.sprite.currentKeyframe = 0;
+            this.sprite.elapsedTime = 0; // <- importante para que no avance por deltaTime
         }
-
-
-        // Player movement control
+    
+        // Sincronizar posición del sprite
+        this.sprite.x = this.x;
+        this.sprite.y = this.y;
+    
+        // Solo actualizar sprite si está en movimiento
+        if (this.moving) {
+            this.sprite.update(deltaTime);
+        }
+    
+        // Leer teclas
         let direction = { x: 0, y: 0 };
-
-        if (keyboard[37]) direction.x += -1; // Left arrow
-        if (keyboard[39]) direction.x += 1;  // Right arrow
-        if (keyboard[38]) direction.y += -1; // Up arrow
-        if (keyboard[40]) direction.y += 1;  // Down arrow
-
+        if (keyboard[37]) direction.x = -1;
+        if (keyboard[39]) direction.x = 1;
+        if (keyboard[38]) direction.y = -1;
+        if (keyboard[40]) direction.y = 1;
         this.setDirection(direction.x, direction.y);
-
-        // reset direction if no key is pressed
-        if(!keyboard[37] && !keyboard[39] && !keyboard[38] && !keyboard[40]) this.setDirection(0, 0);
-
-
+    
+        if (!keyboard[37] && !keyboard[39] && !keyboard[38] && !keyboard[40]) {
+            this.setDirection(0, 0);
+        }
     }
+    
 
     setDirection(dx, dy) {
         this.direction.x = dx;
