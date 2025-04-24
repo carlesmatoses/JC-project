@@ -2,6 +2,7 @@ class Enemy {
     constructor(x, y, width, height, texture = 'imgs/enemies/Octorok.png') {
         this.x = x; // X position
         this.y = y; // Y position
+        this.lastPosition = { x: x, y: y }; // Last position for collision detection
         this.width = width; // Width of the player
         this.height = height; // Height of the player
         this.render_layer = -1;
@@ -249,6 +250,11 @@ class Enemy {
     resetPosition() {
         this.x = this.lastPosition.x;
         this.y = this.lastPosition.y;
+    }
+
+    translatePosition(dx, dy) {
+        this.x += dx;
+        this.y += dy;
     }
 
     isActive() {
