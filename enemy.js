@@ -256,5 +256,9 @@ class Enemy {
         this.x += dx;
         this.y += dy;
     }
+
+    isActive() {
+        return this.life;
+    }
 }
 
