@@ -4,7 +4,7 @@
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.speed = 0.0002;
+		this.speed = 0.0004;
 		this.direction = { x: 0, y: 0 };
 		this.lastDirection = { x: 0, y: 1 }; // mirando hacia abajo por defecto
 		this.moving = false;
@@ -90,7 +90,8 @@
             // Mover personaje
             this.x += this.direction.x * this.speed * deltaTime;
             this.y += this.direction.y * this.speed * deltaTime;
-    
+            
+            // TODO: esto debe estar en draw
             // Cambiar animación si cambia la dirección
             if (this.direction.x === -1 && this.sprite.currentAnimation !== this.ANIM_LEFT) {
                 this.sprite.setAnimation(this.ANIM_LEFT);
@@ -106,7 +107,7 @@
         } else {
             // Quieto: mantener dirección anterior pero detener la animación en el primer frame
             this.direction = { x: 0, y: 0 };
-    
+            // TODO: esto debe estar en draw
             if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_LEFT);
             else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_RIGHT);
             else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_UP);
@@ -117,10 +118,12 @@
             this.sprite.elapsedTime = 0; // <- importante para que no avance por deltaTime
         }
     
+        // TODO: esto debe estar en draw
         // Sincronizar posición del sprite
         this.sprite.x = this.x;
         this.sprite.y = this.y;
     
+        // TODO: esto debe estar en draw
         // Solo actualizar sprite si está en movimiento
         if (this.moving) {
             this.sprite.update(deltaTime);
