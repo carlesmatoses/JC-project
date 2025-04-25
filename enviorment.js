@@ -304,6 +304,18 @@ class Tombstone extends BackgroundElement {
     }
 }
 
+class InvisibleWall extends BackgroundElement {
+    constructor(x, y, width, height) {
+        super(x, y, width, height, "wall", false, null, null, null);
+        this.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, width, height); // Bounding box for collision detection
+    }
+
+    draw(context) {
+        // Draw the invisible wall (no visual representation)
+        // Optional: Draw a bounding box for debugging
+        this.boundingBox.draw(context);
+    }
+}
 /**
  * Class representing a level in the game. Contains static elements, enemies, items...
  * @class Level
@@ -346,6 +358,15 @@ class Level{
                     element.isWalkable
                 );
                 copy.globalReference = element;
+                copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof InvisibleWall) {
+                // Create a new InvisibleWall instance
+                let copy = new InvisibleWall(
+                    element.x, element.y, element.width, element.height
+                );
+                copy.globalReference = element;
+                copy.boundingBox = element.boundingBox; // Copy the bounding box
                 copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof BackgroundElement) {

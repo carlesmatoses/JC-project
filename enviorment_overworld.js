@@ -460,6 +460,10 @@ const tile104 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
         drawing_settings={sx: 1120+8, sy: 768+7, sWidth: 160, sHeight: 128}), 
         principal_chest,
+        new InvisibleWall(7/10,1/8,5/10,1/8),
+        new InvisibleWall(1/10,1/8,3/10,1/8),
+        new InvisibleWall(0/10,4/8,1/10,8/8),
+        new InvisibleWall(9/10,4/8,1/10,8/8),
         new Tombstone(3/10, 3/8),
         new Tombstone(5/10, 3/8),
         new Tombstone(7/10, 3/8),
@@ -532,6 +536,10 @@ const tile120 = [
         drawing_settings={sx: 1120+8, sy: 896+8, sWidth: 160, sHeight: 128}), 
         enter_dungeon,
         special_tombstone,
+        new InvisibleWall(9/10,3.5/8,1/10,8/8),
+        new InvisibleWall(7/10,4/8,3/10,1/8),
+        new InvisibleWall(2/10,5/8,7/10,1/8),
+        new InvisibleWall(0/10,0/8,1/10,3/8),
 
 ];
 const tile121 = [
