@@ -291,24 +291,26 @@ draw()
 		}
 	});
 
-	if(keyboard[32])
-	{
-		text = "Spacebar pressed";
-		let text_obj = new Text(text, 0.5, 0.5, "blue",  8, "'tiny5'", this.context);
-		text_obj.draw(this.context);
+	if (keyboard[32] && !this.spacePressed) {
+		DEBUG = !DEBUG;
+		this.spacePressed = true;
+	} else if (!keyboard[32]) {
+		this.spacePressed = false;
 	}
 
 	// Draw debug
-	this.debug_background.draw(this.context);
-	this.debug_text.update("Debug:\n" + 
-					  "  X: " + this.player.x.toFixed(1) + "\n" + 
-					  "  Y: " + this.player.y.toFixed(1) + "\n" + 
-					  "  FrameCount: " + this.frameCount + "\n" +
-					  "  lag: " + this.lag.toFixed(1) + " ms" + "\n" +
-					  "  levelID: " + this.levelID + "\n" 
-
-					);
-	this.debug_text.draw(this.context);
+	if (DEBUG){
+		this.debug_background.draw(this.context);
+		this.debug_text.update("Debug:\n" + 
+						  "  X: " + this.player.x.toFixed(1) + "\n" + 
+						  "  Y: " + this.player.y.toFixed(1) + "\n" + 
+						  "  FrameCount: " + this.frameCount + "\n" +
+						  "  lag: " + this.lag.toFixed(1) + " ms" + "\n" +
+						  "  levelID: " + this.levelID + "\n" 
+	
+						);
+		this.debug_text.draw(this.context);
+	}
 }
 }
 

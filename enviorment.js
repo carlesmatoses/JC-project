@@ -96,8 +96,10 @@ class BackgroundElement {
             context.fillRect(pos.x, pos.y, size.x, size.y);
         }
 
-        // Draw the bounding box for debugging
-        this.boundingBox.draw(context);
+        if (DEBUG){
+            // Draw the bounding box for debugging
+            this.boundingBox.draw(context);
+        }
 
     }
 
@@ -151,6 +153,8 @@ class BackgroundElement {
         if (!blocked) {
             this.x = targetX;
             this.y = targetY;
+            this.defaultX = targetX;
+            this.defaultY = targetY;
             this.boundingBox.setPosition(this.x + this.width / 2, this.y + this.height / 2);
             if (this.callback) {
                 this.callback(); // Call the callback function if provided
@@ -282,8 +286,10 @@ class Chest extends BackgroundElement {
             context.drawImage(this.texture.img, 0, 0, 16, 16, pos.x, pos.y, size.x, size.y);
         }
 
-        // Draw the bounding box for debugging
-        this.boundingBox.draw(context);
+        if (DEBUG) {
+            // Draw the bounding box for debugging
+            this.boundingBox.draw(context);
+        }
     }
 }
 
@@ -295,13 +301,7 @@ class Tombstone extends BackgroundElement {
         this.isPushable = true; // Tombstones are pushable
         this.callback = null; // Optional callback function for when the tombstone is pushed
     }
-    push() {
-        // Logic to push the tombstone (e.g., move it or change its state)
-        console.log("Tombstone pushed! aaa");
-        if (this.callback) {
-            this.callback(); // Call the callback function if provided
-        }
-    }
+
 }
 
 class InvisibleWall extends BackgroundElement {
@@ -311,9 +311,11 @@ class InvisibleWall extends BackgroundElement {
     }
 
     draw(context) {
-        // Draw the invisible wall (no visual representation)
-        // Optional: Draw a bounding box for debugging
-        this.boundingBox.draw(context);
+        if(DEBUG){
+            // Draw the invisible wall (no visual representation)
+            // Optional: Draw a bounding box for debugging
+            this.boundingBox.draw(context);
+        }
     }
 }
 /**

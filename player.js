@@ -54,16 +54,17 @@
 			this.sprite.draw();
 		}
 
-        
-        this.boundingBox.draw(context);
-        this.handBoundingBox.draw(context);
-        
-        // Draw a circle in the center of the player for debugging
-        let centerPixels = transform(this.center.x,this.center.y,context) 
-        context.beginPath();
-        context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
-        context.fillStyle = "red";
-        context.fill();
+        if (DEBUG){
+            this.boundingBox.draw(context);
+            this.handBoundingBox.draw(context);
+            
+            // Draw a circle in the center of the player for debugging
+            let centerPixels = transform(this.center.x,this.center.y,context) 
+            context.beginPath();
+            context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
+            context.fillStyle = "red";
+            context.fill();
+        }
     }
 
     update(deltaTime) {
