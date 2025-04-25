@@ -4,25 +4,27 @@
 
 
 //  Doors
-const enter_dungeon = new Door(x=7/10, y=5/8,  
+const enter_dungeon = new Door(x=7/10, y=1/8,  
+    texture=null,
     map=world.maps["overworld"], 
-    level=103,
+    level=119,
     active=false, 
     door=null
 );
-const entrance_dungeon = new Door(x=5/10, y=5/9,  
+const entrance_dungeon = new Door(x=5/10, y=5/8,  
+    texture=null,
     map=world.maps["dungeon1"], 
-    level=0,
+    level=25,
     active=false, 
     door=null
 );
 enter_dungeon.setDoor(entrance_dungeon);
 entrance_dungeon.setDoor(enter_dungeon);
 
-const special_tombstone = new Tombstone(7/10, 5/8);
+const special_tombstone = new Tombstone(x=7/10, y=1/8);
 special_tombstone.callback = function() {
     special_tombstone.x = 7/10;
-    special_tombstone.y = 6/8;
+    special_tombstone.y = 2/8;
     console.log("Tombstone callback executed");
 }
 
@@ -452,19 +454,17 @@ const tile102 = [
 ];;
 const tile103 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
-        drawing_settings={sx: 960+7, sy: 768+7, sWidth: 16, sHeight: 128}), 
+        drawing_settings={sx: 960+7, sy: 768+7, sWidth: 160, sHeight: 128}), 
 ];
 const tile104 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
         drawing_settings={sx: 1120+8, sy: 768+7, sWidth: 160, sHeight: 128}), 
         principal_chest,
-        enter_dungeon,
         new Tombstone(3/10, 3/8),
         new Tombstone(5/10, 3/8),
         new Tombstone(7/10, 3/8),
         new Tombstone(3/10, 5/8),
         new Tombstone(5/10, 5/8),
-        special_tombstone,
 ];
 const tile105 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
@@ -530,6 +530,9 @@ const tile119 = [
 const tile120 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
         drawing_settings={sx: 1120+8, sy: 896+8, sWidth: 160, sHeight: 128}), 
+        enter_dungeon,
+        special_tombstone,
+
 ];
 const tile121 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 

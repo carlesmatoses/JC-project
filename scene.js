@@ -101,18 +101,18 @@ collisions()
 
 
 newPositionMargins(side){
-	let margin = 0.01;
+	let margin = 0.008;
 	if (side==="left") {
-		return {x: 1-1.0/10-margin, y: this.player.y, wx:1,wy:0}; // Move to the left side of the screen
+		return {x: 1-this.player.width/2-margin, y: this.player.y, wx:1,wy:0}; // Move to the left side of the screen
 	}
 	if (side==="right") {
-		return {x: margin, y: this.player.y, wx:-1,wy:0}; // Move to the right side of the screen
+		return {x: margin - this.player.width/2, y: this.player.y, wx:-1,wy:0}; // Move to the right side of the screen
 	}
 	if (side==="top") {
-		return {x: this.player.x, y: 1.0 - 1.0/9-margin, wx:0, wy:1}; // Move to the top side of the screen
+		return {x: this.player.x, y: 1.0 - this.player.height/2 - margin, wx:0, wy:1}; // Move to the top side of the screen
 	}
 	if (side==="bottom") {
-		return {x: this.player.x, y: margin, wx:0, wy:-1}; // Move to the bottom side of the screen
+		return {x: this.player.x, y: margin-this.player.height/3, wx:0, wy:-1}; // Move to the bottom side of the screen
 	}
 	return {x: this.player.x, y: this.player.y}; // No movement
 }

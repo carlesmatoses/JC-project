@@ -79,7 +79,9 @@ const dungeon_tile24 = [new BackgroundElement(0, 0, 1, 1, "ground", true, textur
 const dungeon_tile25 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 0+1, sy: 512+5, sWidth: 160, sHeight: 128})];
 const dungeon_tile26 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
-    drawing_settings={sx: 160+2, sy: 512+5, sWidth: 160, sHeight: 128})];
+    drawing_settings={sx: 160+2, sy: 512+5, sWidth: 160, sHeight: 128}),
+    entrance_dungeon,
+];
 const dungeon_tile27 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 512+5, sWidth: 160, sHeight: 128})];
 const dungeon_tile28 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",

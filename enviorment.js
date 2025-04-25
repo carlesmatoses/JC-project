@@ -74,11 +74,6 @@ class BackgroundElement {
     }
 
     draw(context) {
-        if (this.color == null && this.texture == null) {
-            // console.warn("No color or texture provided for drawing the element.");
-            return; // No color or texture to draw
-        }
-
         let pos = transform(this.x, this.y, context);
         let size = transform(this.width, this.height, context);
 
@@ -94,15 +89,9 @@ class BackgroundElement {
             } else {
                 context.drawImage(this.texture.img, pos.x, pos.y, size.x, size.y);
             }
-        } else {
+        } else if (this.color) {
             // Draw the element based on its type
-            if (this.color) {
-                context.fillStyle = this.color;
-            } else {
-                context.fillStyle = "black"; // Default color
-            }
-            
-
+            context.fillStyle = this.color;
             // Draw the rectangle representing the element
             context.fillRect(pos.x, pos.y, size.x, size.y);
         }
@@ -173,8 +162,8 @@ class BackgroundElement {
 }
 
 class Door extends BackgroundElement {
-    constructor(x, y,  map = null, level = null, active = true, destination_door = null) {
-        super(x, y, 1/10, 1/8, "door", false, textures.stairs_dirt, null, null);
+    constructor(x, y,  texture = null, map = null, level = null, active = true, destination_door = null) {
+        super(x, y, 1/10, 1/8, "door", false, texture, null, null);
         this.map = map; 
         this.level = level; 
         this.active = active; // Whether the door is active or not
@@ -333,7 +322,7 @@ class Level{
             if (element instanceof Door) {
                 // Create a new Door instance
                 let copy = new Door(
-                    element.x, element.y, element.map,
+                    element.x, element.y, element.texture, element.map,
                     element.level, element.active,
                     element.door,
                 );
