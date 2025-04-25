@@ -166,6 +166,11 @@ class BackgroundElement {
             console.log("Can't push there.");
         }
     }
+
+    update(deltaTime) {
+        // Update the element's position or state based on deltaTime
+        // This method can be overridden in subclasses for specific behavior
+    }
 }
 
 class Door extends BackgroundElement {
@@ -326,6 +331,38 @@ class InvisibleWall extends BackgroundElement {
 function createFirePlace(x, y) {
     let element =  new BackgroundElement(x, y, 1/10, 1/8, "fireplace", false, texture = textures.fireplace, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
     element.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 1/10, 1/8); // Bounding box for collision detection
+    
+    element.update = function(deltaTime) {
+        if (this.animationTimer === undefined) {
+            this.animationTimer = 0;
+            this.animationFrame = 0;
+        }
+    
+        this.animationTimer += deltaTime;
+    
+        const frameDuration = 300; // ms per frame (adjust as needed)
+    
+        if (this.animationTimer >= frameDuration) {
+            this.animationTimer -= frameDuration; // subtract instead of reset to preserve leftover time
+            this.animationFrame = (this.animationFrame + 1) % 4;
+    
+            switch (this.animationFrame) {
+                case 0:
+                    this.drawing_settings = { sx: 0, sy: 0, sWidth: 16, sHeight: 16 };
+                    break;
+                case 1:
+                    this.drawing_settings = { sx: 16, sy: 0, sWidth: 16, sHeight: 16 };
+                    break;
+                case 2:
+                    this.drawing_settings = { sx: 32, sy: 0, sWidth: 16, sHeight: 16 };
+                    break;
+                case 3:
+                    this.drawing_settings = { sx: 48, sy: 0, sWidth: 16, sHeight: 16 };
+                    break;
+            }
+        }
+    };
+    
     return element; // Return the fireplace element
 }
 
@@ -392,6 +429,7 @@ class Level{
                 copy.globalReference = element;
                 copy.boundingBox = element.boundingBox;
                 copy.callback = element.callback; 
+                copy.update = element.update; // Copy the update method
                 return copy;
             } else if (element instanceof Enemy){
                 return new Enemy(element.x, element.y, element.width, element.height, element.texture); 
