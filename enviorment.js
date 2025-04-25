@@ -327,6 +327,11 @@ class InvisibleWall extends BackgroundElement {
     }
 }
 
+function createVase(x, y){
+    let element =  new BackgroundElement(x, y, 1/10, 1/8, "vase", false, texture = textures.vase, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
+    element.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 1/10, 1/8); // Bounding box for collision detection
+    return element; // Return the vase element
+}
 
 function createFirePlace(x, y) {
     let element =  new BackgroundElement(x, y, 1/10, 1/8, "fireplace", false, texture = textures.fireplace, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
@@ -339,13 +344,13 @@ function createFirePlace(x, y) {
         }
     
         this.animationTimer += deltaTime;
-    
-        const frameDuration = 300; // ms per frame (adjust as needed)
-    
-        if (this.animationTimer >= frameDuration) {
-            this.animationTimer -= frameDuration; // subtract instead of reset to preserve leftover time
+        
+
+        const frameDuration = {0:1000, 1:3000, 2:1000, 3:1000}; // ms per frame (adjust as needed)
+        
+        if (this.animationTimer >= frameDuration[this.animationFrame]) {
+            this.animationTimer -= frameDuration[this.animationFrame]; // subtract instead of reset to preserve leftover time
             this.animationFrame = (this.animationFrame + 1) % 4;
-    
             switch (this.animationFrame) {
                 case 0:
                     this.drawing_settings = { sx: 0, sy: 0, sWidth: 16, sHeight: 16 };
@@ -364,6 +369,52 @@ function createFirePlace(x, y) {
     };
     
     return element; // Return the fireplace element
+}
+
+function createAnimatedFloor(x, y, texture) {
+    let element =  new BackgroundElement(x, y, 1/10, 1/8, "animated_floor", true, texture = texture, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
+
+    element.update = function(deltaTime) {
+        if (this.animationTimer === undefined) {
+            this.animationTimer = 0;
+            this.animationFrame = 0;
+        }
+    
+        this.animationTimer += deltaTime;
+        
+
+        const frameDuration = 250; // ms per frame (adjust as needed)
+        
+        if (this.animationTimer >= frameDuration) {
+            this.animationTimer -= frameDuration; // subtract instead of reset to preserve leftover time
+            this.animationFrame = (this.animationFrame + 1) % 4;
+            switch (this.animationFrame) {
+                case 0:
+                    this.drawing_settings = { sx: 0, sy: 0, sWidth: 16, sHeight: 16 };
+                    break;
+                case 1:
+                    this.drawing_settings = { sx: 16, sy: 0, sWidth: 16, sHeight: 16 };
+                    break;
+                case 2:
+                    this.drawing_settings = { sx: 32, sy: 0, sWidth: 16, sHeight: 16 };
+                    break;
+                case 3:
+                    this.drawing_settings = { sx: 48, sy: 0, sWidth: 16, sHeight: 16 };
+                    break;
+            }
+        }
+    };
+    return element; // Return the animated floor element
+}
+
+function createAnimatedFloorRed(x, y) {
+    return createAnimatedFloor(x, y, textures.red_floor); // Create an animated floor with red texture
+}
+function createAnimatedFloorBlue(x, y) {
+    return createAnimatedFloor(x, y, textures.blue_floor); // Create an animated floor with blue texture
+}
+function createAnimatedFloorGreen(x, y) {
+    return createAnimatedFloor(x, y, textures.green_floor); // Create an animated floor with green texture
 }
 
 /**

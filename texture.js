@@ -33,4 +33,8 @@ const textures = {
 	tombstone: new Texture("imgs/tombstone.png"),
 	stairs_dirt: new Texture("imgs/stairs_dirt.png"),
 	fireplace: new Texture("imgs/fireplace.png"),
+	red_floor: new Texture("imgs/animated_floor_red.png"),
+	blue_floor: new Texture("imgs/animated_floor_blue.png"),
+	green_floor: new Texture("imgs/animated_floor_green.png"),
+	vase: new Texture("imgs/vase.png"),
 }
