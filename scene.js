@@ -15,7 +15,7 @@ constructor()
 	
 	this.size_multiply = 4;
 	this.canvas.width = 160*this.size_multiply;
-	this.canvas.height = 144*this.size_multiply;
+	this.canvas.height = 128*this.size_multiply;
 
 	// internal variables
 	this.frameCount=0;
@@ -26,14 +26,15 @@ constructor()
 	this.UI = new UI();
 	
 	// player variables
-	this.player = new Player(0.5, 0.5, 1/10, 1/9);
+	this.player = new Player(0.5, 0.5, 1/10, 1/8);
+	this.player.scene = this; // Set the scene reference in the player object
+	
 	this.levelID = 103; // Current level ID
 
 	// level variables
 	this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
 	this.screen_switch_time = 0.7; // seconds
 	this.mapID = "overworld"; // Current map ID
-
 	this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(this.levelID)); // Current level content
 	this.tmpLevelContent = new Array(); // Temporary level content for transitions
 
@@ -74,15 +75,6 @@ level(deltaTime)
 	// Check for collisions with level elements
 	this.collisions();
 
-	// if "f" pressed, check for interaction with level elements
-	if (keyboard[70]) {
-		if (!this.fKeyState || this.fKeyState.released) {
-			this.player.collidesWithHand(this.levelContent);
-		}
-		this.fKeyState = { down: true, pressed: false, released: false };
-	} else {
-		this.fKeyState = { down: false, pressed: false, released: true };
-	}
 }
 
 collisions()
@@ -104,50 +96,9 @@ collisions()
 		); // Call the transition function
 	}
 
-	// Check for collisions with level elements
-	this.levelContent.forEach((element) => {
-		if (!element.isWalkable && element.isActive()) {
-			this.resolveCollision(this.player, element); // Resolve collision with enemies
-		}
-	});
 }
 
-isColliding(a, b) {
-    return (
-        a.x < b.x + b.width &&
-        a.x + a.width > b.x &&
-        a.y < b.y + b.height &&
-        a.y + a.height > b.y
-    );
-}
-resolveCollision(player, object) {
-    if (object.isWalkable || !this.isColliding(player, object)) return;
 
-    const dx = (player.x + player.width / 2) - (object.x + object.width / 2);
-    const dy = (player.y + player.height / 2) - (object.y + object.height / 2);
-    const widthOverlap = (player.width + object.width) / 2 - Math.abs(dx);
-    const heightOverlap = (player.height + object.height) / 2 - Math.abs(dy);
-
-    if (widthOverlap < heightOverlap) {
-        if (dx > 0) {
-            player.x += widthOverlap;
-        } else {
-            player.x -= widthOverlap;
-        }
-    } else {
-        if (dy > 0) {
-            player.y += heightOverlap;
-        } else {
-            player.y -= heightOverlap;
-        }
-    }
-
-	// Check if element must execute an action	
-	if (object.onCollision && object.isActive()) 
-	object.onCollision({player:this.player, scene: this}); 
-	
-
-}
 
 newPositionMargins(side){
 	let margin = 0.01;
@@ -269,7 +220,7 @@ levelTransitionMarginAnimation(currentElements, futureElements, player_old_posit
 	}, interval);
 }
 
-levelTransitionDoorAnimation(newLevelID, userPosition, screen_switch_time = 1) {
+levelTransitionDoorAnimation(newLevelID, mapID, userPosition, screen_switch_time = 1) {
 	// Create a loop for the specified transition duration, then return control to the main loop
 	this.stop = true; // Pause the main loop
 	let elapsedTime = 0;
@@ -293,7 +244,8 @@ levelTransitionDoorAnimation(newLevelID, userPosition, screen_switch_time = 1) {
 
 		if (elapsedTime >= halfDuration && !newContentLoaded) {
 			// Load the new level content at the halfway point
-			this.levelContent = world.maps[this.mapID].getLevelElements(newLevelID);
+			console.log("Loading new level content..."+mapID);
+			this.levelContent = world.maps[mapID].getLevelElements(newLevelID);
 			this.levelContent.push(white_rectangle);
 			this.player.setPosition(userPosition.x, userPosition.y); // Set the player's position
 			newContentLoaded = true; // Mark the new content as loaded
@@ -302,6 +254,8 @@ levelTransitionDoorAnimation(newLevelID, userPosition, screen_switch_time = 1) {
 		if (elapsedTime >= screen_switch_time * 1000) {
 			clearInterval(loop);
 			this.stop = false; // Resume the main loop
+			this.mapID = mapID; // Update the map ID
+			console.log("Transition complete to level: " + newLevelID + " in map: " + mapID);
 			this.levelTransition(newLevelID);
 			return;
 		}

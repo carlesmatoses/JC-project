@@ -1,3 +1,52 @@
+class BoundingBox {
+    constructor(x, y, width, height) {
+        this.x = x; // X position of the center of the bounding box
+        this.y = y; // Y position of the center of the bounding box
+        this.width = width; // Width of the bounding box
+        this.height = height; // Height of the bounding box
+    }
+    /**
+     * isColliding - Check if this bounding box is colliding with another bounding box.
+     * @param {BoundingBox} other - The other bounding box to check for collision.
+     * @returns boolean - True if the bounding boxes are colliding, false otherwise.
+     */
+    isColliding(other) {
+        // Check if this bounding box is colliding with another bounding box
+        return (
+            Math.abs(this.x - other.x) < (this.width + other.width) / 2 &&
+            Math.abs(this.y - other.y) < (this.height + other.height) / 2
+        );
+    }
+
+    draw(context) {
+        // Use the bounding box object for drawing the bounding box
+        let boundingBoxPixels = transform(this.x, this.y, context);
+        let boundingBoxSizePixels = transform(this.width, this.height, context);
+
+        // Draw the bounding box of the player
+        context.strokeStyle = 'red'; // Set the color of the bounding box
+        context.lineWidth = 1; // Set the width of the bounding box lines
+        context.strokeRect(
+            boundingBoxPixels.x - boundingBoxSizePixels.x / 2,
+            boundingBoxPixels.y - boundingBoxSizePixels.y / 2,
+            boundingBoxSizePixels.x,
+            boundingBoxSizePixels.y
+        );
+    }
+
+    translate(x, y) {
+        // Translate the bounding box by a given x and y offset
+        this.x += x;
+        this.y += y;
+    }
+
+    setPosition(x, y) {
+        // Set the position of the bounding box to a new x and y
+        this.x = x;
+        this.y = y;
+    }
+}
+
 class BackgroundElement {
     constructor(x, y, width, height, type, isWalkable, texture = null, color = null, drawing_settings=null) {
         this.x = x; // X position
@@ -13,6 +62,9 @@ class BackgroundElement {
         this.drawing_settings = drawing_settings; // Optional drawing settings for the element
         this.active = true; // Whether the element is active or not
         
+        // Bounding box for collision detection
+        this.boundingBox = new BoundingBox(0, 0, 0, 0); // Empty bounding box
+
         if (color)
         this.color = color; // Optional color for the element
         if (texture)
@@ -27,7 +79,7 @@ class BackgroundElement {
 
         let pos = transform(this.x, this.y, context);
         let size = transform(this.width, this.height, context);
-        
+
         if (this.texture) {
             // Draw the texture if it exists
             if (this.drawing_settings) {
@@ -52,6 +104,10 @@ class BackgroundElement {
             // Draw the rectangle representing the element
             context.fillRect(pos.x, pos.y, size.x, size.y);
         }
+
+        // Draw the bounding box for debugging
+        this.boundingBox.draw(context);
+
     }
 
     isColliding(playerX, playerY, playerWidth, playerHeight) {
@@ -82,16 +138,47 @@ class BackgroundElement {
     isActive() {
         return this.active; // Check if the element is active
     }
+
+    tryPush(direction, scene) {
+        const targetX = this.x + direction.x * 1/10;
+        const targetY = this.y + direction.y * 1/8;
+    
+        // Create a temporary bounding box to simulate the move
+        const testBox = new BoundingBox(
+            targetX + this.width / 2,
+            targetY + this.height / 2,
+            this.width,
+            this.height
+        );
+    
+        // Check for collisions with other solid objects in the scene
+        let blocked = scene.levelContent.some(obj => {
+            if (obj === this || !obj.boundingBox) return false;
+            return testBox.isColliding(obj.boundingBox);
+        });
+    
+        if (!blocked) {
+            this.x = targetX;
+            this.y = targetY;
+            this.boundingBox.setPosition(this.x + this.width / 2, this.y + this.height / 2);
+            if (this.callback) {
+                this.callback(); // Call the callback function if provided
+            }
+        } else {
+            console.log("Can't push there.");
+        }
+    }
 }
 
 class Door extends BackgroundElement {
-    constructor(x, y, width, height, isWalkable, texture = null, color = null, drawing_settings = null, destination = null, active = true, door = null) {
-        super(x, y, width, height, "door", isWalkable, texture, color, drawing_settings);
-        this.destination = destination; // Destination level or map the door leads to
+    constructor(x, y,  map = null, level = null, active = true, destination_door = null) {
+        super(x, y, 1/10, 1/8, "door", false, textures.stairs_dirt, null, null);
+        this.map = map; 
+        this.level = level; 
         this.active = active; // Whether the door is active or not
-        this.door = door; // Optional door object for additional functionality
+        this.door = destination_door; // Optional door object for additional functionality
         this.wasColliding = false; // Track previous collision state
-        console.log("Door created at:", x, y, "with destination:", destination, "and active:", active);
+        this.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 0.8/10, 0.8/8); // Bounding box for collision detection
     }
 
     setDestination(destination) {
@@ -107,6 +194,7 @@ class Door extends BackgroundElement {
     }
 
     activate() {
+        console.log("Door activated!");
         this.active = true; // Activate the door
     }
 
@@ -139,20 +227,29 @@ class Door extends BackgroundElement {
 
     onCollision({player, scene}) {
         if (this.active) {
-            console.log("Door collision detected!");
-            scene.levelTransitionDoorAnimation(this.getDestination(), {x:this.door.x, y:this.door.y});
+            scene.levelTransitionDoorAnimation(this.door.level, this.door.map.id, {x:this.door.x, y:this.door.y});
             return; 
         } else {
             console.log("Door is inactive, cannot pass through.");
         }
     }
+
+    transition(scene){
+        if (this.active) {
+            console.log("Transitioning to level:", this.destination);
+            // scene.levelTransitionDoorAnimation(this.getDestination(), {x:this.door.x, y:this.door.y});
+        } else {
+            console.log("Door is inactive, cannot transition.");
+        }
+    }
 }
 
 class Chest extends BackgroundElement {
-    constructor(x, y, width, height, isWalkable, texture = textures.chest, color = null, drawing_settings = null) {
-        super(x, y, width, height, "chest", isWalkable, texture, color, drawing_settings);
+    constructor(x, y) {
+        super(x, y, 1/10, 1/8, "chest", false, textures.chest, null, null);
         this.isOpen = false; // Whether the chest is open or not
         this.content = null; // Content of the chest (e.g., items, coins)
+        this.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 0.8/10, 0.8/8); // Bounding box for collision detection
     }
 
     open() {
@@ -190,6 +287,9 @@ class Chest extends BackgroundElement {
             // Draw the closed chest texture (0x0 to 16x16)
             context.drawImage(this.texture.img, 0, 0, 16, 16, pos.x, pos.y, size.x, size.y);
         }
+
+        // Draw the bounding box for debugging
+        this.boundingBox.draw(context);
     }
 }
 
@@ -197,10 +297,16 @@ class Tombstone extends BackgroundElement {
     constructor(x, y) {
         super(x, y, 1/10, 1/8, "tombstone", false, textures.tombstone, null, null);
         this.render_layer = 0; // Render layer for tombstones
+        this.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 1/10, 1/8); // Bounding box for collision detection
+        this.isPushable = true; // Tombstones are pushable
+        this.callback = null; // Optional callback function for when the tombstone is pushed
     }
     push() {
         // Logic to push the tombstone (e.g., move it or change its state)
-        console.log("Tombstone pushed!");
+        console.log("Tombstone pushed! aaa");
+        if (this.callback) {
+            this.callback(); // Call the callback function if provided
+        }
     }
 }
 
@@ -222,10 +328,8 @@ class Level{
             if (element instanceof Door) {
                 // Create a new Door instance
                 return new Door(
-                    element.x, element.y, element.width, element.height,
-                    element.isWalkable, element.texture, element.color,
-                    element.drawing_settings, element.destination,
-                    element.active, 
+                    element.x, element.y, element.map,
+                    element.level, element.active,
                     element.door,
                 );
             } else if (element instanceof Chest) {
@@ -239,10 +343,13 @@ class Level{
             } else if (element instanceof Tombstone) {
                 console.log("Tombstone created at:", element.x, element.y);
                 // Create a new Tombstone instance
-                return new Tombstone(
+                let copy =new Tombstone(
                     element.x, element.y,
                     element.isWalkable
                 );
+                copy.globalReference = element;
+                copy.callback = element.callback; 
+                return copy;
             } else if (element instanceof BackgroundElement) {
                 // Create a new BackgroundElement instance
                 console.log("BackgroundElement created at:", element.x, element.y);
@@ -292,6 +399,10 @@ class Map {
     getSize() {
         return { cols: this.x, rows: this.y }; // Returns the size of the map
     }
+
+    setLevels(levels) {
+        this.levels = levels; // Set the levels of the map
+    }
 }
 
 /**
@@ -325,5 +436,8 @@ function createBasicTailRock(x, y) {
     return basicTail;
 }
 
-const world = new World([]); // Create a world with the dungeon1 map
+const world = new World([
+    new Map('overworld', 16, 16, []),
+    new Map('dungeon1', 6, 5, []),
+]); // Create a world with the dungeon1 map
 window.world = world; // Make the world accessible globally for debugging

@@ -8,6 +8,15 @@
 		this.direction = { x: 0, y: 0 };
 		this.lastDirection = { x: 0, y: 1 }; // mirando hacia abajo por defecto
 		this.moving = false;
+        this.scene = null; // store a reference to the scene
+        this.center = { x: x+width / 2, y: y+height / 2 }; // local center 
+        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width-0.01, height-0.01);
+        this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, width/4, height/4);
+
+        // Pushing mechanics
+        this.lastBlockedDirection = null;
+        this.pushAttemptTimer = 0;
+        this.pushThreshold = 1*1000; // ms
 
 		// Sprite y animaciones
 		this.texture = new Texture(texture);
@@ -45,37 +54,16 @@
 			this.sprite.draw();
 		}
 
-        let centerX = this.x + (this.width / 2);
-        let centerY = this.y + (this.height / 2);
-        let centerPixels = transform(centerX,centerY,context) 
-        let sizePixels = transform(this.width, this.height, context);
-
-                // Draw the bounding box of the player
-                context.strokeStyle = 'red'; // Set the color of the bounding box
-                context.lineWidth = 1; // Set the width of the bounding box lines
-                context.strokeRect(centerPixels.x-sizePixels.x/2, centerPixels.y-sizePixels.y/2, sizePixels.x, sizePixels.y); // Draw the bounding box
-                
-                // Draw a circle in the center of the player for debugging
-                context.beginPath();
-                context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
-                context.fillStyle = "red";
-                context.fill();
         
-                // Draw the hand rectangle for collision detection
-                let handRect = {
-                    x: (centerX-this.width/8) + (this.lastDirection.x * (this.width/2+this.width/8)),
-                    y: (centerY-this.height/8) + (this.lastDirection.y * (this.height/2+this.height/8)),
-                    width: this.width/4,
-                    height: this.height/4
-                };
+        this.boundingBox.draw(context);
+        this.handBoundingBox.draw(context);
         
-                let handRectPixels = transform(handRect.x, handRect.y, context);
-                let handRectSizePixels = transform(handRect.width, handRect.height, context);
-                context.strokeStyle = 'blue'; // Set the color of the hand rectangle
-                context.lineWidth = 1; // Set the width of the hand rectangle lines
-                context.strokeRect(handRectPixels.x, handRectPixels.y, handRectSizePixels.x, handRectSizePixels.y); // Draw the hand rectangle
-        
-        
+        // Draw a circle in the center of the player for debugging
+        let centerPixels = transform(this.center.x,this.center.y,context) 
+        context.beginPath();
+        context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
+        context.fillStyle = "red";
+        context.fill();
     }
 
     update(deltaTime) {
@@ -88,9 +76,63 @@
             this.direction.y /= magnitude;
     
             // Mover personaje
-            this.x += this.direction.x * this.speed * deltaTime;
-            this.y += this.direction.y * this.speed * deltaTime;
+            let offsetX = this.direction.x * this.speed * deltaTime;
+            let offsetY = this.direction.y * this.speed * deltaTime;
+            this.x += offsetX
+            this.y += offsetY;
+            this.center.x = this.x + (this.width / 2);
+            this.center.y = this.y + (this.height / 2);
+
+            // Actualizar la posición del bounding box y el handBoundingBox
+            this.boundingBox.setPosition(this.center.x, this.center.y);
+            this.handBoundingBox.setPosition(
+                this.center.x + (this.lastDirection.x * (this.width / 2 + this.width / 8)), 
+                this.center.y + (this.lastDirection.y * (this.height / 2 + this.height / 8)),
+            );
             
+            // check collision with level content
+            let collided = false;
+            let collidedElement = null;
+
+            // check collision
+            for (let element of this.scene.levelContent) {
+                if (element.boundingBox && element.isActive()) {
+                    if (this.boundingBox.isColliding(element.boundingBox)) {
+                        // Revert movement
+                        this.x -= offsetX;
+                        this.y -= offsetY;
+                        this.boundingBox.setPosition(this.x + (this.width / 2), this.y + (this.height / 2));
+                        collided = true;
+                        collidedElement = element;
+
+                        if (element.onCollision) {
+                            element.onCollision({scene:this.scene}); // Call the onCollision method of the element
+                        }
+
+                        break;
+                    }
+                }
+            }
+
+            if (collided) {
+                // PUSHING MECHANICS
+                // If we’re colliding in the same direction, count time
+                if (this.sameDirection(this.direction, this.lastBlockedDirection)) {
+                    this.pushAttemptTimer += deltaTime;
+                    if (this.pushAttemptTimer > this.pushThreshold && collidedElement.isPushable) {
+                        collidedElement.tryPush(this.direction, this.scene);
+                        this.pushAttemptTimer = 0;
+                    }
+                } else {
+                    this.pushAttemptTimer = 0;
+                    this.lastBlockedDirection = { ...this.direction };
+                }
+            } else {
+                // No collision, reset
+                this.pushAttemptTimer = 0;
+                this.lastBlockedDirection = null;
+            }
+
             // TODO: esto debe estar en draw
             // Cambiar animación si cambia la dirección
             if (this.direction.x === -1 && this.sprite.currentAnimation !== this.ANIM_LEFT) {
@@ -140,8 +182,30 @@
         if (!keyboard[37] && !keyboard[39] && !keyboard[38] && !keyboard[40]) {
             this.setDirection(0, 0);
         }
+
+        // if "f" pressed, check for interaction with level elements
+        if (keyboard[70]) {
+            if (!this.fKeyState || this.fKeyState.released) {
+                for (let element of this.scene.levelContent) {
+                    if (element.boundingBox && this.handBoundingBox.isColliding(element.boundingBox)) {
+                        if (element.interact) {
+                            element.interact(this); // Call the interact method of the element
+                        }
+                        break; // Stop after the first interaction
+                    }
+                }
+            }
+            this.fKeyState = { down: true, pressed: false, released: false };
+        } else {
+            this.fKeyState = { down: false, pressed: false, released: true };
+        }
+    }    
+
+    sameDirection(dir1, dir2) {
+        if (!dir1 || !dir2) return false;
+        return Math.sign(dir1.x) === Math.sign(dir2.x) &&
+               Math.sign(dir1.y) === Math.sign(dir2.y);
     }
-    
 
     setDirection(dx, dy) {
         this.direction.x = dx;
@@ -154,39 +218,21 @@
         }
     }
 
-    collidesWith(element) {
-        // Check if the player is colliding with the specified element
-        return element.isColliding(this.x, this.y, this.width, this.height);
-    }
-
-    collidesWithHand(elements) {
-        // Define the hand rectangle based on the player's direction
-        let handRect = {
-            x: (this.x + this.width / 2) + (this.lastDirection.x * (this.width / 2 + this.width / 8)),
-            y: (this.y + this.height / 2) + (this.lastDirection.y * (this.height / 2 + this.height / 8)),
-            width: this.width / 4,
-            height: this.height / 4
-        };
-
-        // Check collision with each element in the provided array
-        for (let element of elements) {
-            if (element.isColliding(handRect.x, handRect.y, handRect.width, handRect.height) && element.interact) {
-                element.interact(this); // Call the interact method of the element
-                return element; // Return the first element that collides
-            }
-        }
-
-        return null; // No collision detected
-    }
     
     setPosition(x, y) {
         this.x = x;
         this.y = y;
+        this.center.x = x + (this.width / 2);
+        this.center.y = y + (this.height / 2);
+        this.boundingBox.setPosition(this.center.x, this.center.y);
     }
 
     resetPosition() {
         this.x = this.lastPosition.x;
         this.y = this.lastPosition.y;
+        this.center.x = this.x + (this.width / 2);
+        this.center.y = this.y + (this.height / 2);
+        this.boundingBox.setPosition(this.center.x, this.center.y);
     }
 }
 

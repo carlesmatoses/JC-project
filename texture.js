@@ -31,4 +31,5 @@ const textures = {
 	chest: new Texture("imgs/chest.png"),
 	overworld: new Texture("imgs/overworld.png"),
 	tombstone: new Texture("imgs/tombstone.png"),
+	stairs_dirt: new Texture("imgs/stairs_dirt.png"),
 }

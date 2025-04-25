@@ -2,6 +2,30 @@
 // We use textures.overworld
 // The textures.overworld has 16x16 tiles of 160x128 pixels, they are separated by 1px
 
+
+//  Doors
+const enter_dungeon = new Door(x=7/10, y=5/8,  
+    map=world.maps["overworld"], 
+    level=103,
+    active=false, 
+    door=null
+);
+const entrance_dungeon = new Door(x=5/10, y=5/9,  
+    map=world.maps["dungeon1"], 
+    level=0,
+    active=false, 
+    door=null
+);
+enter_dungeon.setDoor(entrance_dungeon);
+entrance_dungeon.setDoor(enter_dungeon);
+
+const special_tombstone = new Tombstone(7/10, 5/8);
+special_tombstone.callback = function() {
+    special_tombstone.x = 7/10;
+    special_tombstone.y = 6/8;
+    console.log("Tombstone callback executed");
+}
+
 // ROW1
 const tile1 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
@@ -426,13 +450,14 @@ const tile103 = [
 const tile104 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
         drawing_settings={sx: 1120+8, sy: 768+7, sWidth: 160, sHeight: 128}), 
-        new Chest(4/10, 1/9, 1/10, 1/9, isWalkable=false, texture=textures.chest, color="yellow",drawing_settings=null),
-        new Tombstone(3/10, 3/8),
-        new Tombstone(5/10, 3/8),
-        new Tombstone(7/10, 3/8),
-        new Tombstone(3/10, 5/8),
-        new Tombstone(5/10, 5/8),
-        new Tombstone(7/10, 5/8),
+        new Chest(4/10, 1/8),
+        enter_dungeon,
+        // new Tombstone(3/10, 3/8),
+        // new Tombstone(5/10, 3/8),
+        // new Tombstone(7/10, 3/8),
+        // new Tombstone(3/10, 5/8),
+        // new Tombstone(5/10, 5/8),
+        special_tombstone,
 ];
 const tile105 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
@@ -1063,6 +1088,4 @@ for (let i = 1; i <= 256; i++) {
     levelsToAdd.push(new Level(i - 1, tile));
 }
 
-const overworld = new Map('overworld', 16, 16, levelsToAdd); 
-
-world.addMap(overworld); // Add the overworld map to the world
+world.maps["overworld"].setLevels(levelsToAdd); 
