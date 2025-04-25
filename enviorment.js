@@ -147,6 +147,9 @@ class BackgroundElement {
         // Check for collisions with other solid objects in the scene
         let blocked = scene.levelContent.some(obj => {
             if (obj === this || !obj.boundingBox) return false;
+            if (testBox.isColliding(obj.boundingBox)){
+                console.log("Colliding with: ", obj.type, "at", obj.x, obj.y);
+            }
             return testBox.isColliding(obj.boundingBox);
         });
     
@@ -318,6 +321,14 @@ class InvisibleWall extends BackgroundElement {
         }
     }
 }
+
+
+function createFirePlace(x, y) {
+    let element =  new BackgroundElement(x, y, 1/10, 1/8, "fireplace", false, texture = textures.fireplace, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
+    element.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 1/10, 1/8); // Bounding box for collision detection
+    return element; // Return the fireplace element
+}
+
 /**
  * Class representing a level in the game. Contains static elements, enemies, items...
  * @class Level
@@ -379,6 +390,7 @@ class Level{
                     element.color, element.drawing_settings
                 );
                 copy.globalReference = element;
+                copy.boundingBox = element.boundingBox;
                 copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof Enemy){

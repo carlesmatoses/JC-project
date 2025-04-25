@@ -79,35 +79,58 @@
             // Mover personaje
             let offsetX = this.direction.x * this.speed * deltaTime;
             let offsetY = this.direction.y * this.speed * deltaTime;
-            this.x += offsetX
-            this.y += offsetY;
-            this.center.x = this.x + (this.width / 2);
-            this.center.y = this.y + (this.height / 2);
 
-            // Actualizar la posición del bounding box y el handBoundingBox
+            let collidedElement = null;
+            // Move X first
+            this.x += offsetX;
+            this.center.x = this.x + (this.width / 2);
             this.boundingBox.setPosition(this.center.x, this.center.y);
             this.handBoundingBox.setPosition(
                 this.center.x + (this.lastDirection.x * (this.width / 2 + this.width / 8)), 
                 this.center.y + (this.lastDirection.y * (this.height / 2 + this.height / 8)),
             );
-            
-            // check collision with level content
-            let collided = false;
-            let collidedElement = null;
 
-            // check collision
+            let collidedX = false;
+
+
             for (let element of this.scene.levelContent) {
                 if (element.boundingBox && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
-                        // Revert movement
+                        // Revert X movement
                         this.x -= offsetX;
-                        this.y -= offsetY;
-                        this.boundingBox.setPosition(this.x + (this.width / 2), this.y + (this.height / 2));
-                        collided = true;
-                        collidedElement = element;
+                        this.center.x = this.x + (this.width / 2);
+                        this.boundingBox.setPosition(this.center.x, this.center.y);
+                        collidedX = true;
 
                         if (element.onCollision) {
-                            element.onCollision({scene:this.scene}); // Call the onCollision method of the element
+                            element.onCollision({ scene: this.scene });
+                        }
+
+                        break;
+                    }
+                }
+            }
+            // Move Y
+            this.y += offsetY;
+            this.center.y = this.y + (this.height / 2);
+            this.boundingBox.setPosition(this.center.x, this.center.y);
+            this.handBoundingBox.setPosition(
+                this.center.x + (this.lastDirection.x * (this.width / 2 + this.width / 8)), 
+                this.center.y + (this.lastDirection.y * (this.height / 2 + this.height / 8)),
+            );
+            let collidedY = false;
+
+            for (let element of this.scene.levelContent) {
+                if (element.boundingBox && element.isActive()) {
+                    if (this.boundingBox.isColliding(element.boundingBox)) {
+                        // Revert Y movement
+                        this.y -= offsetY;
+                        this.center.y = this.y + (this.height / 2);
+                        this.boundingBox.setPosition(this.center.x, this.center.y);
+                        collidedY = true;
+
+                        if (element.onCollision) {
+                            element.onCollision({ scene: this.scene });
                         }
 
                         break;
@@ -115,12 +138,16 @@
                 }
             }
 
-            if (collided) {
-                // PUSHING MECHANICS
-                // If we’re colliding in the same direction, count time
+            for (let element of this.scene.levelContent) {
+                if (element.boundingBox && this.handBoundingBox.isColliding(element.boundingBox) && element.type !== "door") {
+                    collidedElement = element;
+                    break;
+                }
+            }
+            if (collidedX || collidedY) {
                 if (this.sameDirection(this.direction, this.lastBlockedDirection)) {
                     this.pushAttemptTimer += deltaTime;
-                    if (this.pushAttemptTimer > this.pushThreshold && collidedElement.isPushable) {
+                    if (this.pushAttemptTimer > this.pushThreshold && collidedElement?.isPushable) {
                         collidedElement.tryPush(this.direction, this.scene);
                         this.pushAttemptTimer = 0;
                     }
@@ -129,7 +156,6 @@
                     this.lastBlockedDirection = { ...this.direction };
                 }
             } else {
-                // No collision, reset
                 this.pushAttemptTimer = 0;
                 this.lastBlockedDirection = null;
             }

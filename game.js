@@ -16,7 +16,7 @@ let frameCount = 0;
 let fps = 0;
 let lag = 0;
 
-let DEBUG = false; // Set to true to enable debug mode
+let DEBUG = true; // Set to true to enable debug mode
 
 // Control keyboard events
 
