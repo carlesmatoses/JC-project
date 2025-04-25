@@ -26,6 +26,13 @@ special_tombstone.callback = function() {
     console.log("Tombstone callback executed");
 }
 
+//  Chests
+const principal_chest =  new Chest(4/10, 1/8);
+principal_chest.callback = function() {
+    console.log("Chest callback executed");
+    principal_chest.open();
+}
+
 // ROW1
 const tile1 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
@@ -450,13 +457,13 @@ const tile103 = [
 const tile104 = [
     new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.overworld, color="black", 
         drawing_settings={sx: 1120+8, sy: 768+7, sWidth: 160, sHeight: 128}), 
-        new Chest(4/10, 1/8),
+        principal_chest,
         enter_dungeon,
-        // new Tombstone(3/10, 3/8),
-        // new Tombstone(5/10, 3/8),
-        // new Tombstone(7/10, 3/8),
-        // new Tombstone(3/10, 5/8),
-        // new Tombstone(5/10, 5/8),
+        new Tombstone(3/10, 3/8),
+        new Tombstone(5/10, 3/8),
+        new Tombstone(7/10, 3/8),
+        new Tombstone(3/10, 5/8),
+        new Tombstone(5/10, 5/8),
         special_tombstone,
 ];
 const tile105 = [

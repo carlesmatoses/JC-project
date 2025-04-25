@@ -69,6 +69,8 @@ class BackgroundElement {
         this.color = color; // Optional color for the element
         if (texture)
         this.texture = texture; // Optional texture (image) for the element
+
+        this.globalReference = null; // Reference to the global object for callbacks
     }
 
     draw(context) {
@@ -250,6 +252,7 @@ class Chest extends BackgroundElement {
         this.isOpen = false; // Whether the chest is open or not
         this.content = null; // Content of the chest (e.g., items, coins)
         this.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 0.8/10, 0.8/8); // Bounding box for collision detection
+        console.log("is chest oppened?", this.isOpen);
     }
 
     open() {
@@ -268,11 +271,13 @@ class Chest extends BackgroundElement {
         if (!this.isOpen) {
             this.open(); // Open the chest if it is not already open
             console.log("Chest opened!");
+            
             // Add logic to give content to the player
             // e.g., player.addItem(this.content);
+            if(this.callback) this.callback(); // Call the callback function if provided
         } else {
-            this.close(); // Close the chest if it is already open
-            console.log("Chest closed!");
+            // this.close(); // Close the chest if it is already open
+            console.log("Chest has already been oppened!");
         }
     }
 
@@ -327,23 +332,27 @@ class Level{
         return this.background_elements.map(element => {
             if (element instanceof Door) {
                 // Create a new Door instance
-                return new Door(
+                let copy = new Door(
                     element.x, element.y, element.map,
                     element.level, element.active,
                     element.door,
                 );
+                copy.globalReference = element;
+                copy.callback = element.callback; 
+                return copy;
             } else if (element instanceof Chest) {
                 // Create a new Chest instance
-                console.log("Chest created at:", element.x, element.y);
-                return new Chest(
-                    element.x, element.y, element.width, element.height,
-                    element.isWalkable, element.texture, element.color,
-                    element.drawing_settings
+                let copy = new Chest(
+                    element.x, element.y
                 );
+                copy.globalReference = element;
+                copy.isOpen = element.isOpen; // Copy the isOpen state
+                copy.callback = element.callback; 
+                return copy;
             } else if (element instanceof Tombstone) {
                 console.log("Tombstone created at:", element.x, element.y);
                 // Create a new Tombstone instance
-                let copy =new Tombstone(
+                let copy = new Tombstone(
                     element.x, element.y,
                     element.isWalkable
                 );
@@ -352,12 +361,14 @@ class Level{
                 return copy;
             } else if (element instanceof BackgroundElement) {
                 // Create a new BackgroundElement instance
-                console.log("BackgroundElement created at:", element.x, element.y);
-                return new BackgroundElement(
+                let copy = new BackgroundElement(
                     element.x, element.y, element.width, element.height,
                     element.type, element.isWalkable, element.texture,
                     element.color, element.drawing_settings
                 );
+                copy.globalReference = element;
+                copy.callback = element.callback; 
+                return copy;
             } else if (element instanceof Enemy){
                 return new Enemy(element.x, element.y, element.width, element.height, element.texture); 
             }else {
