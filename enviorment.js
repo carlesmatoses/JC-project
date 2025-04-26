@@ -276,6 +276,7 @@ class Chest extends BackgroundElement {
             // Add logic to give content to the player
             // e.g., player.addItem(this.content);
             player.inventory.addItem(this.content); // Add the content to the player's inventory
+            player.inventory.assignToEmptySlot(this.content); // Assign the item to an empty slot in the inventory
             if(this.callback) this.callback(); // Call the callback function if provided
         } else {
             // this.close(); // Close the chest if it is already open
@@ -429,11 +430,10 @@ class Item {
 }
 
 class Equipment extends Item {
-    constructor(name, icon, slot, effects = {}) {
-        super(name, icon, false); // equipment is usually not stackable
+    constructor(name, icon, effects = {}) {
+        super(name, icon, false);
         this.type = "equipment";
-        this.slot = slot; // e.g., 'head', 'body', 'legs', etc.
-        this.effects = effects; // e.g., { armor: 5 }
+        this.effects = effects;
     }
 }
 
@@ -450,7 +450,8 @@ class Effect {
         return (currentTime - this.startTime) >= this.duration * 1000;
     }
 }
-const BraceletStrength = new Equipment("Power Bracelet", "imgs/items/bracelet_strength.png", null, [new Effect("strength", 15, 0)]);
+
+const BraceletStrength = new Equipment("Power Bracelet", textures.braceletStrength, [new Effect("strength", 15, 0)]);
 
 
 /**

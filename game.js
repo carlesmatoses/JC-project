@@ -6,10 +6,15 @@ const TARGET_FPS = FRAME_RATE;
 const TIME_PER_FRAME = 1000 / FRAME_RATE;
 
 
+var canvas = document.getElementById("game-layer");
+var context = this.canvas.getContext("2d");
+var gamestatemanager = new GameStateManager();
+var scene = new Scene(gamestatemanager);
+gamestatemanager.pushState(scene);
+gamestatemanager.pushState(new DialogState(gamestatemanager, ["Hola", "Como estas?"]));
 
-var scene = new Scene();
 var previousTimestamp;
-var keyboard = [];
+var keyboardInput = null;
 var interacted;
 
 let deltaTime = 0;
@@ -21,36 +26,50 @@ let lag = 0;
 let DEBUG = true; // Set to true to enable debug mode
 
 // Control keyboard events
+class KeyboardInput {
+    constructor() {
+        this.held = {};
+        this.pressed = {};
+        this.released = {};
+        this.previous = {};
+        
+        document.body.addEventListener('keydown', (e) => this.keyDown(e));
+        document.body.addEventListener('keyup', (e) => this.keyUp(e));
+    }
 
-function keyDown(keycode)
-{
-	if(keycode.which >= 0 && keycode.which < 256)
-		keyboard[keycode.which] = true;
+    keyDown(event) {
+        const key = event.code;
+        if (!this.held[key]) {
+            this.pressed[key] = true;
+        }
+        this.held[key] = true;
+    }
+
+    keyUp(event) {
+        const key = event.code;
+        this.held[key] = false;
+        this.released[key] = true;
+    }
+
+    update() {
+        // Reset pressed/released every frame AFTER input was processed
+        this.pressed = {};
+        this.released = {};
+    }
+
+    isHeld(key) {
+        return !!this.held[key];
+    }
+
+    isPressed(key) {
+        return !!this.pressed[key];
+    }
+
+    isReleased(key) {
+        return !!this.released[key];
+    }
 }
 
-function keyUp(keycode)
-{
-	if(keycode.which >= 0 && keycode.which < 256)
-		keyboard[keycode.which] = false;
-}
-
-function click()
-{
-	interacted = true;
-}
-
-// Initialization
-
-function init()
-{
-	for(var i=0; i<256; i++)
-		keyboard.push(false);
-	document.body.addEventListener('keydown', keyDown);
-	document.body.addEventListener('keyup', keyUp);
-	document.body.addEventListener('click', click);
-	previousTimestamp = performance.now();
-	interacted = false;
-}
 
 // Calculate FPS
 function calculateFPS(deltaTime) {
@@ -75,6 +94,15 @@ function calculateLag(deltaTime) {
 	scene.lag = lag;
 }
 
+// Initialization
+function init()
+{
+	previousTimestamp = performance.now();
+	interacted = false;
+	keyboardInput = new KeyboardInput();
+}
+
+
 // Game loop: Update, draw, and request a new frame
 function frameUpdate(timestamp) {
 
@@ -83,13 +111,16 @@ function frameUpdate(timestamp) {
 	calculateFPS(deltaTime);  // Calculate FPS
 	calculateLag(deltaTime);  // Calculate Lag
 
+	gamestatemanager.update(deltaTime);
+	gamestatemanager.handleInput(keyboardInput);
+
 	// Draw the scene
-	scene.update(deltaTime);
 	scene.currentTime = timestamp;
-	scene.draw();
+	gamestatemanager.render(context);
 
 	// update time
     previousTimestamp = timestamp;
+    keyboardInput.update(); 
 
 	// Request the next frame
 	window.requestAnimationFrame(frameUpdate);

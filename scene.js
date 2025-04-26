@@ -7,15 +7,15 @@
 // The scene is responsible from controlling the level and the player
 
 class Scene{
-	constructor()
+	constructor(gameStateManager)
 	{
 		// Set canvas dimensions 
 		this.canvas = document.getElementById("game-layer");
 		this.context = this.canvas.getContext("2d");
 		
 		this.size_multiply = 4;
-		this.canvas.width = 142*this.size_multiply;
-		this.canvas.height = 128*this.size_multiply;
+		this.canvas.width = 160*this.size_multiply;
+		this.canvas.height = 144*this.size_multiply;
 
 		// internal variables
 		this.frameCount=0;
@@ -23,43 +23,33 @@ class Scene{
 		this.currentTime = 0
 		this.stop = false; // When we talk to characters, 
 
-		this.UI = new UI();
+
 		
 		// player variables
-		this.player = new Player(TILEWIDTH, TILEHEIGHT*4, TILEWIDTH*0.5, TILEHEIGHT*0.5);
+		this.player = new Player(TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT);
 		this.player.scene = this; // Set the scene reference in the player object
 		
-		this.levelID = 25; // Current level ID
+		this.levelID = 103; // Current level ID
 
 		// level variables
 		this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
 		this.screen_switch_time = 0.7; // seconds
-		this.mapID = "dungeon1"; // Current map ID
+		this.mapID = "overworld"; // Current map ID
 		this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(this.levelID)); // Current level content
 		this.tmpLevelContent = new Array(); // Temporary level content for transitions
 
 		this.debug_text = new Text("Debug: ", 0.0, 0.05, "white",  6, "'tiny5'", this.context);
 		this.debug_background = new BackgroundElement(0, 0, 0.29, 0.8, "ground", false, texture=null, color="rgba(0, 0, 0, 0.5)");
 		
-		this.context.imageSmoothingEnabled = false;
-
+		// this.context.imageSmoothingEnabled = false;
+		this.UI = new UI(gameStateManager, this.player); 
+		this.menu = new Menu(gameStateManager, this.player); // Create a menu instance
+		this.gameStateManager = gameStateManager
 	}
 
 
 	update(deltaTime)
 	{
-		// Check for "i" key press to toggle the menu
-		if (keyboard[73] && !this.iPressed) {
-			this.iPressed = true;
-			if (this.stop) {
-				this.closeMenu(); // Resume the game and close the menu
-			} else {
-				this.openMenu(); // Pause the game and open the menu
-			}
-		} else if (!keyboard[73]) {
-			this.iPressed = false;
-		}
-
 		// Game is stopped, we need to stop the time updates
 		if (this.stop) {
 			return;
@@ -73,8 +63,16 @@ class Scene{
 	// It can stop the time updates for the scene (transitions, menu screen, etc.)
 	level(deltaTime)
 	{
-		// Update Player
-		this.player.update(deltaTime);
+		// Update Player: send flag if some event happened: couldnt move a rock, etc.
+		const flag = this.player.update(deltaTime);
+		switch (flag) {
+			case "strength": // obj couldnt be moved
+				this.gameStateManager.pushState(new DialogState(this.gameStateManager, ["You need more strength to move this object."])); // Show dialog
+				break;
+			default:
+				break;
+		}
+
 
 		this.levelContent.forEach((element) => {
 			if (typeof element.update === "function") {
@@ -118,8 +116,20 @@ class Scene{
 
 	}
 
+	handleInput(input) {
+        
+		if (input.isPressed('KeyB')) { // DEBUG KEY
+			console.log("Pressed B!");
+			DEBUG = !DEBUG;
+		}
+		if (input.isPressed('KeyI')) { //
+			this.gameStateManager.pushState(this.menu); 
+        }
 
-
+		// additionally handle player input
+		this.player.handleInput(input);
+	}
+	
 	newPositionMargins(side){
 		if (side==="left") {
 			return {x: 1-this.player.width, y: this.player.y, wx:1, wy:0}; // Move to the left side of the screen
@@ -291,39 +301,34 @@ class Scene{
 		return [x*this.canvas.width_px, y*this.canvas.height_px];
 	}
 
-	draw()
+	draw(context)
 	{
 		// Clear background
-		this.context.fillStyle = "rgb(224, 224, 240)";
-		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
+		context.fillStyle = "rgb(224, 224, 240)";
+		context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 
 		// Draw all scene elements of level with layer 0
 		this.levelContent.forEach((element) => {
 			if (element.render_layer === 0) {
-				element.draw(this.context);
+				element.draw(context);
 			}
 		});
 
 		// Draw player
-		this.player.draw(this.context);
+		this.player.draw(context);
 
 		// Draw Elements on layer -1
 		this.levelContent.forEach((element) => {
 			if (element.render_layer === -1) {
-				element.draw(this.context);
+				element.draw(context);
 			}
 		});
 
-		if (keyboard[32] && !this.spacePressed) {
-			DEBUG = !DEBUG;
-			this.spacePressed = true;
-		} else if (!keyboard[32]) {
-			this.spacePressed = false;
-		}
+		this.UI.draw(context); // Draw the UI elements
 
 		// Draw debug
 		if (DEBUG){
-			this.debug_background.draw(this.context);
+			this.debug_background.draw(context);
 			this.debug_text.update("Debug:\n" + 
 							"  X: " + this.player.x.toFixed(1) + "\n" + 
 							"  Y: " + this.player.y.toFixed(1) + "\n" + 
@@ -332,23 +337,9 @@ class Scene{
 							"  levelID: " + this.levelID + "\n" 
 		
 							);
-			this.debug_text.draw(this.context);
-			this.UI.draw(this.context); // Draw the UI elements
+			this.debug_text.draw(context);
 		}
 	}
-
-	openMenu(){
-		// Open the menu screen
-		this.stop = true; // Pause the main loop
-		this.UI.mode = "paused"; // Set the UI mode to paused
-	}
-
-	closeMenu(){
-		// Close the menu screen
-		this.stop = false; // Resume the main loop
-		this.UI.mode = "normal"; // Set the UI mode to normal
-	}
-
 }
 
 class GameStateManager {
@@ -378,8 +369,49 @@ class GameStateManager {
 
     render(context) {
         for (let state of this.stateStack) {
-            state.render(context);
+            state.draw(context);
         }
     }
 }
 
+class DialogState {
+    constructor(gameStateManager, dialogList) {
+        this.gameStateManager = gameStateManager;
+        this.dialogList = dialogList; // array of strings
+        this.currentIndex = 0;
+    }
+
+    enter() {
+        // Called when DialogState is pushed
+    }
+
+    exit() {
+        // Called when DialogState is popped
+    }
+
+    update(deltaTime) {
+        // Nothing to update for now
+    }
+
+    draw(context) {
+        context.fillStyle = "rgba(0, 0, 0, 0.7)";
+        context.fillRect(10, context.canvas.height - 120, context.canvas.width - 20, 100);
+
+        context.fillStyle = "white";
+        context.font = "20px Arial";
+        context.fillText(
+            this.dialogList[this.currentIndex],
+            20,
+            context.canvas.height - 80
+        );
+    }
+
+    handleInput(event) {
+        if (event.isPressed("KeyF")) { 
+            this.currentIndex++;
+            if (this.currentIndex >= this.dialogList.length) {
+                this.gameStateManager.popState(); // End conversation
+            }
+        }
+    }
+}

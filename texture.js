@@ -38,4 +38,5 @@ const textures = {
 	green_floor: new Texture("imgs/animated_floor_green.png"),
 	vase: new Texture("imgs/vase.png"),
 	menu: new Texture("imgs/Menu.png"),
+	braceletStrength: new Texture("imgs/brazalete-l1.png"),
 }
