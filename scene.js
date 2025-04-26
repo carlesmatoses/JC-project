@@ -379,6 +379,20 @@ class DialogState {
         this.gameStateManager = gameStateManager;
         this.dialogList = dialogList; // array of strings
         this.currentIndex = 0;
+
+		this.box = {
+			x: TILEWIDTH * 2,
+			y: TILEHEIGHT * 6,
+			width: TILEWIDTH * 6,
+			height: TILEHEIGHT * 2
+		};
+		const pos = transform(this.box.x, this.box.y, context);
+		const size = transform(this.box.width, this.box.height, context);
+		this.box.x = pos.x;
+		this.box.y = pos.y;
+		this.box.width = size.x;
+		this.box.height = size.y;
+
     }
 
     enter() {
@@ -393,18 +407,48 @@ class DialogState {
         // Nothing to update for now
     }
 
-    draw(context) {
-        context.fillStyle = "rgba(0, 0, 0, 0.7)";
-        context.fillRect(10, context.canvas.height - 120, context.canvas.width - 20, 100);
-
-        context.fillStyle = "white";
-        context.font = "20px Arial";
-        context.fillText(
-            this.dialogList[this.currentIndex],
-            20,
-            context.canvas.height - 80
-        );
-    }
+	draw(context) {
+		// Draw the semi-transparent black background
+		context.fillStyle = "rgb(249, 253, 185)";
+		context.fillRect(this.box.x, this.box.y, this.box.width, this.box.height);
+	
+		// Draw the dialog box
+		context.fillStyle = "rgb(0, 0, 0)";
+		context.fillRect(this.box.x + 10, this.box.y + 10, this.box.width - 20, this.box.height - 20);
+	
+		if (this.currentIndex < this.dialogList.length) {
+			const text = this.dialogList[this.currentIndex];
+			const maxCharsPerLine = 34;
+			const words = text.split(" ");
+			const lines = [];
+	
+			let currentLine = "";
+	
+			for (let word of words) {
+				if ((currentLine + word).length <= maxCharsPerLine) {
+					currentLine += word + " ";
+				} else {
+					lines.push(currentLine.trim());
+					currentLine = word + " ";
+				}
+			}
+			if (currentLine.length > 0) {
+				lines.push(currentLine.trim());
+			}
+	
+			context.fillStyle = "white";
+			context.font = "'tiny5'";
+			
+			let lineHeight = 26; // Adjust based on your font size
+			let startY = this.box.y + 40;
+			
+			for (let i = 0; i < lines.length; i++) {
+				context.fillText(lines[i], this.box.x + 20, startY + i * lineHeight);
+			}
+		} else {
+			this.gameStateManager.popState(); // End conversation if no more text to show
+		}
+	}
 
     handleInput(event) {
         if (event.isPressed("KeyF")) { 
