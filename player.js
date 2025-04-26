@@ -1,17 +1,131 @@
-    class Player {
+
+class Stats{
+    constructor(health, attack, defense, strength, speed) {
+        this.health = health;
+        this.attack = attack;
+        this.defense = defense;
+        this.strength = strength;
+        this.speed = speed;
+        
+        this.bonuses = {
+            health: 0,
+            attack: 0,
+            defense: 0,
+            strength: 0,
+            speed: 0
+        };
+
+        this.effects = {
+            health: 0,
+            attack: 0,
+            defense: 0,
+            strength: 0,
+            speed: 0
+        }
+    }
+
+    getTotalStats() {
+        return {
+            health: this.health + this.bonuses.health + this.effects.health,
+            attack: this.attack + this.bonuses.attack + this.effects.attack,
+            defense: this.defense + this.bonuses.defense + this.effects.defense,
+            strength: this.strength + this.bonuses.strength + this.effects.strength,
+            speed: this.speed + this.bonuses.speed + this.effects.speed
+        };
+    }
+    applyEffects(effects) {
+        for (let effect of effects) {
+            if (this.effects[effect.stat] !== undefined) {
+                this.effects[effect.stat] += effect.value;
+            } else {
+                console.error("Invalid stat for effect:", effect.stat);
+            }
+        }
+    }
+    removeEffects(effects) {
+        for (let effect of effects) {
+            if (this.effects[effect.stat] !== undefined) {
+                this.effects[effect.stat] -= effect.value;
+            } else {
+                console.error("Invalid stat for effect:", effect.stat);
+            }
+        }
+    }
+}
+
+// Inventory.js
+class Inventory {
+    constructor(player) {
+        this.items = new Map(); // key: item.name or item.id, value: { item, quantity }
+        this.equipedLeft = null; // left hand
+        this.equipedRight = null; // right hand
+        this.stats = player.stats; // reference to player stats
+    }
+
+    addItem(item, quantity = 1) {
+        if (this.items.has(item.name)) {
+            this.items.get(item.name).quantity += quantity;
+        } else {
+            this.items.set(item.name, { item, quantity });
+        }
+    }
+
+    removeItem(item, quantity = 1) {
+        if (!this.items.has(item.name)) return false;
+        const entry = this.items.get(item.name);
+        entry.quantity -= quantity;
+        if (entry.quantity <= 0) this.items.delete(item.name);
+        return true;
+    }
+
+    getItemQuantity(item) {
+        return this.items.get(item.name)?.quantity || 0;
+    }
+
+    equipItem(item) {
+        if (item instanceof Equipment) {
+            this.equipedLeft = item;
+            if (item.effects) this.stats.applyEffects(item.effects);
+        } else {
+            console.error("Item is not equipment or invalid slot.");
+        }
+    }
+    unequipItem(item) {
+        if (item instanceof Equipment) {
+            if (this.equipedLeft === item) {
+                this.equipedLeft = null;
+            } else if (this.equipedRight === item) {
+                this.equipedRight = null;
+            } else {
+                console.error("Item is not equipped in either hand.");
+                return;
+            }
+            if (item.effects) this.stats.removeEffects(item.effects);
+        } else {
+            console.error("Item is not equipment or invalid slot.");
+        }
+    }
+}
+
+
+class Player {
     constructor(x, y, width, height, texture = 'imgs/link/link_sprites.png') {
         this.x = x;
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		this.speed = 0.0004;
+		// this.speed = 0.0004;
 		this.direction = { x: 0, y: 0 };
 		this.lastDirection = { x: 0, y: 1 }; // mirando hacia abajo por defecto
 		this.moving = false;
         this.scene = null; // store a reference to the scene
         this.center = { x: x+width / 2, y: y+height / 2 }; // local center 
-        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width-0.01, height-0.01);
+        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width, height);
         this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, width/4, height/4);
+
+        // inventory
+        this.stats = new Stats(100, 10, 5, 16, 0.0004); // health, attack, defense, strength, speed
+        this.inventory = new Inventory(this);
 
         // Pushing mechanics
         this.lastBlockedDirection = null;
@@ -42,17 +156,17 @@
     }
 
     draw(context) {
-        if (this.lastDirection.x === 1) {
-			// Reflejar horizontalmente para derecha
-			context.save();
-			context.scale(-1, 1);
-			this.sprite.x = -this.x - this.width;
-			this.sprite.draw();
-			context.restore();
-			this.sprite.x = this.x; // Restaurar posición original
-		} else {
-			this.sprite.draw();
-		}
+        // if (this.lastDirection.x === 1) {
+		// 	// Reflejar horizontalmente para derecha
+		// 	context.save();
+		// 	context.scale(-1, 1);
+		// 	this.sprite.x = -this.x - this.width;
+		// 	this.sprite.draw();
+		// 	context.restore();
+		// 	this.sprite.x = this.x; // Restaurar posición original
+		// } else {
+		// 	this.sprite.draw();
+		// }
 
         if (DEBUG){
             this.boundingBox.draw(context);
@@ -61,7 +175,7 @@
             // Draw a circle in the center of the player for debugging
             let centerPixels = transform(this.center.x,this.center.y,context) 
             context.beginPath();
-            context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
+            context.arc(centerPixels.x, centerPixels.y, 8, 0, 2 * Math.PI);
             context.fillStyle = "red";
             context.fill();
         }
@@ -77,8 +191,8 @@
             this.direction.y /= magnitude;
     
             // Mover personaje
-            let offsetX = this.direction.x * this.speed * deltaTime;
-            let offsetY = this.direction.y * this.speed * deltaTime;
+            let offsetX = this.direction.x * this.stats.getTotalStats().speed * deltaTime;
+            let offsetY = this.direction.y * this.stats.getTotalStats().speed * deltaTime;
 
             let collidedElement = null;
             // Move X first
@@ -144,12 +258,20 @@
                     break;
                 }
             }
+           
             if (collidedX || collidedY) {
                 if (this.sameDirection(this.direction, this.lastBlockedDirection)) {
                     this.pushAttemptTimer += deltaTime;
                     if (this.pushAttemptTimer > this.pushThreshold && collidedElement?.isPushable) {
-                        collidedElement.tryPush(this.direction, this.scene);
-                        this.pushAttemptTimer = 0;
+                        if (this.stats.getTotalStats().strength > 15) {
+                            collidedElement.tryPush(this.direction, this.scene);
+                            this.pushAttemptTimer = 0;
+                        }
+                        else {
+                            this.pushAttemptTimer = 0;
+                            this.lastBlockedDirection = { ...this.direction };
+                            console.log("No tienes suficiente fuerza para empujar el objeto.");
+                        }
                     }
                 } else {
                     this.pushAttemptTimer = 0;
@@ -160,43 +282,43 @@
                 this.lastBlockedDirection = null;
             }
 
-            // TODO: esto debe estar en draw
-            // Cambiar animación si cambia la dirección
-            if (this.direction.x === -1 && this.sprite.currentAnimation !== this.ANIM_LEFT) {
-                this.sprite.setAnimation(this.ANIM_LEFT);
-            } else if (this.direction.x === 1 && this.sprite.currentAnimation !== this.ANIM_RIGHT) {
-                this.sprite.setAnimation(this.ANIM_RIGHT);
-            } else if (this.direction.y === -1 && this.sprite.currentAnimation !== this.ANIM_UP) {
-                this.sprite.setAnimation(this.ANIM_UP);
-            } else if (this.direction.y === 1 && this.sprite.currentAnimation !== this.ANIM_DOWN) {
-                this.sprite.setAnimation(this.ANIM_DOWN);
-            }
+            // // TODO: esto debe estar en draw
+            // // Cambiar animación si cambia la dirección
+            // if (this.direction.x === -1 && this.sprite.currentAnimation !== this.ANIM_LEFT) {
+            //     this.sprite.setAnimation(this.ANIM_LEFT);
+            // } else if (this.direction.x === 1 && this.sprite.currentAnimation !== this.ANIM_RIGHT) {
+            //     this.sprite.setAnimation(this.ANIM_RIGHT);
+            // } else if (this.direction.y === -1 && this.sprite.currentAnimation !== this.ANIM_UP) {
+            //     this.sprite.setAnimation(this.ANIM_UP);
+            // } else if (this.direction.y === 1 && this.sprite.currentAnimation !== this.ANIM_DOWN) {
+            //     this.sprite.setAnimation(this.ANIM_DOWN);
+            // }
     
             this.lastDirection = { ...this.direction };
         } else {
             // Quieto: mantener dirección anterior pero detener la animación en el primer frame
             this.direction = { x: 0, y: 0 };
-            // TODO: esto debe estar en draw
-            if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_LEFT);
-            else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_RIGHT);
-            else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_UP);
-            else if (this.lastDirection.y === 1) this.sprite.setAnimation(this.ANIM_DOWN);
+            // // TODO: esto debe estar en draw
+            // if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_LEFT);
+            // else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_RIGHT);
+            // else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_UP);
+            // else if (this.lastDirection.y === 1) this.sprite.setAnimation(this.ANIM_DOWN);
     
-            // Congelar animación en primer frame
-            this.sprite.currentKeyframe = 0;
-            this.sprite.elapsedTime = 0; // <- importante para que no avance por deltaTime
+            // // Congelar animación en primer frame
+            // this.sprite.currentKeyframe = 0;
+            // this.sprite.elapsedTime = 0; // <- importante para que no avance por deltaTime
         }
     
-        // TODO: esto debe estar en draw
-        // Sincronizar posición del sprite
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
+        // // TODO: esto debe estar en draw
+        // // Sincronizar posición del sprite
+        // this.sprite.x = this.x;
+        // this.sprite.y = this.y;
     
-        // TODO: esto debe estar en draw
-        // Solo actualizar sprite si está en movimiento
-        if (this.moving) {
-            this.sprite.update(deltaTime);
-        }
+        // // TODO: esto debe estar en draw
+        // // Solo actualizar sprite si está en movimiento
+        // if (this.moving) {
+        //     this.sprite.update(deltaTime);
+        // }
     
         // Leer teclas
         let direction = { x: 0, y: 0 };
@@ -226,6 +348,7 @@
         } else {
             this.fKeyState = { down: false, pressed: false, released: true };
         }
+
     }    
 
     sameDirection(dir1, dir2) {

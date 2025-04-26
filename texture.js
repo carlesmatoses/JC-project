@@ -37,4 +37,5 @@ const textures = {
 	blue_floor: new Texture("imgs/animated_floor_blue.png"),
 	green_floor: new Texture("imgs/animated_floor_green.png"),
 	vase: new Texture("imgs/vase.png"),
+	menu: new Texture("imgs/Menu.png"),
 }

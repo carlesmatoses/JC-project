@@ -5,6 +5,8 @@ const FRAME_RATE = 60;
 const TARGET_FPS = FRAME_RATE;
 const TIME_PER_FRAME = 1000 / FRAME_RATE;
 
+
+
 var scene = new Scene();
 var previousTimestamp;
 var keyboard = [];

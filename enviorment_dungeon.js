@@ -1,246 +1,245 @@
 //  Doors
-// const door1 = new Door(1/10, 1/9, 1/10, 1/9, isWalkable=false, texture=null, color="yellow",drawing_settings=null,destination=2, active=true, door=null);
-// const door2 = new Door(5/10, 5/9, 1/10, 1/9, isWalkable=false, texture=null, color="purple",drawing_settings=null,destination=0, active=true, door=null);
+// const door1 = new Door(TILEWIDTH, 1/9, TILEWIDTH, 1/9, isWalkable=false, texture=null, color="yellow",drawing_settings=null,destination=2, active=true, door=null);
+// const door2 = new Door(5*TILEWIDTH, 5/9, TILEWIDTH, 1/9, isWalkable=false, texture=null, color="purple",drawing_settings=null,destination=0, active=true, door=null);
 
 // door1.setDoor(door2); 
 // door2.setDoor(door1);
 
 // // Chests
-// const chest1 = new Chest(4/10, 1/9, 1/10, 1/9, isWalkable=false, texture=textures.chest, color="yellow",drawing_settings=null);
-// const chest2 = new Chest(5/10, 1/9, 1/10, 1/9, isWalkable=false, texture=textures.chest, color="yellow",drawing_settings=null);
+// const chest1 = new Chest(4*TILEWIDTH, 1/9, TILEWIDTH, 1/9, isWalkable=false, texture=textures.chest, color="yellow",drawing_settings=null);
+// const chest2 = new Chest(5*TILEWIDTH, 1/9, TILEWIDTH, 1/9, isWalkable=false, texture=textures.chest, color="yellow",drawing_settings=null);
 
 // // Invisible walls
-// const wall1 = new BackgroundElement(0, 0, 10/10, 1/9,   type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
-// const wall2 = new BackgroundElement(0, 0, 1/10, 9/9,    type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
-// const wall3 = new BackgroundElement(9/10, 0, 1/10, 9/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
-// const wall4 = new BackgroundElement(0, 8/9, 10/10, 1/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
+// const wall1 = new BackgroundElement(0, 0, 10*TILEWIDTH, 1/9,   type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
+// const wall2 = new BackgroundElement(0, 0, TILEWIDTH, 9/9,    type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
+// const wall3 = new BackgroundElement(9*TILEWIDTH, 0, TILEWIDTH, 9/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
+// const wall4 = new BackgroundElement(0, 8/9, 10*TILEWIDTH, 1/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
 
 //Enemies
-const enemyOcto1 = new Enemy(0.4, 0.4, 1/10, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
+const enemyOcto1 = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
 
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
-const dungeon_tile1 = [
-    new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
+const dungeon_tile1 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
         drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128}), 
         entrance_dungeon
 ];
-const dungeon_tile2 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
+const dungeon_tile2 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128})];
-const dungeon_tile3 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
+const dungeon_tile3 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 320+3, sy: 1, sWidth: 160, sHeight: 128}),
 ];
-const dungeon_tile4 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
+const dungeon_tile4 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 480+4, sy: 1, sWidth: 160, sHeight: 128})];
-const dungeon_tile5 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
+const dungeon_tile5 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 640+5, sy: 1, sWidth: 160, sHeight: 128}),
-    new InvisibleWall(4.5/10, 0/8, 10/10, 1/8 ), // top
-    new InvisibleWall(4.5/10, 7/8, 10/10, 1/8 ), // bottom
-    new InvisibleWall(0/10, 3.5/8, 1/10, 8/8 ), // left
+    new InvisibleWall(4.5*TILEWIDTH, 0*TILEHEIGHT, 10*TILEWIDTH, TILEHEIGHT ), // top
+    new InvisibleWall(4.5*TILEWIDTH, 7*TILEHEIGHT, 10*TILEWIDTH, TILEHEIGHT ), // bottom
+    new InvisibleWall(0*TILEWIDTH, 3.5*TILEHEIGHT, TILEWIDTH, 8*TILEHEIGHT ), // left
 
-    new InvisibleWall(8/10, 2/8, 1/10, 1/8 ), // right
-    new InvisibleWall(8/10, 1/8, 1/10, 1/8 ), // right
-    new InvisibleWall(9/10, 2/8, 1/10, 1/8 ), // right
-    new InvisibleWall(9/10, 2.5/8, 1/10, 1/8 ), // right
-    new InvisibleWall(9/10, 4.5/8, 1/10, 1/8 ), // right
-    new InvisibleWall(8/10, 5/8, 1/10, 1/8 ), // right
-    new InvisibleWall(8/10, 6/8, 1/10, 1/8 ), // right
+    new InvisibleWall(8*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ), // right
+    new InvisibleWall(8*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT ), // right
+    new InvisibleWall(9*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ), // right
+    new InvisibleWall(9*TILEWIDTH, 2.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT ), // right
+    new InvisibleWall(9*TILEWIDTH, 4.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT ), // right
+    new InvisibleWall(8*TILEWIDTH, 5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT ), // right
+    new InvisibleWall(8*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT ), // right
 
-    new InvisibleWall(2/10, 2/8, 1/10, 1/8 ), // center
-    new InvisibleWall(2/10, 3/8, 1/10, 1/8 ), // center
-    new InvisibleWall(3/10, 3/8, 1/10, 1/8 ), // center
-    new InvisibleWall(5/10, 3/8, 1/10, 1/8 ), // center
-    new InvisibleWall(6/10, 3/8, 1/10, 1/8 ), // center
-    new InvisibleWall(6/10, 2/8, 1/10, 1/8 ), // center
-    new InvisibleWall(5/10, 2/8, 1/10, 1/8 ), // center
-    new InvisibleWall(3/10, 2/8, 1/10, 1/8 ), // center
+    new InvisibleWall(2*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ), // center
+    new InvisibleWall(2*TILEWIDTH, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT ), // center
+    new InvisibleWall(3*TILEWIDTH, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT ), // center
+    new InvisibleWall(5*TILEWIDTH, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT ), // center
+    new InvisibleWall(6*TILEWIDTH, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT ), // center
+    new InvisibleWall(6*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ), // center
+    new InvisibleWall(5*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ), // center
+    new InvisibleWall(3*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ), // center
 ];
-const dungeon_tile6 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black", 
+const dungeon_tile6 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 800+6, sy: 1, sWidth: 160, sHeight: 128}),
 
-    new InvisibleWall(0/10, 0/8, 20/10, 1/8 ),
+    new InvisibleWall(0*TILEWIDTH, 0*TILEHEIGHT, 20*TILEWIDTH, TILEHEIGHT ),
 
-    new InvisibleWall(0/10, 7/8, 8/10, 1/8 ),
-    new InvisibleWall(9/10, 7/8, 8/10, 1/8 ),
+    new InvisibleWall(0*TILEWIDTH, 7*TILEHEIGHT, 8*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(9*TILEWIDTH, 7*TILEHEIGHT, 8*TILEWIDTH, TILEHEIGHT ),
 
-    new InvisibleWall(9/10, 3.5/8, 1/10, 8/8 ),
+    new InvisibleWall(9*TILEWIDTH, 3.5*TILEHEIGHT, TILEWIDTH, 8*TILEHEIGHT ),
 
-    new InvisibleWall(0/10, 0/8, 1/10, 6/8 ),
-    new InvisibleWall(0/10, 7/8, 1/10, 6/8 ),
+    new InvisibleWall(0*TILEWIDTH, 0*TILEHEIGHT, TILEWIDTH, 6*TILEHEIGHT ),
+    new InvisibleWall(0*TILEWIDTH, 7*TILEHEIGHT, TILEWIDTH, 6*TILEHEIGHT ),
 ];
 // ROW2
-const dungeon_tile7 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile7 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 0+1, sy: 128+2, sWidth: 160, sHeight: 128})];
-const dungeon_tile8 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile8 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 160+2, sy: 128+2, sWidth: 160, sHeight: 128})];
-const dungeon_tile9 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile9 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 128+2, sWidth: 160, sHeight: 128})];
-const dungeon_tile10 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile10 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 128+2, sWidth: 160, sHeight: 128})];
-const dungeon_tile11 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile11 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 128+2, sWidth: 160, sHeight: 128}),
-    new InvisibleWall(0/10, 1/8, 1/10, 8/8 ),
-    new InvisibleWall(9/10, 1/8, 1/10, 4/8 ),
-    new InvisibleWall(0/10, 6/8, 1/10, 3/8 ),
-    new InvisibleWall(9/10, 6/8, 1/10, 4/8 ),
+    new InvisibleWall(0*TILEWIDTH, TILEHEIGHT, TILEWIDTH, 8*TILEHEIGHT ),
+    new InvisibleWall(9*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
+    new InvisibleWall(0*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+    new InvisibleWall(9*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
 
-    new InvisibleWall(2/10, 0/8, 6/10, 1/8 ),
-    new InvisibleWall(2/10, 7/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 7/8, 4/10, 1/8 ),
+    new InvisibleWall(2*TILEWIDTH, 0*TILEHEIGHT, 6*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
 ];   
-const dungeon_tile12 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile12 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 128+2, sWidth: 160, sHeight: 128}),
-    new InvisibleWall(0/10, 1/8, 1/10, 4/8 ),
-    new InvisibleWall(9/10, 1/8, 1/10, 6/8 ),
-    new InvisibleWall(0/10, 6/8, 1/10, 4/8 ),
-    new InvisibleWall(9/10, 6/8, 1/10, 4/8 ),
+    new InvisibleWall(0*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
+    new InvisibleWall(9*TILEWIDTH, TILEHEIGHT, TILEWIDTH, 6*TILEHEIGHT ),
+    new InvisibleWall(0*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
+    new InvisibleWall(9*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
 
-    new InvisibleWall(2/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(2/10, 7/8, 5/10, 1/8 ),
-    new InvisibleWall(7/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 7/8, 5/10, 1/8 ),
+    new InvisibleWall(2*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 5*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 5*TILEWIDTH, TILEHEIGHT ),
 ];
 // ROW3
-const dungeon_tile13 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",    
+const dungeon_tile13 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",    
     drawing_settings={sx: 0+1, sy: 256+3, sWidth: 160, sHeight: 128})];
-const dungeon_tile14 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile14 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 160+2, sy: 256+3, sWidth: 160, sHeight: 128})];
-const dungeon_tile15 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile15 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 256+3, sWidth: 160, sHeight: 128})];
-const dungeon_tile16 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile16 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 256+3, sWidth: 160, sHeight: 128})];
-const dungeon_tile17 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile17 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 256+3, sWidth: 160, sHeight: 128}),
-    new InvisibleWall(0/10, 1/8, 1/10, 8/8 ),
-    new InvisibleWall(9/10, 1/8, 1/10, 8/8 ),
-    new InvisibleWall(0/10, 6/8, 1/10, 3/8 ),
-    new InvisibleWall(9/10, 6/8, 1/10, 3/8 ),
+    new InvisibleWall(0*TILEWIDTH, TILEHEIGHT, TILEWIDTH, 8*TILEHEIGHT ),
+    new InvisibleWall(9*TILEWIDTH, TILEHEIGHT, TILEWIDTH, 8*TILEHEIGHT ),
+    new InvisibleWall(0*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+    new InvisibleWall(9*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
 
-    new InvisibleWall(2/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(2/10, 7/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 7/8, 4/10, 1/8 ),
+    new InvisibleWall(2*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
 ];
-const dungeon_tile18 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile18 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 256+3, sWidth: 160, sHeight: 128})];
 // ROW4
-const dungeon_tile19 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile19 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 0+1, sy: 384+4, sWidth: 160, sHeight: 128})];
-const dungeon_tile20 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile20 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 160+2, sy: 384+4, sWidth: 160, sHeight: 128}),
-    new InvisibleWall(0.0, 3.5/8, 1/10, 8/8 ),
-    new InvisibleWall(9/10, 1/8, 1/10, 4/8 ),
-    new InvisibleWall(9/10, 6/8, 1/10, 4/8 ),
-    new InvisibleWall(4.5/10, 0/8, 10/10, 1/8 ),
-    new InvisibleWall(0/10, 7/8, 8/10, 1/8 ),
-    new InvisibleWall(9/10, 7/8, 8/10, 1/8 ),
+    new InvisibleWall(0.0, 3.5*TILEHEIGHT, TILEWIDTH, 8*TILEHEIGHT ),
+    new InvisibleWall(9*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
+    new InvisibleWall(9*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
+    new InvisibleWall(4.5*TILEWIDTH, 0*TILEHEIGHT, 10*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(0*TILEWIDTH, 7*TILEHEIGHT, 8*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(9*TILEWIDTH, 7*TILEHEIGHT, 8*TILEWIDTH, TILEHEIGHT ),
 
-    createAnimatedFloorGreen(2/10, 6/8),
-    createAnimatedFloorGreen(3/10, 6/8),
-    createAnimatedFloorGreen(3/10, 5/8),
-    createAnimatedFloorGreen(2/10, 5/8),
-    createAnimatedFloorGreen(1/10, 5/8),
-    createAnimatedFloorGreen(1/10, 4/8),
-    createAnimatedFloorGreen(2/10, 4/8),
+    createAnimatedFloorGreen(2*TILEWIDTH, 6*TILEHEIGHT),
+    createAnimatedFloorGreen(3*TILEWIDTH, 6*TILEHEIGHT),
+    createAnimatedFloorGreen(3*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorGreen(2*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorGreen(TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorGreen(TILEWIDTH, TILEHEIGHT*4),
+    createAnimatedFloorGreen(2*TILEWIDTH, TILEHEIGHT*4),
 
-    createAnimatedFloorGreen(7/10, 4/8),
-    createAnimatedFloorGreen(8/10, 4/8),
-    createAnimatedFloorGreen(7/10, 5/8),
-    createAnimatedFloorGreen(8/10, 5/8),
-    createAnimatedFloorGreen(6/10, 5/8),
-    createAnimatedFloorGreen(6/10, 6/8),
-    createAnimatedFloorGreen(7/10, 6/8),
+    createAnimatedFloorGreen(7*TILEWIDTH, TILEHEIGHT*4),
+    createAnimatedFloorGreen(8*TILEWIDTH, TILEHEIGHT*4),
+    createAnimatedFloorGreen(7*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorGreen(8*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorGreen(6*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorGreen(6*TILEWIDTH, 6*TILEHEIGHT),
+    createAnimatedFloorGreen(7*TILEWIDTH, 6*TILEHEIGHT),
 
-    createAnimatedFloorRed(2/10, 2/8),
-    createAnimatedFloorRed(3/10, 2/8),
-    createAnimatedFloorRed(4/10, 2/8),
-    createAnimatedFloorRed(5/10, 2/8),
-    createAnimatedFloorRed(6/10, 2/8),
-    createAnimatedFloorRed(7/10, 2/8),
-    createAnimatedFloorRed(4/10, 1/8),
-    createAnimatedFloorRed(5/10, 1/8),
+    createAnimatedFloorRed(2*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(3*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(4*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(5*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(6*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(7*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(4*TILEWIDTH, TILEHEIGHT),
+    createAnimatedFloorRed(5*TILEWIDTH, TILEHEIGHT),
 
-    createFirePlace(3/10, 1/8),
-    createFirePlace(6/10, 1/8),
+    createFirePlace(3*TILEWIDTH, TILEHEIGHT),
+    createFirePlace(6*TILEWIDTH, TILEHEIGHT),
 
-    createVase(1/10, 1/8),
-    createVase(2/10, 1/8),
-    createVase(1/10, 2/8),
-    createVase(8/10, 1/8),
-    createVase(7/10, 1/8),
-    createVase(8/10, 2/8),
-    createVase(1/10, 6/8),
-    createVase(8/10, 6/8),
+    createVase(TILEWIDTH, TILEHEIGHT),
+    createVase(2*TILEWIDTH, TILEHEIGHT),
+    createVase(TILEWIDTH, TILEHEIGHT*2),
+    createVase(8*TILEWIDTH, TILEHEIGHT),
+    createVase(7*TILEWIDTH, TILEHEIGHT),
+    createVase(8*TILEWIDTH, TILEHEIGHT*2),
+    createVase(TILEWIDTH, 6*TILEHEIGHT),
+    createVase(8*TILEWIDTH, 6*TILEHEIGHT),
 ];
-const dungeon_tile21 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile21 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 384+4, sWidth: 160, sHeight: 128}),
-    new InvisibleWall(0.0, 1/8, 1/10, 4/8 ),
-    new InvisibleWall(0.0, 6/8, 1/10, 4/8 ),
-    new InvisibleWall(4.5/10, 0/8, 10/10, 1/8 ),
-    new InvisibleWall(0/10, 7/8, 7/10, 1/8 ),
-    new InvisibleWall(8/10, 7/8, 7/10, 1/8 ),
-    new InvisibleWall(9/10, 1/8, 1/10, 3/8 ),
-    new InvisibleWall(9/10, 6/8, 1/10, 3/8 ),
+    new InvisibleWall(0.0, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
+    new InvisibleWall(0.0, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
+    new InvisibleWall(4.5*TILEWIDTH, 0*TILEHEIGHT, 10*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(0*TILEWIDTH, 7*TILEHEIGHT, 7*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(8*TILEWIDTH, 7*TILEHEIGHT, 7*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(9*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+    new InvisibleWall(9*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
 ];
-const dungeon_tile22 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile22 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 384+4, sWidth: 160, sHeight: 128}),
-    new InvisibleWall(0/10, 1/8, 1/10, 3/8 ),
-    new InvisibleWall(9/10, 1/8, 1/10, 3/8 ),
-    new InvisibleWall(0/10, 6/8, 1/10, 3/8 ),
-    new InvisibleWall(9/10, 6/8, 1/10, 3/8 ),
+    new InvisibleWall(0*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+    new InvisibleWall(9*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+    new InvisibleWall(0*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+    new InvisibleWall(9*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
 
-    new InvisibleWall(2/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(2/10, 7/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 7/8, 4/10, 1/8 ),
+    new InvisibleWall(2*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
 ];
-const dungeon_tile23 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile23 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 384+4, sWidth: 160, sHeight: 128}),
-    new InvisibleWall(0/10, 1/8, 1/10, 3/8 ),
-    new InvisibleWall(9/10, 1/8, 1/10, 8/8 ),
-    new InvisibleWall(0/10, 6/8, 1/10, 3/8 ),
-    new InvisibleWall(9/10, 6/8, 1/10, 3/8 ),
+    new InvisibleWall(0*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+    new InvisibleWall(9*TILEWIDTH, TILEHEIGHT, TILEWIDTH, 8*TILEHEIGHT ),
+    new InvisibleWall(0*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+    new InvisibleWall(9*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
 
-    new InvisibleWall(2/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(2/10, 7/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 7/8, 4/10, 1/8 ),
+    new InvisibleWall(2*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
 ];
-const dungeon_tile24 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile24 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 384+4, sWidth: 160, sHeight: 128})];
 // ROW5
-const dungeon_tile25 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile25 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 0+1, sy: 512+5, sWidth: 160, sHeight: 128})];
-const dungeon_tile26 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile26 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 160+2, sy: 512+5, sWidth: 160, sHeight: 128}),
     entrance_dungeon,
-    createFirePlace(1/10, 1/8),
-    createFirePlace(1/10, 6/8),
-    createFirePlace(8/10, 1/8),
-    createFirePlace(8/10, 6/8),
-    new InvisibleWall(0.0, 3.5/8, 1/10, 8/8 ),
-    new InvisibleWall(9/10, 3.5/8, 1/10, 8/8 ),
-    new InvisibleWall(2/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(7/10, 0/8, 4/10, 1/8 ),
-    new InvisibleWall(4.5/10, 7/8, 10/10, 1/8 ),
+    createFirePlace(TILEWIDTH, TILEHEIGHT),
+    createFirePlace(TILEWIDTH, 6*TILEHEIGHT),
+    createFirePlace(8*TILEWIDTH, TILEHEIGHT),
+    createFirePlace(8*TILEWIDTH, 6*TILEHEIGHT),
+    new InvisibleWall(0.0, 3.5*TILEHEIGHT, TILEWIDTH, 8*TILEHEIGHT ),
+    new InvisibleWall(9*TILEWIDTH, 3.5*TILEHEIGHT, TILEWIDTH, 8*TILEHEIGHT ),
+    new InvisibleWall(2*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(4.5*TILEWIDTH, 7*TILEHEIGHT, 10*TILEWIDTH, TILEHEIGHT ),
 
-    new InvisibleWall(2/10, 2/8, 1/10, 1/8 ),
-    new InvisibleWall(2/10, 3/8, 1/10, 1/8 ),
-    new InvisibleWall(2/10, 4/8, 1/10, 1/8 ),
-    new InvisibleWall(3/10, 2/8, 1/10, 1/8 ),
-    new InvisibleWall(6/10, 2/8, 1/10, 1/8 ),
-    new InvisibleWall(7/10, 2/8, 1/10, 1/8 ),
-    new InvisibleWall(7/10, 3/8, 1/10, 1/8 ),
-    new InvisibleWall(7/10, 4/8, 1/10, 1/8 ),
+    new InvisibleWall(2*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(2*TILEWIDTH, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(2*TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(3*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(6*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT ),
 ];
-const dungeon_tile27 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile27 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 512+5, sWidth: 160, sHeight: 128})];
-const dungeon_tile28 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile28 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 512+5, sWidth: 160, sHeight: 128})];
-const dungeon_tile29 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile29 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 512+5, sWidth: 160, sHeight: 128})];
-const dungeon_tile30 = [new BackgroundElement(0, 0, 1, 1, "ground", true, texture=textures.dungeon1, color="black",
+const dungeon_tile30 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 512+5, sWidth: 160, sHeight: 128})];
 
 

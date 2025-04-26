@@ -4,7 +4,7 @@ canvas {
     width: 80vw;
     height: auto;
     max-height: 100vh;
-    max-width: calc(100vh * (160 / 128));
+    max-width: calc(100vh * (10 / 9));
     image-rendering: pixelated;
 }
 

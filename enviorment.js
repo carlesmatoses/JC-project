@@ -133,8 +133,8 @@ class BackgroundElement {
     }
 
     tryPush(direction, scene) {
-        const targetX = this.x + direction.x * 1/10;
-        const targetY = this.y + direction.y * 1/8;
+        const targetX = this.x + direction.x * TILEWIDTH;
+        const targetY = this.y + direction.y * TILEHEIGHT;
     
         // Create a temporary bounding box to simulate the move
         const testBox = new BoundingBox(
@@ -175,13 +175,13 @@ class BackgroundElement {
 
 class Door extends BackgroundElement {
     constructor(x, y,  texture = null, map = null, level = null, active = true, destination_door = null) {
-        super(x, y, 1/10, 1/8, "door", false, texture, null, null);
+        super(x, y, TILEWIDTH, TILEHEIGHT, "door", false, texture, null, null);
         this.map = map; 
         this.level = level; 
         this.active = active; // Whether the door is active or not
         this.door = destination_door; // Optional door object for additional functionality
         this.wasColliding = false; // Track previous collision state
-        this.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 0.8/10, 0.8/8); // Bounding box for collision detection
+        this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, 0.8*TILEWIDTH, 0.8*TILEHEIGHT); // Bounding box for collision detection
     }
 
     setDestination(destination) {
@@ -249,10 +249,10 @@ class Door extends BackgroundElement {
 
 class Chest extends BackgroundElement {
     constructor(x, y) {
-        super(x, y, 1/10, 1/8, "chest", false, textures.chest, null, null);
+        super(x, y, TILEWIDTH, TILEHEIGHT, "chest", false, textures.chest, null, null);
         this.isOpen = false; // Whether the chest is open or not
         this.content = null; // Content of the chest (e.g., items, coins)
-        this.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 0.8/10, 0.8/8); // Bounding box for collision detection
+        this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, 0.9*TILEWIDTH, 0.9*TILEHEIGHT); // Bounding box for collision detection
         console.log("is chest oppened?", this.isOpen);
     }
 
@@ -275,6 +275,7 @@ class Chest extends BackgroundElement {
             
             // Add logic to give content to the player
             // e.g., player.addItem(this.content);
+            player.inventory.addItem(this.content); // Add the content to the player's inventory
             if(this.callback) this.callback(); // Call the callback function if provided
         } else {
             // this.close(); // Close the chest if it is already open
@@ -303,9 +304,9 @@ class Chest extends BackgroundElement {
 
 class Tombstone extends BackgroundElement {
     constructor(x, y) {
-        super(x, y, 1/10, 1/8, "tombstone", false, textures.tombstone, null, null);
+        super(x, y, TILEWIDTH, TILEHEIGHT, "tombstone", false, textures.tombstone, null, null);
         this.render_layer = 0; // Render layer for tombstones
-        this.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 1/10, 1/8); // Bounding box for collision detection
+        this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT); // Bounding box for collision detection
         this.isPushable = true; // Tombstones are pushable
         this.callback = null; // Optional callback function for when the tombstone is pushed
     }
@@ -315,7 +316,7 @@ class Tombstone extends BackgroundElement {
 class InvisibleWall extends BackgroundElement {
     constructor(x, y, width, height) {
         super(x, y, width, height, "wall", false, null, null, null);
-        this.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, width, height); // Bounding box for collision detection
+        this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, width, height); // Bounding box for collision detection
     }
 
     draw(context) {
@@ -328,14 +329,13 @@ class InvisibleWall extends BackgroundElement {
 }
 
 function createVase(x, y){
-    let element =  new BackgroundElement(x, y, 1/10, 1/8, "vase", false, texture = textures.vase, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
-    element.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 1/10, 1/8); // Bounding box for collision detection
+    let element =  new BackgroundElement(x, y, TILEWIDTH, TILEHEIGHT, "vase", false, texture = textures.vase, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
+    element.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT); // Bounding box for collision detection
     return element; // Return the vase element
 }
-
 function createFirePlace(x, y) {
-    let element =  new BackgroundElement(x, y, 1/10, 1/8, "fireplace", false, texture = textures.fireplace, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
-    element.boundingBox = new BoundingBox(x+0.5/10, y+0.5/8, 1/10, 1/8); // Bounding box for collision detection
+    let element =  new BackgroundElement(x, y, TILEWIDTH, TILEHEIGHT, "fireplace", false, texture = textures.fireplace, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
+    element.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT); // Bounding box for collision detection
     
     element.update = function(deltaTime) {
         if (this.animationTimer === undefined) {
@@ -370,9 +370,8 @@ function createFirePlace(x, y) {
     
     return element; // Return the fireplace element
 }
-
 function createAnimatedFloor(x, y, texture) {
-    let element =  new BackgroundElement(x, y, 1/10, 1/8, "animated_floor", true, texture = texture, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
+    let element =  new BackgroundElement(x, y, TILEWIDTH, TILEHEIGHT, "animated_floor", true, texture = texture, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
 
     element.update = function(deltaTime) {
         if (this.animationTimer === undefined) {
@@ -406,7 +405,6 @@ function createAnimatedFloor(x, y, texture) {
     };
     return element; // Return the animated floor element
 }
-
 function createAnimatedFloorRed(x, y) {
     return createAnimatedFloor(x, y, textures.red_floor); // Create an animated floor with red texture
 }
@@ -416,6 +414,44 @@ function createAnimatedFloorBlue(x, y) {
 function createAnimatedFloorGreen(x, y) {
     return createAnimatedFloor(x, y, textures.green_floor); // Create an animated floor with green texture
 }
+
+// ITEMS
+// Item.js
+class Item {
+    constructor(name, icon, isStackable = true) {
+        this.name = name;
+        this.icon = icon;
+        this.isStackable = isStackable;
+        this.maxStackSize = 10;
+        this.type = "generic"; // could be 'equipment', 'consumable', etc.
+        this.effects = []; // array of effects that this item can apply
+    }
+}
+
+class Equipment extends Item {
+    constructor(name, icon, slot, effects = {}) {
+        super(name, icon, false); // equipment is usually not stackable
+        this.type = "equipment";
+        this.slot = slot; // e.g., 'head', 'body', 'legs', etc.
+        this.effects = effects; // e.g., { armor: 5 }
+    }
+}
+
+class Effect {
+    constructor(stat, value, duration) {
+        this.stat = stat; // e.g., 'health', 'attack', etc.
+        this.value = value; // e.g., +5 or -3
+        this.duration = duration; // in seconds, 0 means it does not expire
+        this.startTime = null; // to track when the effect started
+    }
+
+    isExpired(currentTime) {
+        if (this.duration === 0) return false; // Does not expire
+        return (currentTime - this.startTime) >= this.duration * 1000;
+    }
+}
+const BraceletStrength = new Equipment("Power Bracelet", "imgs/items/bracelet_strength.png", null, [new Effect("strength", 15, 0)]);
+
 
 /**
  * Class representing a level in the game. Contains static elements, enemies, items...
@@ -449,6 +485,7 @@ class Level{
                 );
                 copy.globalReference = element;
                 copy.isOpen = element.isOpen; // Copy the isOpen state
+                copy.content = element.content; // Copy the content of the chest
                 copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof Tombstone) {
@@ -500,7 +537,7 @@ class Level{
  * @param {Array} levels - The levels in the map.
  * 
  * */
-class Map {
+class MapContainer {
     constructor(id, x, y, levels) {
         this.id = id; // ID of the map
         this.x = x;  // cols of matrix
@@ -548,8 +585,8 @@ class World {
 
 
 // level_001 elements
-let size_x = 1/10;
-let size_y = 1/9;
+let size_x = TILEWIDTH;
+let size_y = TILEHEIGHT;
 
 function createBasicTail(x, y) {
     const basicTail = new BackgroundElement(x, y, size_x, size_y, "ground", false, texture=textures.brick, color="green");
@@ -561,7 +598,7 @@ function createBasicTailRock(x, y) {
 }
 
 const world = new World([
-    new Map('overworld', 16, 16, []),
-    new Map('dungeon1', 6, 5, []),
+    new MapContainer('overworld', 16, 16, []),
+    new MapContainer('dungeon1', 6, 5, []),
 ]); // Create a world with the dungeon1 map
 window.world = world; // Make the world accessible globally for debugging
