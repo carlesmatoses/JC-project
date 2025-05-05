@@ -126,6 +126,11 @@ class Scene{
 			this.gameStateManager.pushState(this.menu); 
         }
 
+		if (input.isPressed('KeyH')) { // add a 
+		
+			this.gameStateManager.pushState(new DialogState(this.gameStateManager, ["Hello! Press F to continue", "Press B to activate Debug"])); // Show dialog
+		}
+
 		// additionally handle player input
 		this.player.handleInput(input);
 	}

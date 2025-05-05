@@ -39,4 +39,5 @@ const textures = {
 	vase: new Texture("imgs/vase.png"),
 	menu: new Texture("imgs/Menu.png"),
 	braceletStrength: new Texture("imgs/brazalete-l1.png"),
+	statue: new Texture("imgs/statue.png"),
 }

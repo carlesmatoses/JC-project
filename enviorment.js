@@ -329,6 +329,18 @@ class InvisibleWall extends BackgroundElement {
     }
 }
 
+class Statue extends BackgroundElement {
+    constructor(x, y, dialog) {
+        super(x, y, TILEWIDTH, TILEHEIGHT, "statue", false, textures.statue, null, null);
+        this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
+        this.dialog = dialog; 
+    }
+
+    interact(player) {
+        addDialog(this.dialog); 
+    }
+}
+
 function createVase(x, y){
     let element =  new BackgroundElement(x, y, TILEWIDTH, TILEHEIGHT, "vase", false, texture = textures.vase, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
     element.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT); // Bounding box for collision detection
@@ -503,6 +515,15 @@ class Level{
                 // Create a new InvisibleWall instance
                 let copy = new InvisibleWall(
                     element.x, element.y, element.width, element.height
+                );
+                copy.globalReference = element;
+                copy.boundingBox = element.boundingBox; // Copy the bounding box
+                copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof Statue) {
+                // Create a new Statue instance
+                let copy = new Statue(
+                    element.x, element.y, element.dialog
                 );
                 copy.globalReference = element;
                 copy.boundingBox = element.boundingBox; // Copy the bounding box
