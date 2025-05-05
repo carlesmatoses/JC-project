@@ -345,7 +345,8 @@ class Player {
     }
 
     draw(context) {
-       
+        this.sprite.x = this.x;
+        this.sprite.y = this.y;
 		this.sprite.draw();
 
         if (this.isAttacking) {
@@ -370,6 +371,7 @@ class Player {
     }
 
     update(deltaTime) {
+        console.log("hola no se actualiza el player");
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
 
