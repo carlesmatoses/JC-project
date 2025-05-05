@@ -5,7 +5,15 @@ class Enemy {
         this.lastPosition = { x: x, y: y }; // Last position for collision detection
         this.width = width; // Width of the player
         this.height = height; // Height of the player
-        this.render_layer = -1;
+        this.render_layer = 0   ; //this.render_layer = -1;
+        this.center = { x: x+width / 2, y: y+height / 2 }; // local center 
+        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.9, height*0.9);
+
+        // FIXME: Carles hay que buscar una manera de pasarle la escena y tambien el player para detectar colision con él 
+        // Ademas esta con el codigo "antiguo" sin tener en cuenta las colisiones por el problema de pasarle la escena
+        //this.scene = scene;
+
+        //FIXME: Al poner su texture se bugea no se porque
         //this.texture = new Texture(texture); // Texture (sprites) for the player //OLD
 
         //Cara a futuro
@@ -46,21 +54,7 @@ class Enemy {
 
 		this.sprite.setAnimation(this.animDown); // Animación por defecto
 
-        /* //OLD
-        // Animation
-        this.frame = 0; // Current frame of the player's animation (0,1)
-        this.animationTimer = 0;
-        this.frameDuration = 100; // Time in milliseconds for each frame
-        this.lastPosition = { x: 0, y: 0 }; // Last position of the player for collision detection
-        
-        // Sprites
-        this.sprites = {
-            idle_walk_0: { start: { x: 1, y: 11 }, end: { x: 16, y: 27 } }, // facing down
-            idle_walk_1: { start: { x: 18, y: 11 }, end: { x: 33, y: 27 } }, // facing up
-            idle_walk_2_1: { start: { x: 35, y: 11 }, end: { x: 50, y: 27 } }, // facing left
-            idle_walk_2_2: { start: { x: 52, y: 11 }, end: { x: 67, y: 27 } }  // facing left 2
-        };*/
-
+        console.log("Enemigo Creado");
 
     }
 
@@ -81,70 +75,21 @@ class Enemy {
         //OLD
         let pos = transform(this.x, this.y, context);
         let size = transform(this.width, this.height, context);
-    
-        /*
-        // Determine the sprite based on direction
-        let spriteKey;
-        if (this.lastDirection.x === -1) { // Left
-            // Select idle_walk_2_1 or idle_walk_2_2 based on frame
-            spriteKey = this.frame === 0 ? 'idle_walk_2_1' : 'idle_walk_2_2';
-        } else if (this.lastDirection.x === 1) { // Right
-            // Select idle_walk_2_1 or idle_walk_2_2 for right (mirroring already handled by scaling)
-            spriteKey = this.frame === 0 ? 'idle_walk_2_1' : 'idle_walk_2_2';
-            context.save();  // Save current state
-            context.scale(-1, 1); // Flip horizontally
-            pos.x = -pos.x - size.x; // Offset mirrored sprite
-        } else if (this.lastDirection.y === -1) { // Up
-            spriteKey = 'idle_walk_1'; // Same sprite for both frames
-            if (this.frame === 1) {
-                context.save();  // Save current state
-                context.scale(-1, 1); // Flip horizontally for frame 1
-                pos.x = -pos.x - size.x; // Offset mirrored sprite
-            }
-        } else if (this.lastDirection.y === 1) { // Down
-            spriteKey = 'idle_walk_0'; // Same sprite for both frames
-            if (this.frame === 1) {
-                context.save();  // Save current state
-                context.scale(-1, 1); // Flip horizontally for frame 1
-                pos.x = -pos.x - size.x; // Offset mirrored sprite
-            }
-        } else {
-            spriteKey = 'idle_walk_0'; // Default sprite (standing still)
-        }
-    
-        // Select the sprite based on the key
-        const sprite = this.sprites[spriteKey];
-    
-        // Draw the sprite to the canvas
-        context.drawImage(
-            this.texture.img,
-            sprite.start.x,
-            sprite.start.y,
-            sprite.end.x - sprite.start.x,
-            sprite.end.y - sprite.start.y,
-            pos.x,
-            pos.y,
-            size.x,
-            size.y
-        );
-
-        */
-
+        
         //DEBUG
         // Draw the bounding box of the player
         context.strokeStyle = 'red'; // Set the color of the bounding box
         context.lineWidth = 1; // Set the width of the bounding box lines
         context.strokeRect(pos.x, pos.y, size.x, size.y); // Draw the bounding box
     
-        /*
-        //OLD
-        // Restore context if mirrored
-        if (this.lastDirection.x === 1 || this.lastDirection.y !== 0) context.restore();  // Only restore if mirrored
-        */
+     
 
+        //console.log("Enemigo Dibujado");
 
     }
 
+    
+    //OLD
     update(deltaTime) {
         // Actualiza temporizador para cambiar dirección
 		this.changeDirTimer += deltaTime;
@@ -177,29 +122,7 @@ class Enemy {
             this.x = Math.max(0, Math.min(this.x, canvasWidth - this.width));
             this.y = Math.max(0, Math.min(this.y, canvasHeight - this.height));
         }
-        /*
-        //OLD
-        if (this.moving) {
-            // Normalize movement
-            this.direction.x /= magnitude;
-            this.direction.y /= magnitude;
 
-            // Move enemy
-            this.x += this.direction.x * this.speed * deltaTime;
-            this.y += this.direction.y * this.speed * deltaTime;
-
-            // **Handle Animation Frame Switching**
-            //FIXME: Modificar
-            this.animationTimer += deltaTime;
-            if (this.animationTimer > this.frameDuration) {
-                this.frame = this.frame === 0 ? 1 : 0; // Toggle between frame 0 and 1
-                this.animationTimer = 0;
-            }
-        } else {
-            this.frame = 0; // Reset to idle when not moving
-        }*/
-
-        
         this.sprite.x = this.x;
         this.sprite.y = this.y;
 
@@ -218,6 +141,7 @@ class Enemy {
         // Solo animar si está moviéndose
         if (this.moving) {
             this.sprite.update(deltaTime);
+            //console.log("Animandose el enemigo");
         } else {
             this.sprite.currentKeyframe = 0; // Mostrar frame "quieto"
         }
@@ -225,6 +149,96 @@ class Enemy {
         //this.setDirection(direction.x, direction.y);
        
     }
+    
+    /*
+    update(deltaTime) {
+        // Cambiar dirección cada cierto tiempo
+        this.changeDirTimer += deltaTime;
+        if (this.changeDirTimer >= this.timeToChange) {
+            this.changeDirTimer = 0;
+            this.timeToChange = 1000 + Math.random() * 2000;
+            const randomDir = this.getRandomDirection();
+            this.setDirection(randomDir.x, randomDir.y);
+        }
+    
+        // Normalizar dirección
+        let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
+        this.moving = magnitude > 0;
+    
+        if (this.moving) {
+            this.direction.x /= magnitude;
+            this.direction.y /= magnitude;
+    
+            let offsetX = this.direction.x * this.speed * deltaTime;
+            let offsetY = this.direction.y * this.speed * deltaTime;
+    
+            // Guardar referencia para colisión
+            let collidedX = false;
+            let collidedY = false;
+    
+            // --- Movimiento en X ---
+            this.x += offsetX;
+            this.center.x = this.x + (this.width / 2);
+            this.boundingBox.setPosition(this.center.x, this.center.y);
+    
+            for (let element of this.scene.levelContent) {
+                if (element.boundingBox && element.isActive()) {
+                    if (this.boundingBox.isColliding(element.boundingBox)) {
+                        this.x -= offsetX; // revertir movimiento
+                        this.center.x = this.x + (this.width / 2);
+                        this.boundingBox.setPosition(this.center.x, this.center.y);
+                        collidedX = true;
+                        break;
+                    }
+                }
+            }
+    
+            // --- Movimiento en Y ---
+            this.y += offsetY;
+            this.center.y = this.y + (this.height / 2);
+            this.boundingBox.setPosition(this.center.x, this.center.y);
+    
+            for (let element of this.scene.levelContent) {
+                if (element.boundingBox && element.isActive()) {
+                    if (this.boundingBox.isColliding(element.boundingBox)) {
+                        this.y -= offsetY; // revertir movimiento
+                        this.center.y = this.y + (this.height / 2);
+                        this.boundingBox.setPosition(this.center.x, this.center.y);
+                        collidedY = true;
+                        break;
+                    }
+                }
+            }
+    
+            if (!collidedX && !collidedY) {
+                this.lastDirection = { ...this.direction };
+            }
+        }
+    
+        // Animación según dirección
+        let newAnim = this.animRight;
+        if (this.lastDirection.x === -1) newAnim = this.animLeft;
+        else if (this.lastDirection.x === 1) newAnim = this.animRight;
+        else if (this.lastDirection.y === -1) newAnim = this.animUp;
+        else if (this.lastDirection.y === 1) newAnim = this.animDown;
+    
+        if (this.sprite.currentAnimation !== newAnim) {
+            this.sprite.setAnimation(newAnim);
+        }
+    
+        // Actualizar sprite solo si se mueve
+        if (this.moving) {
+            this.sprite.update(deltaTime);
+        } else {
+            this.sprite.currentKeyframe = 0;
+            this.sprite.elapsedTime = 0;
+        }
+    
+        // Sincronizar sprite con posición
+        this.sprite.x = this.x;
+        this.sprite.y = this.y;
+    } */
+    
 
     setDirection(dx, dy) {
         this.direction.x = dx;

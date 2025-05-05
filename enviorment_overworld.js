@@ -36,6 +36,11 @@ principal_chest.callback = function() {
     principal_chest.open();
 }
 
+const enemyOctoOver = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //Para testear
+
+
+//Remember the tile we work is on debug +1. Example debug says 103 we are working on the code on 104
+
 // ROW1
 const tile1 = [
     new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.overworld, color="black", 
@@ -471,6 +476,7 @@ const tile104 = [
         new Tombstone(TILEWIDTH*7, TILEHEIGHT*3),
         new Tombstone(TILEWIDTH*3, TILEHEIGHT*5),
         new Tombstone(TILEWIDTH*5, TILEHEIGHT*5),
+        enemyOctoOver
 ];
 const tile105 = [
     new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.overworld, color="black", 

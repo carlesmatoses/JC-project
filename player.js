@@ -258,7 +258,7 @@ class Inventory {
 
 
 class Player {
-    constructor(x, y, width, height, texture = 'imgs/link/link_sprites.png') {
+    constructor(x, y, width, height, texture = 'imgs/link/link_spritePropio3.png') {
         this.x = x;
 		this.y = y;
 		this.width = width;
@@ -281,42 +281,81 @@ class Player {
         this.pushAttemptTimer = 0;
         this.pushThreshold = 1*1000; // ms
 
-		// Sprite y animaciones
+        //attack 
+        this.isAttacking = false;
+        this.attackDuration = 500; // milisegundos
+        this.attackTimer = 0;
+
+		// Sprite y animaciones Player
 		this.texture = new Texture(texture);
 		this.sprite = new Sprite(x, y, width, height, 10, this.texture);
 
+        //Sino hacer spritesheet independiente
+        this.swordTexture = new Texture(texture);
+        this.swordSprite = new Sprite(x, y, width, height, 10, this.swordTexture);
+
 		// Creamos animaciones (puedes añadir más si tienes otras direcciones o acciones)
-		this.ANIM_DOWN = this.sprite.addAnimation(); // 0
-		this.sprite.addKeyframe(this.ANIM_DOWN, [1, 11, 15, 16]);
-		this.sprite.addKeyframe(this.ANIM_DOWN, [1, 11, 15, 16]);
+        this.ANIM_DOWN = this.sprite.addAnimation(); // 0
+		this.sprite.addKeyframe(this.ANIM_DOWN, [0, 0, 15, 16]);
+		this.sprite.addKeyframe(this.ANIM_DOWN, [16, 0, 15, 16]);
 
 		this.ANIM_UP = this.sprite.addAnimation(); // 1
-		this.sprite.addKeyframe(this.ANIM_UP, [18, 11, 15, 16]); // mismo frame que antes
-		this.sprite.addKeyframe(this.ANIM_UP, [18, 11, 15, 16]); // repetir si no tienes otra imagen
+		this.sprite.addKeyframe(this.ANIM_UP, [32, 0, 15, 16]); // mismo frame que antes
+		this.sprite.addKeyframe(this.ANIM_UP, [48, 0, 15, 16]); 
 
 		this.ANIM_LEFT = this.sprite.addAnimation(); // 2
-		this.sprite.addKeyframe(this.ANIM_LEFT, [35, 11, 15, 16]);
-		this.sprite.addKeyframe(this.ANIM_LEFT, [52, 11, 15, 16]);
+		this.sprite.addKeyframe(this.ANIM_LEFT, [64, 0, 15, 16]);
+		this.sprite.addKeyframe(this.ANIM_LEFT, [80, 0, 15, 16]);
 
 		this.ANIM_RIGHT = this.sprite.addAnimation(); // 3 (igual que left pero reflejado)
-		this.sprite.addKeyframe(this.ANIM_RIGHT, [35, 11, 15, 16]);
-		this.sprite.addKeyframe(this.ANIM_RIGHT, [52, 11, 15, 16]);
+		this.sprite.addKeyframe(this.ANIM_RIGHT, [96, 0, 15, 16]);
+		this.sprite.addKeyframe(this.ANIM_RIGHT, [112, 0, 15, 16]);
+
+
+        //Animaciones Ataque Player
+        this.ANIM_ATTACK_DOWN = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.ANIM_ATTACK_DOWN,[0, 16, 16, 16] ); //[16, 32, 15, 16]);
+        
+        this.ANIM_ATTACK_UP = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.ANIM_ATTACK_UP, [80, 32, 15, 16]);
+        
+        this.ANIM_ATTACK_LEFT = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.ANIM_ATTACK_LEFT, [0, 32, 15, 16]);
+
+        this.ANIM_ATTACK_RIGHT = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.ANIM_ATTACK_RIGHT, [96, 32, 15, 16]);
+
+        //Animaciones Sword
+        // Simple
+        //FIXME: Modificar valores
+        this.SWORD_DOWN = this.swordSprite.addAnimation();
+        this.swordSprite.addKeyframe(this.SWORD_DOWN, [0, 16, 16, 16]);
+
+        this.SWORD_UP = this.swordSprite.addAnimation();
+        this.swordSprite.addKeyframe(this.SWORD_UP, [16, 16, 16, 16]);
+
+        this.SWORD_LEFT = this.swordSprite.addAnimation();
+        this.swordSprite.addKeyframe(this.SWORD_LEFT, [32, 16, 16, 16]);
+
+        this.SWORD_RIGHT = this.swordSprite.addAnimation();
+        this.swordSprite.addKeyframe(this.SWORD_RIGHT, [48, 16, 16, 16]);
+
+        
 
     }
 
     draw(context) {
-        if (this.lastDirection.x === 1) {
-			// Reflejar horizontalmente para derecha
-			context.save();
-			context.scale(-1, 1);
-			this.sprite.x = -this.x - this.width;
-			this.sprite.draw();
-			context.restore();
-			this.sprite.x = this.x; // Restaurar posición original
-		} else {
-			this.sprite.draw();
-		}
+       
+		this.sprite.draw();
 
+        if (this.isAttacking) {
+            console.log("dibujando espada");
+            this.swordSprite.draw(); // dibujar espada encima si estamos atacando
+            //context.fillStyle = "red";
+            //context.fillRect(this.swordSprite.x, this.swordSprite.y, 16, 16);
+            
+        }
+        
         if (DEBUG){
             this.boundingBox.draw(context);
             this.handBoundingBox.draw(context);
@@ -333,6 +372,43 @@ class Player {
     update(deltaTime) {
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
+
+        //console.log(this.isAttacking);
+        if (this.isAttacking) {
+            this.attackTimer += deltaTime;
+            this.sprite.update(deltaTime); // animación del cuerpo
+            this.swordSprite.update(deltaTime); // animación de la espada también
+        
+            if (this.attackTimer >= this.attackDuration) {
+                this.isAttacking = false;
+                this.attackTimer = 0;
+            }
+        
+            // Posicionar espada dependiendo de dirección
+            const offset = 16; // o lo que necesites según la dirección
+        
+            if (this.lastDirection.x === -1) {
+                this.swordSprite.setAnimation(this.SWORD_LEFT);
+                this.swordSprite.x = this.x - offset;
+                this.swordSprite.y = this.y;
+            } else if (this.lastDirection.x === 1) {
+                this.swordSprite.setAnimation(this.SWORD_RIGHT);
+                this.swordSprite.x = this.x + offset;
+                this.swordSprite.y = this.y;
+            } else if (this.lastDirection.y === -1) {
+                this.swordSprite.setAnimation(this.SWORD_UP);
+                this.swordSprite.x = this.x;
+                this.swordSprite.y = this.y - offset;
+            } else if (this.lastDirection.y === 1) {
+                this.swordSprite.setAnimation(this.SWORD_DOWN);
+                this.swordSprite.x = this.x;
+                this.swordSprite.y = this.y + offset;
+            }
+        
+            return; // no mover durante ataque
+        }
+        
+        
     
         if (this.moving) {
             // Normalizar dirección
@@ -355,7 +431,7 @@ class Player {
 
             let collidedX = false;
 
-
+            
             for (let element of this.scene.levelContent) {
                 if (element.boundingBox && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
@@ -432,7 +508,7 @@ class Player {
                 this.lastBlockedDirection = null;
             }
 
-            // TODO: esto debe estar en draw
+            
             // Cambiar animación si cambia la dirección
             if (this.direction.x === -1 && this.sprite.currentAnimation !== this.ANIM_LEFT) {
                 this.sprite.setAnimation(this.ANIM_LEFT);
@@ -448,7 +524,7 @@ class Player {
         } else {
             // Quieto: mantener dirección anterior pero detener la animación en el primer frame
             this.direction = { x: 0, y: 0 };
-            // TODO: esto debe estar en draw
+            
             if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_LEFT);
             else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_RIGHT);
             else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_UP);
@@ -459,12 +535,10 @@ class Player {
             this.sprite.elapsedTime = 0; // <- importante para que no avance por deltaTime
         }
     
-        // TODO: esto debe estar en draw
         // Sincronizar posición del sprite
         this.sprite.x = this.x;
         this.sprite.y = this.y;
     
-        // TODO: esto debe estar en draw
         // Solo actualizar sprite si está en movimiento
         if (this.moving) {
             this.sprite.update(deltaTime);
@@ -504,7 +578,24 @@ class Player {
                     break; // Stop after the first interaction
                 }
             }
-        } 
+        }
+        
+        //New: Attack press button
+        if (keyboard.isPressed('KeyZ') && !this.isAttacking) {
+            //console.log("atacando");
+            this.isAttacking = true;
+            this.attackTimer = 0;
+        
+            if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_ATTACK_LEFT);
+            else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_ATTACK_RIGHT);
+            else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_ATTACK_UP);
+            else if (this.lastDirection.y === 1) this.sprite.setAnimation(this.ANIM_ATTACK_DOWN);
+        
+            this.sprite.currentKeyframe = 0;
+            this.sprite.elapsedTime = 0;
+        }        
+
+
     }
         
 

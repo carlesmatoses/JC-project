@@ -11,7 +11,7 @@ var context = this.canvas.getContext("2d");
 var gamestatemanager = new GameStateManager();
 var scene = new Scene(gamestatemanager);
 gamestatemanager.pushState(scene);
-gamestatemanager.pushState(new DialogState(gamestatemanager, ["Hola", "Como estas?"]));
+//gamestatemanager.pushState(new DialogState(gamestatemanager, ["Entrega Parcial", "Agafa l'objecte del cofre"]));
 
 var previousTimestamp;
 var keyboardInput = null;
