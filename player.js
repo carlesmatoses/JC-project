@@ -371,7 +371,6 @@ class Player {
     }
 
     update(deltaTime) {
-        console.log("hola no se actualiza el player");
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
 
@@ -536,10 +535,6 @@ class Player {
             this.sprite.currentKeyframe = 0;
             this.sprite.elapsedTime = 0; // <- importante para que no avance por deltaTime
         }
-    
-        // Sincronizar posición del sprite
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
     
         // Solo actualizar sprite si está en movimiento
         if (this.moving) {
