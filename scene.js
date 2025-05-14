@@ -44,7 +44,10 @@ class Scene{
 		// this.context.imageSmoothingEnabled = false;
 		this.UI = new UI(gameStateManager, this.player); 
 		this.menu = new Menu(gameStateManager, this.player); // Create a menu instance
-		this.gameStateManager = gameStateManager
+		this.gameStateManager = gameStateManager;
+		
+		this.setSceneReferenceToNPCs(); 
+
 	}
 
 
@@ -161,14 +164,6 @@ class Scene{
 			if (element.type==="door" && !element.isActive() && !element.isColliding(this.player.x, this.player.y, this.player.width, this.player.height)) {
 					element.activate(); // Activate the door if the player is not colliding with it
 			}
-
-			// TODO: este codi deu anar en level
-			// else if (element.type==="enemy") {
-			// 	if (this.player.collidesWith(element)) {
-			// 		console.log("Collision with enemy detected!");
-			// 		this.player.die(); // Handle player death
-			// 	}
-			// }
 		});
 	}
 
@@ -217,6 +212,9 @@ class Scene{
 					element.safeCheck(this.player.x, this.player.y, this.player.width, this.player.height); 
 			}
 		});
+
+		this.setSceneReferenceToNPCs(); 
+
 	}
 
 	// Transition animation function
@@ -307,6 +305,17 @@ class Scene{
 	transform(x, y)
 	{
 		return [x*this.canvas.width_px, y*this.canvas.height_px];
+	}
+
+	setSceneReferenceToNPCs()
+	{
+		// Assign to all type==='enemy' elements the scene reference. 
+		this.levelContent.forEach((element) => {
+			if (element.type === 'enemy') {
+				element.scene = this; // Assign the scene reference
+				console.log("Assigning scene reference to enemy element", element);
+			}
+		});
 	}
 
 	draw(context)
@@ -443,9 +452,12 @@ class DialogState {
 			if (currentLine.length > 0) {
 				lines.push(currentLine.trim());
 			}
-	
+			
+			// we get context canvas size in pixels
+			var sizeWidth = context.canvas.clientWidth / 160;
+
 			context.fillStyle = "white";
-			context.font = "'tiny5'";
+			context.font = `${6*sizeWidth}px 'tiny5', sans-serif`;
 			
 			let lineHeight = 26; // Adjust based on your font size
 			let startY = this.box.y + 40;
