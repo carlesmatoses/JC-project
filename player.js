@@ -564,65 +564,45 @@ class Player {
             // Mover personaje
             let offsetX = this.direction.x * this.stats.getTotalStats().speed * deltaTime;
             let offsetY = this.direction.y * this.stats.getTotalStats().speed * deltaTime;
-
             let collidedElement = null;
-            // Move X first
-            this.x += offsetX;
-            this.center.x = this.x + (this.width / 2);
-            this.boundingBox.setPosition(this.center.x, this.center.y);
-            this.handBoundingBox.setPosition(
-                this.center.x + (this.lastDirection.x * (this.boundingBox.width / 2 + this.width / 8)), 
-                this.center.y + (this.lastDirection.y * (this.boundingBox.height / 2 + this.height / 8)),
-            );
-
             let collidedX = false;
+            let collidedY = false;
 
-            
+            // Move X
+            this.translatePosition(offsetX, 0);
             for (let element of this.scene.levelContent) {
                 if (element.boundingBox && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert X movement
-                        this.x -= offsetX;
-                        this.center.x = this.x + (this.width / 2);
-                        this.boundingBox.setPosition(this.center.x, this.center.y);
+                        this.translatePosition(-offsetX, 0);
                         collidedX = true;
 
-                        if (element.onCollision) {
+                        if (element.onCollision)
                             element.onCollision({ scene: this.scene });
-                        }
-
+                        
                         break;
                     }
                 }
             }
-            // Move Y
-            this.y += offsetY;
-            this.center.y = this.y + (this.height / 2);
-            this.boundingBox.setPosition(this.center.x, this.center.y);
-            this.handBoundingBox.setPosition(
-                this.center.x + (this.lastDirection.x * (this.boundingBox.width / 2 + this.width / 8)), 
-                this.center.y + (this.lastDirection.y * (this.boundingBox.height / 2 + this.height / 8)),
-            );
-            let collidedY = false;
 
+            // Move Y
+            this.translatePosition(0, offsetY);
             for (let element of this.scene.levelContent) {
                 if (element.boundingBox && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert Y movement
-                        this.y -= offsetY;
-                        this.center.y = this.y + (this.height / 2);
-                        this.boundingBox.setPosition(this.center.x, this.center.y);
+                        this.translatePosition(0, -offsetY);
                         collidedY = true;
 
-                        if (element.onCollision) {
+                        if (element.onCollision) 
                             element.onCollision({ scene: this.scene });
-                        }
 
                         break;
                     }
                 }
             }
 
+            // Retrieve hand collided element
             for (let element of this.scene.levelContent) {
                 if (element.boundingBox && this.handBoundingBox.isColliding(element.boundingBox) && element.type !== "door") {
                     collidedElement = element;
@@ -630,6 +610,7 @@ class Player {
                 }
             }
            
+            // Check if player is trying to push an object
             if (collidedX || collidedY) {
                 if (this.sameDirection(this.direction, this.lastBlockedDirection)) {
                     this.pushAttemptTimer += deltaTime;
@@ -681,17 +662,10 @@ class Player {
             this.sprite.elapsedTime = 0; // <- importante para que no avance por deltaTime
         }
     
-        // Sincronizar posición del sprite
-        //this.sprite.x = this.x;
-        //this.sprite.y = this.y;
-    
         // Solo actualizar sprite si está en movimiento
         if (this.moving) {
             this.sprite.update(deltaTime);
         }
-    
-
-
     }    
 
     handleInput(keyboard) {
@@ -757,7 +731,6 @@ class Player {
 
 
     }
-        
 
     sameDirection(dir1, dir2) {
         if (!dir1 || !dir2) return false;
@@ -776,6 +749,18 @@ class Player {
         }
     }
 
+    translatePosition(dx, dy) {
+        this.x += dx;
+        this.y += dy;
+        this.center.x = this.x + this.width / 2;
+        this.center.y = this.y + this.height / 2;
+
+        this.boundingBox.translate(dx, dy);
+        this.handBoundingBox.setPosition(
+            this.center.x + (this.lastDirection.x * (this.boundingBox.width / 2 + this.width / 8)), 
+            this.center.y + (this.lastDirection.y * (this.boundingBox.height / 2 + this.height / 8)),
+        );
+    }
     
     setPosition(x, y) {
         this.x = x;
