@@ -419,6 +419,7 @@ class Player {
             if (this.attackTimer >= this.attackDuration) {
                 this.isAttacking = false;
                 this.attackTimer = 0;
+                this.checkAttackCollision();
             }
         
             // Posicionar espada dependiendo de dirección
@@ -667,6 +668,25 @@ class Player {
             this.sprite.update(deltaTime);
         }
     }    
+
+    checkAttackCollision() {
+
+        const attackBox = new BoundingBox(
+            this.swordSprite.x + this.swordSprite.width / 2,
+            this.swordSprite.y + this.swordSprite.height / 2,
+            this.swordSprite.width,
+            this.swordSprite.height
+        );
+
+        for (let element of this.scene.levelContent) {
+            if (element.boundingBox && element.type === 'enemy' && attackBox.isColliding(element.boundingBox)) {
+                console.log("collision with enemy: ", element);
+                if (element.takeDamage) {
+                    element.takeDamage(this.stats.getTotalStats().attack);
+                }
+            }
+        }
+    }
 
     handleInput(keyboard) {
         // Leer teclas
