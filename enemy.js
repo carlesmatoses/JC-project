@@ -9,12 +9,6 @@ class Enemy {
         this.center = { x: x+width / 2, y: y+height / 2 }; // local center 
         this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.9, height*0.9);
 
-        // FIXME: Carles hay que buscar una manera de pasarle la escena y tambien el player para detectar colision con él 
-        // Ademas esta con el codigo "antiguo" sin tener en cuenta las colisiones por el problema de pasarle la escena
-        //this.scene = scene;
-
-        //FIXME: Al poner su texture se bugea no se porque
-        this.texture = texture; // Texture (sprites) for the player //OLD
 
         //Cara a futuro
         this.life = true; // CSi la unidad esta viva o muerta
@@ -30,7 +24,7 @@ class Enemy {
 		this.changeDirTimer = 0;
 		this.timeToChange = 1000 + Math.random() * 2000; // entre 1 y 3 segundos
 
-        // Crear sprite (esto reemplaza a tu this.texture y this.sprites)
+        // Crear sprite 
 		this.sprite = new Sprite(this.x, this.y, this.width, this.height, 10, texture); // 10 fps
    
         // Agregar animaciones propias del enemigo. Por defecto
@@ -54,8 +48,6 @@ class Enemy {
 
 		this.sprite.setAnimation(this.animDown); // Animación por defecto
 
-        console.log("Enemigo Creado");
-
     }
 
     getRandomDirection(){
@@ -74,20 +66,9 @@ class Enemy {
         this.sprite.y  = this.y;
         this.sprite.draw();
         
-        //OLD
-        let pos = transform(this.x, this.y, context);
-        let size = transform(this.width, this.height, context);
-        
-        //DEBUG
-        // Draw the bounding box of the player
-        context.strokeStyle = 'red'; // Set the color of the bounding box
-        context.lineWidth = 1; // Set the width of the bounding box lines
-        context.strokeRect(pos.x, pos.y, size.x, size.y); // Draw the bounding box
-    
-     
-
-        //console.log("Enemigo Dibujado");
-
+        if (DEBUG){
+            this.boundingBox.draw(context);
+        }
     }
 
     
@@ -111,22 +92,11 @@ class Enemy {
             this.direction.y /= magnitude;
 
             // Move enemy
-            this.x += this.direction.x * this.speed * deltaTime;
-            this.y += this.direction.y * this.speed * deltaTime;
-
-            // Limitar movimiento a los bordes del canvas
-            const canvas = document.getElementById("game-layer");
-            const canvasWidth = canvas.width;
-            const canvasHeight = canvas.height;
-
-            //FIXME: Arreglar 
-            // Asegurar que no se salga del área visible
-            this.x = Math.max(0, Math.min(this.x, canvasWidth - this.width));
-            this.y = Math.max(0, Math.min(this.y, canvasHeight - this.height));
+            this.translatePosition(
+                this.direction.x * this.speed * deltaTime,
+                this.direction.y * this.speed * deltaTime
+            )
         }
-
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
 
         let newAnim = this.animRight; // default
 
@@ -143,12 +113,9 @@ class Enemy {
         // Solo animar si está moviéndose
         if (this.moving) {
             this.sprite.update(deltaTime);
-            //console.log("Animandose el enemigo");
         } else {
             this.sprite.currentKeyframe = 0; // Mostrar frame "quieto"
         }
-        
-        //this.setDirection(direction.x, direction.y);
        
     }
     
@@ -164,23 +131,30 @@ class Enemy {
     }
 
     collidesWith(element) {
-        // Check if the player is colliding with the specified element
+        // Check if the enemy is colliding with the specified element
         return element.isColliding(this.x, this.y, this.width, this.height);
     }
     
     setPosition(x, y) {
         this.x = x;
         this.y = y;
+        this.boundingBox.setPosition(x, y);
     }
 
     resetPosition() {
         this.x = this.lastPosition.x;
         this.y = this.lastPosition.y;
+        this.boundingBox.setPosition(this.x, this.y);
     }
 
     translatePosition(dx, dy) {
         this.x += dx;
         this.y += dy;
+        this.boundingBox.translate(dx, dy);
+        this.center.x = this.x + this.width / 2;
+        this.center.y = this.y + this.height / 2;
+        this.lastPosition.x = this.x;
+        this.lastPosition.y = this.y;
     }
 
     isActive() {
