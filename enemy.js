@@ -7,13 +7,15 @@ class Enemy {
         this.height = height; // Height of the player
         this.render_layer = 0   ; //this.render_layer = -1;
         this.center = { x: x+width / 2, y: y+height / 2 }; // local center 
-        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.9, height*0.9);
-
+        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.8, height*0.8);
+        this.type = "enemy";
+        this.scene = null;
 
         //Cara a futuro
         this.life = true; // CSi la unidad esta viva o muerta
         this.health = 1; //Cantidad de vida del enemigo.
-        
+        this.stats = new Stats(100, 10, 5, 5, 0.00005); 
+
         // movementS
         this.speed = 0.00005; //Modified 
         this.direction = { x: 0, y: 0 }; // Normalized movement vector
@@ -91,12 +93,76 @@ class Enemy {
             this.direction.x /= magnitude;
             this.direction.y /= magnitude;
 
-            // Move enemy
-            this.translatePosition(
-                this.direction.x * this.speed * deltaTime,
-                this.direction.y * this.speed * deltaTime
-            )
+            // Mover personaje
+            let offsetX = this.direction.x * this.stats.getTotalStats().speed * deltaTime;
+            let offsetY = this.direction.y * this.stats.getTotalStats().speed * deltaTime;
+            let collidedElement = null;
+            let collidedX = false;
+            let collidedY = false;
+
+            // Move X
+            this.translatePosition(offsetX, 0);
+            for (let element of this.scene.levelContent) {
+                if (element === this) continue; // Skip self
+                if (element.boundingBox && element.isActive()) {
+                    if (this.boundingBox.isColliding(element.boundingBox)) {
+                        // Revert X movement
+                        this.translatePosition(-offsetX, 0);
+                        collidedX = true;
+
+                        if (element.onCollision)
+                            element.onCollision({ scene: this.scene });
+                        
+                        break;
+                    }
+                }
+            }
+            // check if collision with the scene.player
+            if (this.scene.player.boundingBox && this.boundingBox.isColliding(this.scene.player.boundingBox)) {
+                // Revert X movement
+                this.translatePosition(-offsetX, 0);
+                collidedX = true;
+            }
+            // Check for collision with the scene boundaries
+            if (this.x < 0 || this.x > 1) {
+                // Revert X movement
+                this.translatePosition(-offsetX, 0);
+                collidedX = true;
+            }
+
+            // Move Y
+            this.translatePosition(0, offsetY);
+            for (let element of this.scene.levelContent) {
+                if (element === this) continue; // Skip self
+                if (element.boundingBox && element.isActive()) {
+                    if (this.boundingBox.isColliding(element.boundingBox)) {
+                        // Revert Y movement
+                        this.translatePosition(0, -offsetY);
+                        collidedY = true;
+
+                        if (element.onCollision) 
+                            element.onCollision({ scene: this.scene });
+
+                        break;
+                    }
+                }
+            }
+            // check if collision with the scene.player
+            if (this.scene.player.boundingBox && this.boundingBox.isColliding(this.scene.player.boundingBox)) {
+                // Revert Y movement
+                this.translatePosition(0, -offsetY);
+                collidedY = true;
+            }
+            // Check for collision with the scene boundaries
+            if (this.y < 0 || this.y > TILEHEIGHT*7) {
+                // Revert Y movement
+                this.translatePosition(0, -offsetY);
+                collidedY = true;
+            }
         }
+        // Store last position only when is the actual object who is moving and not the camera
+        this.lastPosition.x = this.x;
+        this.lastPosition.y = this.y;
 
         let newAnim = this.animRight; // default
 
@@ -153,8 +219,8 @@ class Enemy {
         this.boundingBox.translate(dx, dy);
         this.center.x = this.x + this.width / 2;
         this.center.y = this.y + this.height / 2;
-        this.lastPosition.x = this.x;
-        this.lastPosition.y = this.y;
+        // this.lastPosition.x = this.x;
+        // this.lastPosition.y = this.y;
     }
 
     isActive() {
