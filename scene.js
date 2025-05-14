@@ -23,7 +23,6 @@ class Scene{
 		this.currentTime = 0
 		this.stop = false; // When we talk to characters, 
 
-		//TODO: Buscar sitio correcto donde ponerlo
 		this.music = AudioFX('audio/TheLegendofZelda_LinksAwakeningDX-MainTheme.mp3', { loop: true });
 		
 		// player variables
@@ -57,7 +56,6 @@ class Scene{
 			return;
 		}
 
-		//NEW: FIXME: Revisar si aqui esta correcto.
 		this.music.play();
 
 		// Level time update
