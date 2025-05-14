@@ -4,6 +4,7 @@
 const FRAME_RATE = 60;
 const TARGET_FPS = FRAME_RATE;
 const TIME_PER_FRAME = 1000 / FRAME_RATE;
+let DEBUG = false; // Set to true to enable debug mode
 
 
 var canvas = document.getElementById("game-layer");
@@ -31,7 +32,6 @@ let frameCount = 0;
 let fps = 0;
 let lag = 0;
 
-let DEBUG = true; // Set to true to enable debug mode
 
 // Control keyboard events
 class KeyboardInput {
