@@ -465,20 +465,20 @@ const tile103 = [
 const tile104 = [
     new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.overworld, color="black", 
         drawing_settings={sx: 1120+8, sy: 768+7, sWidth: 160, sHeight: 128}), 
-        principal_chest,
-        new InvisibleWall(TILEWIDTH*7,TILEHEIGHT,TILEWIDTH*5,TILEHEIGHT),
-        new InvisibleWall(TILEWIDTH*7,TILEHEIGHT*0,TILEWIDTH*5,TILEHEIGHT),
-        new InvisibleWall(TILEWIDTH,TILEHEIGHT,TILEWIDTH*3,TILEHEIGHT),
-        new InvisibleWall(TILEWIDTH*0,TILEHEIGHT*4,TILEWIDTH,8*TILEHEIGHT),
-        new InvisibleWall(TILEWIDTH*9,TILEHEIGHT*4,TILEWIDTH,8*TILEHEIGHT),
-        new Tombstone(TILEWIDTH*3, TILEHEIGHT*3),
-        new Tombstone(TILEWIDTH*5, TILEHEIGHT*3),
-        new Tombstone(TILEWIDTH*7, TILEHEIGHT*3),
-        new Tombstone(TILEWIDTH*3, TILEHEIGHT*5),
-        new Tombstone(TILEWIDTH*5, TILEHEIGHT*5),
-        enemyOctoOver,
-        new Statue(TILEWIDTH*3, TILEHEIGHT*0, ["Some tools will provide super habilityes.", "Find them on chests."]),
-        new Statue(TILEWIDTH*1, TILEHEIGHT*2, ["A tombstone is missing :(", "If you try to bring it back, it may lead you to an adventure.f"]),
+    principal_chest,
+    new InvisibleWall(TILEWIDTH*7,TILEHEIGHT,TILEWIDTH*5,TILEHEIGHT),
+    new InvisibleWall(TILEWIDTH*7,TILEHEIGHT*0,TILEWIDTH*5,TILEHEIGHT),
+    new InvisibleWall(TILEWIDTH,TILEHEIGHT,TILEWIDTH*3,TILEHEIGHT),
+    new InvisibleWall(TILEWIDTH*0,TILEHEIGHT*4,TILEWIDTH,8*TILEHEIGHT),
+    new InvisibleWall(TILEWIDTH*9,TILEHEIGHT*4,TILEWIDTH,8*TILEHEIGHT),
+    new Tombstone(TILEWIDTH*3, TILEHEIGHT*3),
+    new Tombstone(TILEWIDTH*5, TILEHEIGHT*3),
+    new Tombstone(TILEWIDTH*7, TILEHEIGHT*3),
+    new Tombstone(TILEWIDTH*3, TILEHEIGHT*5),
+    new Tombstone(TILEWIDTH*5, TILEHEIGHT*5),
+    enemyOctoOver,
+    new Statue(TILEWIDTH*3, TILEHEIGHT*0, ["Some tools will provide super habilityes.", "Find them on chests."]),
+    new Statue(TILEWIDTH*1, TILEHEIGHT*2, ["A tombstone is missing :(", "If you try to bring it back, it may lead you to an adventure."]),
 
 ];
 const tile105 = [
@@ -545,12 +545,12 @@ const tile119 = [
 const tile120 = [
     new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.overworld, color="black", 
         drawing_settings={sx: 1120+8, sy: 896+8, sWidth: 160, sHeight: 128}), 
-        enter_dungeon,
-        special_tombstone,
-        new InvisibleWall(TILEWIDTH*9,3.5*TILEHEIGHT,TILEWIDTH,8*TILEHEIGHT),
-        new InvisibleWall(TILEWIDTH*7,TILEHEIGHT*4,TILEWIDTH*3,TILEHEIGHT),
-        new InvisibleWall(TILEWIDTH*2,5*TILEHEIGHT,TILEWIDTH*7,TILEHEIGHT),
-        new InvisibleWall(TILEWIDTH*0,0*TILEHEIGHT,TILEWIDTH,TILEHEIGHT*3),
+    enter_dungeon,
+    special_tombstone,
+    new InvisibleWall(TILEWIDTH*9,3.5*TILEHEIGHT,TILEWIDTH,8*TILEHEIGHT),
+    new InvisibleWall(TILEWIDTH*7,TILEHEIGHT*4,TILEWIDTH*3,TILEHEIGHT),
+    new InvisibleWall(TILEWIDTH*2,5*TILEHEIGHT,TILEWIDTH*7,TILEHEIGHT),
+    new InvisibleWall(TILEWIDTH*0,0*TILEHEIGHT,TILEWIDTH,TILEHEIGHT*3),
 
 ];
 const tile121 = [
