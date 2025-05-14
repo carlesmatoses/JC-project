@@ -121,7 +121,7 @@ class Scene{
 
 	handleInput(input) {
         
-		if (input.isPressed('KeyB')) { // DEBUG KEY
+		if (input.isPressed('KeyB')) { // key for debug
 			console.log("Pressed B!");
 			DEBUG = !DEBUG;
 		}
