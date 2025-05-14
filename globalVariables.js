@@ -11,11 +11,28 @@ const UIWIDTH = TILEWIDTH * 10;
 const UIHEIGHT = TILEHEIGHT * 1;
 
 // KEYS
-const KEY_PRIMARY     = "KeyF"; 
-const KEY_SECONDARY   = "KeyG"; 
-const KEY_UP          = "ArrowUp";
-const KEY_DOWN        = "ArrowDown"; 
-const KEY_LEFT        = "ArrowLeft";
-const KEY_RIGHT       = "ArrowRight"; 
-const KEY_DEBUBG      = "KeyB"; 
-const KEY_INVENTORY   = "KeyI"; 
+const KEY_PRIMARY          = "KeyF";  //FIXME: MODIFICAR TECLA a OTRA
+const KEY_SECONDARY        = "KeyG"; //FIXME: MODIFICAR TECLA a OTRA + Preguntar cual es
+const KEY_UP               = "ArrowUp";
+const KEY_DOWN             = "ArrowDown"; 
+const KEY_LEFT             = "ArrowLeft";
+const KEY_RIGHT            = "ArrowRight"; 
+const KEY_DEBUBG           = "KeyB";  //FIXME: MODIFICAR TECLA a OTRA
+const KEY_INVENTORY        = "KeyI";  //FIXME: Modificar tecla a otra
+
+//NEW
+const KEY_SHIELD           = "KeyX";
+/*
+//TODO: Quitar hardcode y poner bien las global variables
+const KEY_INVULNERABLE     = "KeyG"; 
+const KEY_USE_SP_OBJECT    = "KeyC"; 
+const KEY_HEAL             = "KeyH";
+const KEY_SKIP_MBOSS       = "KeyM"; 
+const KEY_SKIP_FBOSS       = "KeyB";
+const KEY_OBTAIN_SP_OBJECT = "KeyI"; 
+const KEY_SWORD            = "KeyZ"; 
+
+
+
+
+*/

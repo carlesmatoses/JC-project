@@ -40,4 +40,5 @@ const textures = {
 	menu: new Texture("imgs/Menu.png"),
 	braceletStrength: new Texture("imgs/brazalete-l1.png"),
 	statue: new Texture("imgs/statue.png"),
+	enemy: new Texture("imgs/enemies/Octorok.png"),
 }

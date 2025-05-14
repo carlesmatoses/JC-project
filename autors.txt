@@ -1,0 +1,13 @@
+Alumne 1: Carles Matoses Gimenez - carles.matoses@estudiantat.upc.edu
+Alumne 2: Alberto Jiménez Muñoz - alberto.jimenez.munoz@estudiantat.upc.edu
+
+Controls: 
+Movimient - Tecles AWSD o les fleches del teclat
+Dialegs, Interacció - Tecla F
+Obrir inventari - Tecla I 
+Seleccionar Objecte del inventari - Fleches en el inventari
+Posarlo com objecte "actiu" - Tecla F en el inventari
+Posar o quitar debug mode - Tecla B
+Atacar amb l'espassa - Tecla Z
+
+Puzzle agafar l'objecte de força, moure la tomba de la pantalla inferior i anar a la dungeon.

@@ -1,5 +1,5 @@
 class Enemy {
-    constructor(x, y, width, height, texture = 'imgs/enemies/Octorok.png') {
+    constructor(x, y, width, height, texture =  textures.enemy) {
         this.x = x; // X position
         this.y = y; // Y position
         this.lastPosition = { x: x, y: y }; // Last position for collision detection
@@ -14,7 +14,7 @@ class Enemy {
         //this.scene = scene;
 
         //FIXME: Al poner su texture se bugea no se porque
-        //this.texture = new Texture(texture); // Texture (sprites) for the player //OLD
+        this.texture = texture; // Texture (sprites) for the player //OLD
 
         //Cara a futuro
         this.life = true; // CSi la unidad esta viva o muerta
@@ -31,7 +31,7 @@ class Enemy {
 		this.timeToChange = 1000 + Math.random() * 2000; // entre 1 y 3 segundos
 
         // Crear sprite (esto reemplaza a tu this.texture y this.sprites)
-		this.sprite = new Sprite(this.x, this.y, this.width, this.height, 10, new Texture(texture)); // 10 fps
+		this.sprite = new Sprite(this.x, this.y, this.width, this.height, 10, texture); // 10 fps
    
         // Agregar animaciones propias del enemigo. Por defecto
 		this.animDown = this.sprite.addAnimation();
@@ -70,6 +70,8 @@ class Enemy {
     }
 
     draw(context) {
+        this.sprite.x  = this.x;
+        this.sprite.y  = this.y;
         this.sprite.draw();
         
         //OLD
@@ -150,96 +152,6 @@ class Enemy {
        
     }
     
-    /*
-    update(deltaTime) {
-        // Cambiar dirección cada cierto tiempo
-        this.changeDirTimer += deltaTime;
-        if (this.changeDirTimer >= this.timeToChange) {
-            this.changeDirTimer = 0;
-            this.timeToChange = 1000 + Math.random() * 2000;
-            const randomDir = this.getRandomDirection();
-            this.setDirection(randomDir.x, randomDir.y);
-        }
-    
-        // Normalizar dirección
-        let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
-        this.moving = magnitude > 0;
-    
-        if (this.moving) {
-            this.direction.x /= magnitude;
-            this.direction.y /= magnitude;
-    
-            let offsetX = this.direction.x * this.speed * deltaTime;
-            let offsetY = this.direction.y * this.speed * deltaTime;
-    
-            // Guardar referencia para colisión
-            let collidedX = false;
-            let collidedY = false;
-    
-            // --- Movimiento en X ---
-            this.x += offsetX;
-            this.center.x = this.x + (this.width / 2);
-            this.boundingBox.setPosition(this.center.x, this.center.y);
-    
-            for (let element of this.scene.levelContent) {
-                if (element.boundingBox && element.isActive()) {
-                    if (this.boundingBox.isColliding(element.boundingBox)) {
-                        this.x -= offsetX; // revertir movimiento
-                        this.center.x = this.x + (this.width / 2);
-                        this.boundingBox.setPosition(this.center.x, this.center.y);
-                        collidedX = true;
-                        break;
-                    }
-                }
-            }
-    
-            // --- Movimiento en Y ---
-            this.y += offsetY;
-            this.center.y = this.y + (this.height / 2);
-            this.boundingBox.setPosition(this.center.x, this.center.y);
-    
-            for (let element of this.scene.levelContent) {
-                if (element.boundingBox && element.isActive()) {
-                    if (this.boundingBox.isColliding(element.boundingBox)) {
-                        this.y -= offsetY; // revertir movimiento
-                        this.center.y = this.y + (this.height / 2);
-                        this.boundingBox.setPosition(this.center.x, this.center.y);
-                        collidedY = true;
-                        break;
-                    }
-                }
-            }
-    
-            if (!collidedX && !collidedY) {
-                this.lastDirection = { ...this.direction };
-            }
-        }
-    
-        // Animación según dirección
-        let newAnim = this.animRight;
-        if (this.lastDirection.x === -1) newAnim = this.animLeft;
-        else if (this.lastDirection.x === 1) newAnim = this.animRight;
-        else if (this.lastDirection.y === -1) newAnim = this.animUp;
-        else if (this.lastDirection.y === 1) newAnim = this.animDown;
-    
-        if (this.sprite.currentAnimation !== newAnim) {
-            this.sprite.setAnimation(newAnim);
-        }
-    
-        // Actualizar sprite solo si se mueve
-        if (this.moving) {
-            this.sprite.update(deltaTime);
-        } else {
-            this.sprite.currentKeyframe = 0;
-            this.sprite.elapsedTime = 0;
-        }
-    
-        // Sincronizar sprite con posición
-        this.sprite.x = this.x;
-        this.sprite.y = this.y;
-    } */
-    
-
     setDirection(dx, dy) {
         this.direction.x = dx;
         this.direction.y = dy;

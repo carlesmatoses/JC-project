@@ -23,7 +23,8 @@ class Scene{
 		this.currentTime = 0
 		this.stop = false; // When we talk to characters, 
 
-
+		//TODO: Buscar sitio correcto donde ponerlo
+		this.music = AudioFX('audio/TheLegendofZelda_LinksAwakeningDX-MainTheme.mp3', { loop: true });
 		
 		// player variables
 		this.player = new Player(TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT);
@@ -52,8 +53,12 @@ class Scene{
 	{
 		// Game is stopped, we need to stop the time updates
 		if (this.stop) {
+			this.music.stop();
 			return;
 		}
+
+		//NEW: FIXME: Revisar si aqui esta correcto.
+		this.music.play();
 
 		// Level time update
 		this.level(deltaTime);
