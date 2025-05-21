@@ -457,7 +457,7 @@ class DialogState {
 			var sizeWidth = context.canvas.clientWidth / 160;
 
 			context.fillStyle = "white";
-			context.font = `${6*sizeWidth}px 'tiny5', sans-serif`;
+			context.font = `${22}px 'tiny5', sans-serif`;
 			
 			let lineHeight = 26; // Adjust based on your font size
 			let startY = this.box.y + 40;
