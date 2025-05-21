@@ -478,7 +478,7 @@ const tile104 = [
     new Tombstone(TILEWIDTH*5, TILEHEIGHT*5),
     enemyOctoOver,
     new Statue(TILEWIDTH*3, TILEHEIGHT*0, ["Some tools will provide super habilityes.", "Find them on chests."]),
-    new Statue(TILEWIDTH*1, TILEHEIGHT*2, ["A tombstone is missing :(", "If you try to bring it back, it may lead you to an adventure."]),
+    new Statue(TILEWIDTH*1, TILEHEIGHT*2, ["A tombstone is missing :(", "If you try to bring it up, it may lead you to an adventure."]),
 
 ];
 const tile105 = [
