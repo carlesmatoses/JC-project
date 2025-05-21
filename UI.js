@@ -73,7 +73,7 @@ class UI {
 
         this.player.inventory.drawUI(context);
 
-        // this.healthBar.draw(context);
+        this.healthBar.draw(context, this.player.stats.getHealth().maxHealth, this.player.stats.getHealth().health, UIWIDTH / 10 * 6.5, PLAYSCREENHEIGHT);
         // this.moneyDisplay.draw(context);
     }
 
@@ -81,18 +81,45 @@ class UI {
 
 class HealthBar {
     constructor() {
-        this.health = 100;
-        this.maxHealth = 100;
-        this.width = UIWIDTH/2;
-        this.height =  UIHEIGHT/2;
+        this.width = UIWIDTH / 10 * 3.5;
+        this.height = UIHEIGHT;
+        this.heart_texture = textures.hearts; // 32x8 texture with 4 heart states
     }
 
-    draw(context) {
-        let size = transform(this.width, this.height, context); 
-        let pos = transform(UIWIDTH/2, PLAYSCREENHEIGHT, context);
-        // Draw the rectangle
-        context.fillStyle = "red";
-        context.fillRect(pos.x, pos.y, size.x, size.y);
+    draw(context, maxHealth = 10.0, health = 5, x = UIWIDTH / 10 * 6.5, y = PLAYSCREENHEIGHT) {
+        let heartWidth = this.heart_texture.img.width / 4; // Each heart is 8px wide
+        let heartHeight = this.heart_texture.img.height; // Each heart is 8px tall
+        let size = transformPixels(heartWidth, heartHeight, context); // Transform heart size
+        let pos = transform(x, y, context); // Transform starting position
+
+        let heartsPerRow = 7; // Number of hearts per row
+        let rows = 2; // Number of rows
+
+        for (let row = 0; row < rows; row++) {
+            for (let i = 0; i < heartsPerRow; i++) {
+                let heartIndex = row * heartsPerRow + i;
+                let heartState = 0; // Default to "None"
+
+                if (heartIndex < maxHealth) {
+                    if (health > heartIndex) {
+                        heartState = (health - heartIndex >= 1) ? 3 : 2; // Full or Half heart
+                    } else {
+                        heartState = 1; // Empty heart
+                    }
+                }
+
+                // Calculate source position in the texture
+                let sx = Math.floor(heartState) * heartWidth;
+                let sy = 0;
+
+                // Draw the heart
+                context.drawImage(
+                    this.heart_texture.img,
+                    sx, sy, heartWidth, heartHeight, // Source rectangle
+                    pos.x + size.x * i, pos.y + size.y * row, size.x, size.y // Destination position
+                );
+            }
+        }
     }
 }
 

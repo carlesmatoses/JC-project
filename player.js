@@ -2,6 +2,7 @@
 class Stats{
     constructor(health, attack, defense, strength, speed) {
         this.health = health;
+        this.maxHealth = health;
         this.attack = attack;
         this.defense = defense;
         this.strength = strength;
@@ -24,6 +25,12 @@ class Stats{
         }
     }
 
+    getHealth() {
+        return {
+            health:this.health + this.bonuses.health + this.effects.health,
+            maxHealth: this.maxHealth + this.bonuses.health + this.effects.health
+        };
+    }
     getTotalStats() {
         return {
             health: this.health + this.bonuses.health + this.effects.health,
@@ -84,7 +91,7 @@ class Slot{
         if (this.item) {
             context.drawImage(this.item.icon.img, pos.x, pos.y, size.x, size.y);
         } else {
-            context.fillStyle = "rgb(235, 236, 152)"; // semi-transparent black
+            context.fillStyle = "rgb(255, 255, 140)"; // semi-transparent black
             context.fillRect(pos.x, pos.y, size.x, size.y);
         }
 
@@ -120,6 +127,9 @@ class Inventory {
         this.selectedRow = 0;
         this.selectedCol = 0;
         this.getSlot(0, 0).select();
+
+        this.healthBar = new HealthBar(); 
+
     }
 
     createSlots() {
@@ -143,6 +153,8 @@ class Inventory {
         Object.values(this.slots).forEach(slot => slot.draw(context));
         this.equipped.left.draw(context);
         this.equipped.right.draw(context);
+
+        this.healthBar.draw(context, this.player.stats.getHealth().maxHealth, this.player.stats.getHealth().health, UIWIDTH / 10 * 6.5, 0);
     }
 
     drawUI(context) {
@@ -273,7 +285,7 @@ class Player {
         this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, (width)/4, (height)/4);
 
         // inventory
-        this.stats = new Stats(100, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
+        this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
         this.inventory = new Inventory(this);
 
         //Audio

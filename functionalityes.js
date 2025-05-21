@@ -5,6 +5,15 @@ function transform(x, y, ctx) {
     };
 }
 
+function transformPixels(x, y, ctx) {
+    const baseWidth = 160;
+    const baseHeight = 144;
+    return {
+        x: Math.floor((x / baseWidth) * ctx.canvas.width),
+        y: Math.floor((y / baseHeight) * ctx.canvas.height)
+    };
+}
+
 /*
     * Function to get adjacent levels in a grid layout.
     * @param {number} id - The ID of the current level.
