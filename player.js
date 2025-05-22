@@ -115,6 +115,7 @@ class Inventory {
     constructor(player) {
         this.player = player;
         this.stats = player.stats;
+        this.money = 0;
         this.items = new Map(); // key: item.name, value: { item, quantity }
         this.resolution = 4;
         
@@ -129,6 +130,7 @@ class Inventory {
         this.getSlot(0, 0).select();
 
         this.healthBar = new HealthBar(); 
+        this.moneyDisplay = new MoneyDisplay(0.5,0);
 
     }
 
@@ -155,6 +157,7 @@ class Inventory {
         this.equipped.right.draw(context);
 
         this.healthBar.draw(context, this.player.stats.getHealth().maxHealth, this.player.stats.getHealth().health, UIWIDTH / 10 * 6.5, 0);
+        this.moneyDisplay.draw(context, this.money);
     }
 
     drawUI(context) {
@@ -285,7 +288,7 @@ class Player {
         this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, (width)/4, (height)/4);
 
         // inventory
-        this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
+        this.stats = new Stats(9, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
         this.inventory = new Inventory(this);
 
         //Audio
@@ -759,9 +762,6 @@ class Player {
             this.sprite.currentKeyframe = 0;
             this.sprite.elapsedTime = 0;
         }
-        
-
-
     }
 
     sameDirection(dir1, dir2) {

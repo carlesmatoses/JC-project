@@ -12,11 +12,11 @@ var context = this.canvas.getContext("2d");
 var gamestatemanager = new GameStateManager();
 var scene = new Scene(gamestatemanager);
 gamestatemanager.pushState(scene);
-gamestatemanager.pushState(new DialogState(gamestatemanager, [
-    `${KEY_PRIMARY} is the primary button.   Press ${KEY_PRIMARY} to continue`, 
-    `Press ${KEY_DEBUBG} to activiate`, 
-    `Press ${KEY_INVENTORY} to open the inventory`,
-]));
+// gamestatemanager.pushState(new DialogState(gamestatemanager, [
+//     `${KEY_PRIMARY} is the primary button.   Press ${KEY_PRIMARY} to continue`, 
+//     `Press ${KEY_DEBUBG} to activiate`, 
+//     `Press ${KEY_INVENTORY} to open the inventory`,
+// ]));
 
 function addDialog(text) {
     gamestatemanager.pushState(new DialogState(gamestatemanager, text));

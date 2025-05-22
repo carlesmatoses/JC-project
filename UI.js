@@ -74,7 +74,7 @@ class UI {
         this.player.inventory.drawUI(context);
 
         this.healthBar.draw(context, this.player.stats.getHealth().maxHealth, this.player.stats.getHealth().health, UIWIDTH / 10 * 6.5, PLAYSCREENHEIGHT);
-        // this.moneyDisplay.draw(context);
+        this.moneyDisplay.draw(context, this.player.inventory.money);
     }
 
 }
@@ -124,16 +124,51 @@ class HealthBar {
 }
 
 class MoneyDisplay {
-    constructor() {
-        this.money = 0;
-        this.width = 100;
-        this.height = 20;
+    constructor(x=UIWIDTH/10*5,y=UIHEIGHT*8) {
+        this.texture_numbers = textures.menu; // 32x8 texture with numbers
+        this.texture_gem = textures.menu; // 32x8 texture with gem
+        this.size = transformPixels(8, 8, context);
+        this.pos_gem = transform(x, y, context); // Position to draw the money
+        this.pos = transform(x, y+UIHEIGHT/2, context); // Position to draw the money
     }
 
-    draw(context) {
-        // Draw the rectangle
-        context.fillStyle = "green";
-        context.fillRect(0, 20, this.width, this.height);
+    draw(context, money=12) {
+        // Clamp money between 0 and 999
+        money = Math.max(0, Math.min(999, Math.floor(money)));
+
+        // Split money into hundreds, tens, units
+        let digits = [
+            Math.floor(money / 100),
+            Math.floor((money % 100) / 10),
+            money % 10
+        ];
+
+        // Texture info
+        const offsetX = 399;
+        const offsetY = 179;
+        const digitWidth = 8;
+        const digitHeight = 8;
+        const digitSpacing = 1; // 1px empty between digits
+
+        // Draw each digit in a 24x8 grid (3 digits)
+        for (let i = 0; i < 3; i++) {
+            let sx = offsetX + (digitWidth + digitSpacing) * digits[i];
+            let sy = offsetY;
+            let dx = i * this.size.x;
+            let dy = 0;
+
+            context.drawImage(
+                this.texture_numbers.img,
+                sx, sy, digitWidth, digitHeight,
+                this.pos.x+dx, this.pos.y+dy, this.size.x, this.size.y
+            );
+        }
+
+        context.drawImage(
+            this.texture_gem.img,
+            370, 179, digitWidth*3, digitHeight,
+            this.pos_gem.x, this.pos_gem.y, this.size.x*3, this.size.y
+        );
     }
 }
 
