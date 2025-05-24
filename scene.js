@@ -120,6 +120,13 @@ class Scene{
 			); // Call the transition function
 		}
 
+		// Check for damage collisions
+		this.levelContent.forEach((element) => {
+			if (element.type === "enemy" && element.boundingBox.isColliding(this.player.boundingBox, 0.04)) {
+				this.player.takeDamage(element.stats.attack); // Player takes damage from enemy
+			}
+		});
+
 	}
 
 	handleInput(input) {

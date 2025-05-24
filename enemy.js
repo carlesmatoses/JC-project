@@ -14,7 +14,7 @@ class Enemy {
         //Cara a futuro
         this.life = true; // CSi la unidad esta viva o muerta
         this.health = 1; //Cantidad de vida del enemigo.
-        this.stats = new Stats(100, 10, 5, 5, 0.00005); 
+        this.stats = new Stats(100, 0.5, 5, 5, 0.00005); 
 
         // movementS
         this.speed = 0.00005; //Modified 

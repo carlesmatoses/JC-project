@@ -1,4 +1,3 @@
-
 class Stats{
     constructor(health, attack, defense, strength, speed) {
         this.health = health;
@@ -307,6 +306,10 @@ class Player {
         //defend
         this.isDefending = false;
 
+        // Inmunity
+        this.isImmune = false; // Immunity flag
+        this.immunityTimer = 0; // Timer to track immunity duration
+        this.immunityDuration = 1000; // 1 second of immunity (in milliseconds)
 
 		// Sprite y animaciones Player
 		this.texture = new Texture(texture);
@@ -398,7 +401,7 @@ class Player {
     draw(context) {
         this.sprite.x = this.x;
         this.sprite.y = this.y;
-		this.sprite.draw();
+        this.sprite.draw();
 
         if (this.isAttacking) {
             //console.log("dibujando espada");
@@ -410,15 +413,32 @@ class Player {
             this.handBoundingBox.draw(context);
             
             // Draw a circle in the center of the player for debugging
-            let centerPixels = transform(this.center.x,this.center.y,context) 
+            let centerPixels = transform(this.center.x, this.center.y, context);
             context.beginPath();
             context.arc(centerPixels.x, centerPixels.y, 8, 0, 2 * Math.PI);
             context.fillStyle = "red";
             context.fill();
+
+            // Draw a blue dot if player is immune
+            if (this.isImmune) {
+                context.beginPath();
+                context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
+                context.fillStyle = "blue";
+                context.fill();
+            }
         }
     }
 
     update(deltaTime) {
+        // Handle immunity timer
+        if (this.isImmune) {
+            this.immunityTimer += deltaTime;
+            if (this.immunityTimer >= this.immunityDuration) {
+                this.isImmune = false; // End immunity
+                this.immunityTimer = 0; // Reset timer
+            }
+        }
+
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
 
@@ -808,6 +828,23 @@ class Player {
         this.center.x = this.x + (this.width / 2);
         this.center.y = this.y + (this.height / 2);
         this.boundingBox.setPosition(this.center.x, this.center.y);
+    }
+
+    takeDamage(damage) {
+        if (this.isImmune) {
+            console.log("Player is immune to damage!");
+            return; // Ignore damage if immune
+        }
+
+        this.stats.health -= damage;
+        if (this.stats.health <= 0) {
+            console.log("Player has died");
+            this.stats.health = this.stats.getHealth().maxHealth; // Reset health on death
+        }
+
+        // Activate immunity after taking damage
+        this.isImmune = true;
+        this.immunityTimer = 0; // Reset immunity timer
     }
 }
 
