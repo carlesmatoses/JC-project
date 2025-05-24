@@ -10,11 +10,14 @@ class BoundingBox {
      * @param {BoundingBox} other - The other bounding box to check for collision.
      * @returns boolean - True if the bounding boxes are colliding, false otherwise.
      */
-    isColliding(other) {
-        // Check if this bounding box is colliding with another bounding box
+    isColliding(other, epsilon = 0) {
+        // Check if this bounding box is colliding with another bounding box,
+        // optionally expanding this box by epsilon for proximity checks
+        const width = this.width + epsilon;
+        const height = this.height + epsilon;
         return (
-            Math.abs(this.x - other.x) < (this.width + other.width) / 2 &&
-            Math.abs(this.y - other.y) < (this.height + other.height) / 2
+            Math.abs(this.x - other.x) < (width + other.width) / 2 &&
+            Math.abs(this.y - other.y) < (height + other.height) / 2
         );
     }
 
