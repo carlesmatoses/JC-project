@@ -831,6 +831,10 @@ class Player {
     }
 
     takeDamage(damage) {
+        if (typeof CREATIVE_MODE !== "undefined" && CREATIVE_MODE) {
+            console.log("Player is in CREATIVE_MODE, no damage taken!");
+            return;
+        }
         if (this.isImmune) {
             console.log("Player is immune to damage!");
             return; // Ignore damage if immune
