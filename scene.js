@@ -13,9 +13,9 @@ class Scene{
 		this.canvas = document.getElementById("game-layer");
 		this.context = this.canvas.getContext("2d");
 		
-		this.size_multiply = 4;
-		this.canvas.width = 160*this.size_multiply;
-		this.canvas.height = 144*this.size_multiply;
+		// this.size_multiply = 4;
+		// this.canvas.width = 160*this.size_multiply;
+		// this.canvas.height = 144*this.size_multiply;
 
 		// internal variables
 		this.frameCount=0;
@@ -63,7 +63,12 @@ class Scene{
 		// Level time update
 		this.level(deltaTime);
 	}
-
+    destroy() {
+        // Stop the music when the scene is destroyed
+        if (this.music) {
+            this.music.stop();
+        }
+    }
 	// This function is responsible for updating the level content and checking for level transitions
 	// It can stop the time updates for the scene (transitions, menu screen, etc.)
 	level(deltaTime)
@@ -141,7 +146,12 @@ class Scene{
 		
 			this.gameStateManager.pushState(new DialogState(this.gameStateManager, ["Hello! Press F to continue", "Press B to activate Debug"])); // Show dialog
 		}
-		if (input.isPressed(KEY_INVULNERABLE)) CREATIVE_MODE = !CREATIVE_MODE;
+		if (input.isPressed(KEY_INVULNERABLE)) {
+			CREATIVE_MODE = !CREATIVE_MODE;
+		}
+		if (input.isPressed('Escape')) { // Escape key to open in-game menu
+			this.gameStateManager.pushState(new InGameMenuState(this.gameStateManager, this.player)); // Open the in-game menu
+		}
 		// additionally handle player input
 		this.player.handleInput(input);
 	}
@@ -374,7 +384,10 @@ class GameStateManager {
     }
 
     popState() {
-        this.stateStack.pop();
+        const state = this.stateStack.pop();
+        if (state && typeof state.destroy === "function") {
+            state.destroy(); // Call the destroy method if it exists
+        }
     }
 
     update(deltaTime) {
@@ -481,6 +494,222 @@ class DialogState {
             if (this.currentIndex >= this.dialogList.length) {
                 this.gameStateManager.popState(); // End conversation
             }
+        }
+    }
+}
+
+class InGameMenuState {
+	constructor(gameStateManager, player) {
+		this.gameStateManager = gameStateManager;
+		this.player = player;
+		this.options = ["Resume", "Instruccions", "Crèdits", "Exit Game"]; // Added "Resume" as the first option
+		this.selectedOption = 0; // Index of the currently selected option
+	}
+
+	update(deltaTime) {
+		// No updates needed for a static menu
+	}
+
+	draw(context) {
+		// Clear the screen
+		context.fillStyle = "rgb(0, 25, 30, 0.7)"; // steel blue
+		context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+		// Draw the menu title
+		context.fillStyle = "white";
+		context.font = "54px 'tiny5', sans-serif";
+		context.fillText("In-Game Menu", context.canvas.width / 4, 100);
+
+		// Draw the menu options
+		context.font = "32px 'tiny5', sans-serif";
+		this.options.forEach((option, index) => {
+			context.fillStyle = this.selectedOption === index ? "yellow" : "white";
+			context.fillText(option, context.canvas.width / 4, 200 + index * 50);
+		});
+	}
+
+	handleInput(input) {
+		if (input.isPressed("ArrowUp")) {
+			this.selectedOption = (this.selectedOption - 1 + this.options.length) % this.options.length;
+		}
+		if (input.isPressed("ArrowDown")) {
+			this.selectedOption = (this.selectedOption + 1) % this.options.length;
+		}
+		if (input.isPressed("Enter")) {
+			this.selectOption();
+		}
+		if (input.isPressed("Escape")) {
+			this.gameStateManager.popState(); // Close the menu
+		}
+	}
+
+	selectOption() {
+		switch (this.options[this.selectedOption]) {
+			case "Resume":
+				this.gameStateManager.popState(); // Close the in-game menu and resume the game
+				break;
+			case "Instruccions":
+				this.gameStateManager.popState(); // Close the in-game menu
+				this.gameStateManager.pushState(new MenuInstructionsState(this.gameStateManager)); // Open the instructions menu
+				break;
+			case "Crèdits":
+				this.gameStateManager.popState(); // Close the in-game menu
+				this.gameStateManager.pushState(new MenuCredits(this.gameStateManager)); // Open the credits menu
+				break;
+			case "Exit Game":
+				console.log("Exit selected: ", this.gameStateManager.stateStack);
+				this.gameStateManager.popState(); // Close the menu
+				this.gameStateManager.popState(); // Remove the scene
+				this.gameStateManager.pushState(new MenuState(this.gameStateManager)); // Return to the main menu
+				break;
+		}
+	}
+}
+
+class MenuState {
+    constructor(gameStateManager) {
+        this.gameStateManager = gameStateManager;
+        this.options = ["Start New Game", "Credits", "Settings", "Exit"];
+        this.selectedOption = 0; // Index of the currently selected option
+
+		// Set the parametters for the canvas for the rest of the game
+		this.canvas = document.getElementById("game-layer");
+		this.canvas.width = 160*UPSCALE;
+		this.canvas.height = 144*UPSCALE;
+    }
+
+    update(deltaTime) {
+        // No updates needed for a static menu
+    }
+
+    draw(context) {
+        // Clear the screen
+        context.fillStyle = "rgb(0, 25, 30, 0.7)"; // steel blue
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+        // Draw the menu title
+        context.fillStyle = "white";
+        context.font = "32px 'Press Start 2P', sans-serif";
+        context.fillText("Principal Menu", context.canvas.width / UPSCALE, 100);
+		console.log(context.canvas.width);
+
+        // Draw the menu options
+        context.font = "24px 'Press Start 2P', sans-serif";
+        this.options.forEach((option, index) => {
+            context.fillStyle = this.selectedOption === index ? "yellow" : "white";
+            context.fillText(option, context.canvas.width / UPSCALE, 200 + index * 50);
+        });
+    }
+
+    handleInput(input) {
+        if (input.isPressed("ArrowUp")) {
+            this.selectedOption = (this.selectedOption - 1 + this.options.length) % this.options.length;
+        }
+        if (input.isPressed("ArrowDown")) {
+            this.selectedOption = (this.selectedOption + 1) % this.options.length;
+        }
+        if (input.isPressed("Enter")) {
+            this.selectOption();
+        }
+    }
+
+    selectOption() {
+        switch (this.options[this.selectedOption]) {
+            case "Start New Game":
+                this.gameStateManager.popState(); // Remove the menu
+                this.gameStateManager.pushState(new Scene(this.gameStateManager)); // Start the game
+                break;
+            case "Load Game":
+                console.log("Load Game selected");
+                // Implement loading logic here
+                break;
+            case "Settings":
+                console.log("Settings selected");
+                // Implement settings logic here
+                break;
+            case "Exit":
+                console.log("Exit selected");
+                // Implement exit logic here
+				this.gameStateManager.popState();
+				window.close();
+                break;
+        }
+    }
+}
+
+class MenuInstructionsState {
+	constructor(gameStateManager) {
+		this.gameStateManager = gameStateManager;
+		this.instructions = [
+			"Controls:",
+			"Arrow Keys: Move",
+			"F: Interact",
+			"G: Secondary Action",
+			"I: Inventory",
+			"B: Debug Mode",
+			"H: Heal",
+			"X: Shield",
+			"Escape: In-Game Menu"
+		];
+	}
+
+	update(deltaTime) {
+		// No updates needed for a static instructions screen
+	}
+
+	draw(context) {
+		context.fillStyle = "rgb(0, 25, 30, 0.7)"; // steel blue
+		context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+		context.fillStyle = "white";
+		context.font = "24px 'Press Start 2P', sans-serif";
+		this.instructions.forEach((line, index) => {
+			context.fillText(line, 20, 50 + index * 30);
+		});
+	}
+
+	handleInput(input) {
+		if (input.isPressed("Escape")) {
+			this.gameStateManager.popState(); // Close the instructions screen
+		}
+	}
+}
+
+class MenuCredits {
+    constructor(gameStateManager) {
+        this.gameStateManager = gameStateManager;
+        this.credits = [
+            "Game Credits:",
+            "",
+            "Developer: Your Name",
+            "Designer: Your Name",
+            "Music: Your Name",
+            "Special Thanks: Your Team",
+            "",
+            "Press Escape to return"
+        ];
+    }
+
+    update(deltaTime) {
+        // No updates needed for a static credits screen
+    }
+
+    draw(context) {
+        // Clear the screen
+        context.fillStyle = "rgb(0, 25, 30, 0.7)"; // steel blue
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+
+        // Draw the credits text
+        context.fillStyle = "white";
+        context.font = "24px 'Press Start 2P', sans-serif";
+        this.credits.forEach((line, index) => {
+            context.fillText(line, 20, 50 + index * 30);
+        });
+    }
+
+    handleInput(input) {
+        if (input.isPressed("Escape")) {
+            this.gameStateManager.popState(); // Close the credits screen
         }
     }
 }

@@ -9,6 +9,7 @@ const PLAYSCREENWIDTH = TILEWIDTH * 10;
 const PLAYSCREENHEIGHT = TILEHEIGHT * 8;
 const UIWIDTH = TILEWIDTH * 10;
 const UIHEIGHT = TILEHEIGHT * 1;
+const UPSCALE = 4;
 
 // KEYS
 const KEY_PRIMARY          = "KeyF";  //FIXME: MODIFICAR TECLA a OTRA
@@ -23,6 +24,7 @@ const KEY_INVULNERABLE     = "KeyG";
 
 //NEW
 const KEY_SHIELD           = "KeyX";
+const KEY_ESCAPE            = "Escape";
 /*
 //TODO: Quitar hardcode y poner bien las global variables
 const KEY_USE_SP_OBJECT    = "KeyC"; 
