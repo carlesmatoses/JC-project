@@ -291,6 +291,7 @@ class Player {
 
         //defend
         this.isDefending = false;
+        this.defendingTimer = 0;
 
 
 		// Sprite y animaciones Player
@@ -425,7 +426,7 @@ class Player {
             let offset = transform(this.center.x, this.center.y , context); 
             offset = {x:this.center.x - this.width/2.0 ,y:this.center.y - this.height/2.0};
         
-            //FIXME: Arreglar donde se renderiza la espada dependiendo el frame de la animacion
+            
             if (this.lastDirection.x === -1) {
                 if (this.swordSprite.currentAnimation != this.SWORD_LEFT){
                     this.swordSprite.setAnimation(this.SWORD_LEFT);
@@ -537,21 +538,15 @@ class Player {
             return; // no mover durante ataque
         }
 
-        //FIXME: Arreglar
+
         if (this.isDefending) {
-            
-            if (this.lastDirection.y === 1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_DOWN) {
-                this.sprite.setAnimation(this.ANIM_DEFEND_DOWN);
-            } else if (this.lastDirection.y === -1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_UP) {
-                this.sprite.setAnimation(this.ANIM_DEFEND_UP);
-            } else if (this.lastDirection.x === -1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_LEFT) {
-                this.sprite.setAnimation(this.ANIM_DEFEND_LEFT);
-            } else if (this.lastDirection.x === 1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_RIGHT) {
-                this.sprite.setAnimation(this.ANIM_DEFEND_RIGHT);
-            }
+            if (this.direction.x === -1) this.sprite.setAnimation(this.ANIM_DEFEND_LEFT);
+            else if (this.direction.x === 1) this.sprite.setAnimation(this.ANIM_DEFEND_RIGHT);
+            else if (this.direction.y === -1) this.sprite.setAnimation(this.ANIM_DEFEND_UP);
+            else if (this.direction.y === 1) this.sprite.setAnimation(this.ANIM_DEFEND_DOWN);
         
-            this.sprite.update(deltaTime); // actualizar animación de defensa
-            console.log("Estoy defendiendo!");
+            this.sprite.update(deltaTime);
+            return;
         }
         
         
@@ -689,10 +684,28 @@ class Player {
         if (this.moving) {
             this.sprite.update(deltaTime);
         }
-    
-
 
     }    
+
+    //TODO: Revisar Alberto
+    checkAttackCollision() {
+
+        for (let element of this.scene.levelContent) {
+            if (element.boundingBox && element.type === 'enemy' && attackBox.isColliding(element.boundingBox)) {
+                console.log("collision with enemy: ", element);
+                //console.log("this.stats.getTotalStats().attack: " + this.stats.getTotalStats().attack);
+                
+                //TODO: Añadir funcion que ver si ha obtenido daño
+                //FIXME: error al intentar getTotalStats del enemigo
+                //console.log("Stats enemy" + element.getTotalStats().health );
+                if (element.takeDamage) {
+                    console.log("Hola he entrado aqui");
+                    element.takeDamage(this.stats.getTotalStats().attack);
+                }
+            }
+        }
+    }
+
 
     handleInput(keyboard) {
         // Leer teclas
@@ -727,7 +740,7 @@ class Player {
         }
         
         //New: Attack press button
-        if (keyboard.isPressed('KeyZ') && !this.isAttacking) {
+        if (keyboard.isPressed('KeyZ') && !this.isAttacking && !this.isDefending) {
             //console.log("atacando");
             this.isAttacking = true;
             this.attackTimer = 0;
@@ -741,9 +754,12 @@ class Player {
             this.sprite.elapsedTime = 0;
         }
         
-        if (keyboard.isPressed('KeyX') && !this.isDefending) {
-            //console.log("atacando");
-            this.isDefending = true;
+        //Defense
+        if (keyboard.isHeld('KeyX') && !this.isDefending) {
+            
+            if (!this.isDefending) {
+                this.isDefending = true;
+            }
             
             if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_DEFEND_LEFT);
             else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_DEFEND_RIGHT);
@@ -752,6 +768,10 @@ class Player {
         
             this.sprite.currentKeyframe = 0;
             this.sprite.elapsedTime = 0;
+        }else{
+            if (this.isDefending) {
+                this.isDefending = false;
+            }
         }
         
 

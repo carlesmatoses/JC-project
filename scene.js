@@ -52,8 +52,7 @@ class Scene{
 	update(deltaTime)
 	{
 		// Game is stopped, we need to stop the time updates
-		if (this.stop) {
-			this.music.stop();
+		if (this.stop) {			
 			return;
 		}
 
@@ -447,7 +446,7 @@ class DialogState {
 			}
 	
 			context.fillStyle = "white";
-			context.font = "'tiny5'";
+			context.font = `${22}px 'tiny5', sans-serif`;
 			
 			let lineHeight = 26; // Adjust based on your font size
 			let startY = this.box.y + 40;

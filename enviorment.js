@@ -543,7 +543,10 @@ class Level{
                 return copy;
             } else if (element instanceof Enemy){
                 return new Enemy(element.x, element.y, element.width, element.height, element.texture); 
-            }else {
+            } else if (element instanceof Projectile){
+                console.log("El elemento es un projectile");
+                return new Projectile(element.center, element.width, element.height);
+            } else {
                 console.warn("Unknown element type:", element);
                 return null; // Handle unexpected types gracefully
             }
