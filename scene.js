@@ -55,7 +55,6 @@ class Scene{
 	{
 		// Game is stopped, we need to stop the time updates
 		if (this.stop) {
-			this.music.stop();
 			return;
 		}
 
