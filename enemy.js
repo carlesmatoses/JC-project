@@ -287,7 +287,8 @@ class Enemy {
 		if (this.changeDirTimer >= this.timeToChange) {
 			this.changeDirTimer = 0;
 			this.timeToChange = 1000 + Math.random() * 2000;
-			this.setDirection(this.getRandomDirection().x, this.getRandomDirection().y);
+            let direction = this.getRandomDirection();
+            this.setDirection(direction.x, direction.y);
 		}
         
         // Normalize direction to prevent diagonal speed boost
