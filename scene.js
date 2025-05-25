@@ -106,13 +106,6 @@ class Scene{
 			// If the player is trying to leave the screen, transition to the adjacent level
 			// Get the adjacent level ID based on the current level ID and direction
 			this.player.lastPosition = {x: this.player.x, y: this.player.y};  // save last position
-			// this.levelTransition(margins.destination)
-			// let new_pos = this.newPositionMargins(margins.side)
-			// this.player.setPosition(new_pos.x, new_pos.y); 
-			// setTimeout(() => {
-			// 	this.stop = false; // Resume the main loop after 1 second
-			// }, 1000);
-			// this.stop = true; // Pause the main loop
 			this.levelTransitionMarginAnimation(
 				this.levelContent,
 				world.maps[this.mapID].getLevelElements(margins.destination),
@@ -128,6 +121,22 @@ class Scene{
 		this.levelContent.forEach((element) => {
 			if (element.type === "enemy" && element.boundingBox.isColliding(this.player.boundingBox, 0.04)) {
 				this.player.takeDamage(element.stats.attack); // Player takes damage from enemy
+			}
+			// Check for collisions of projectiles with the player
+			if (element instanceof Projectile && element.boundingBox.isColliding(this.player.boundingBox, -0.04)) {
+				if (typeof element.onHit === "function") {
+					element.onHit(this.player, this);
+				}
+			}
+			
+			if (element instanceof Projectile) { // if it did not collide, check if it collides with any other element
+				this.levelContent.forEach((otherElement) => {
+					if (otherElement !== element && otherElement !== element.parent) {
+						if (element.boundingBox.isColliding(otherElement.boundingBox)) {
+							element.onHit(otherElement, this); // Call the onCollide function if it exists
+						}
+					}
+				});
 			}
 		});
 
@@ -152,6 +161,15 @@ class Scene{
 		if (input.isPressed('Escape')) { // Escape key to open in-game menu
 			this.gameStateManager.pushState(new InGameMenuState(this.gameStateManager, this.player)); // Open the in-game menu
 		}
+		if (input.isPressed('Numpad0')) {
+			this.levelContent.forEach(element => {
+				if (element.type === "enemy" && typeof element.shoot === "function") {
+					console.log("Shooting element: ", element);
+					element.shoot();
+				}
+			});
+		}
+
 		// additionally handle player input
 		this.player.handleInput(input);
 	}
@@ -261,8 +279,10 @@ class Scene{
 			this.player.setPosition(x, y); 
 			// Interpolate level elements
 			currentElements.forEach((element) => {
-				element.resetPosition(); // Reset to old position
-				element.translatePosition(t * (player_new_position.wx - player_old_position.wx), t * (player_new_position.wy - player_old_position.wy)); // Translate to new position
+				if (element.resetPosition) {
+					element.resetPosition(); // Reset to old position
+					element.translatePosition(t * (player_new_position.wx - player_old_position.wx), t * (player_new_position.wy - player_old_position.wy)); // Translate to new position
+				}
 			});
 			futureElements.forEach((element) => {
 				element.resetPosition(); // Reset to old position

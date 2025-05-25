@@ -1,110 +1,59 @@
 class Projectile {
-    constructor(center, width, height ){
-        this.lastPosition = { x: center.x, y: center.y }; // Last position for collision detection
-        this.width = width; // Width  Mismo valor que height, es una esfera 
-        this.height = height; // Height 
-        this.render_layer = 0; 
+    constructor(center, width, height, direction, parent) {
+        this.width = width; 
+        this.height = height; 
         this.center = { x: center.x, y: center.y };
-        this.originalCenter = { x: center.x, y: center.y }; // Para resetPosition
-        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.8, height*0.8);
-        this.scene = null;
-
-        this.stats = new Stats(1, 10, 0, 0, 0.0005); //health, attack, defense, strength, speed //FIXME: Revisar si va muy rapido.
-        this.direction = { x: 0, y: 0 }; // Normalized movement vector        
-        this.lastDirection = { x: 0, y: 0 };; // Direction the player is facing 
-        
-        this.active = true;
+        this.lastCenter = { x: center.x, y: center.y }; // Last position for collision detection
+        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width, height);
+        this.attack = 0.5;
+        this.speed = 0.0001;
+        this.direction = direction;   
+        this.render_layer = -1;
+        this.texture = textures.hearts; // Texture for the projectile
+        this.parent = parent;
     }
 
-
     draw(context) {
-        //FIXME: No se ve la boudingBox
-        this.boundingBox.draw(context);
-
-        if (DEBUG) {
-            //Si el debug mode esta activado, dibuja una esfera azul en el centro
-            let centerPixels = transform(this.center.x,this.center.y,context) 
-            context.beginPath();
-            context.arc(centerPixels.x, centerPixels.y, 8, 0, 2 * Math.PI);
-            context.fillStyle = "blue";
-            context.fill();
+        // Dibujar el proyectil como un rectángulo
+        let topleftcorner = {
+            x: this.center.x - this.width / 2,
+            y: this.center.y - this.height / 2
+        };
+        let pos = transform(topleftcorner.x, topleftcorner.y, context);
+        let size = transform(this.width, this.height, context);
         
+        context.fillStyle = "red"; // Color del proyectil
+        context.fillRect(pos.x, pos.y, size.x, size.y);
+        context.restore();
+
+        // Dibujar la textura del proyectil
+        // if (this.texture && this.texture.isLoaded()) {
+        //     context.drawImage(this.texture.img, pos.x, pos.y, size.x, size.y);
+        // }
+
+        if(DEBUG){
+            this.boundingBox.draw(context);
         }
     }
 
     update(deltaTime) {
-        //FIXME: Al parecer cuando esto esta descomentado se queda estatico -> isActive = false
-        // Cuando esta comentado siguen su trayectoria hasta el infinito pero se van a la dungeon el Link
-        console.log(this.active);
-        if (!this.active) {    
-            console.log("Estoy inactivo");
-            return;
-        }
-
         // Calcular desplazamiento en base a la dirección y velocidad del projectile
-        const speed = this.stats.getTotalStats().speed;
-        const offsetX = this.direction.x * speed * deltaTime;
-        const offsetY = this.direction.y * speed * deltaTime;
+        const offsetX = this.direction.x * this.speed * deltaTime;
+        const offsetY = this.direction.y * this.speed * deltaTime;
+        this.translatePosition(offsetX, offsetY);
+        this.lastCenter.x = this.center.x;
+        this.lastCenter.y = this.center.y;
 
-        // Guardar posición anterior
-        this.lastPosition.x = this.center.x;
-        this.lastPosition.y = this.center.y;
-
-        // Aplicar movimiento
-        this.center.x += offsetX;
-        this.center.y += offsetY;
-
-        console.log("Center " +this.center.x +" "+ this.center.y);
-
-        // Actualiza la posición de la boundingBox también
-        this.boundingBox.setPosition(this.center.x, this.center.y);
-
-
-        // Colisión con jugador
-        //TODO: Funcion cuando golpee al jugador pierda vida
-        /*const player = this.scene.player;
-        if (player.boundingBox && this.boundingBox.isColliding(player.boundingBox)) {
-            if (player.onHit) {
-                player.onHit(); // Daño al jugador
-            }
-            
-            this.active = false;
-            return;
-        }*/
-
-        // Colisión con elementos del nivel
-        for (let element of this.scene.levelContent) {
-            if (element === this) continue;
-            if (element.boundingBox && element.isActive()) {
-                if (this.boundingBox.isColliding(element.boundingBox)) {
-                    if (element.onCollision) {
-                        element.onCollision({ scene: this.scene });
-                    }
-                    
-                    this.active = false;
-                    return;
-                }
-            }
-        }
-
-        // Colisión con los límites de la escena
-        if (this.center.x < 0 || this.center.x > this.scene.width ||
-            this.center.y < 0 || this.center.y > this.scene.height) {
-            
-            this.active = false;
+        // kill it if its out of bounds
+        if (
+            this.center.x + this.width / 2 < 0 ||
+            this.center.x - this.width / 2 > 1 ||
+            this.center.y + this.height / 2 < 0 ||
+            this.center.y - this.height / 2 > TILEHEIGHT * 8
+        ) {
+            this.destroy(this.parent.scene);
         }
     }
-
-    collidesWith(element) {
-        //if (!element.boundingBox) return false;
-        return this.boundingBox.isColliding(element.boundingBox);
-    }
-
-
-    isActive() {
-        return this.active;
-    }
-
 
     setPosition(x, y) {
         this.center.x = x;
@@ -112,16 +61,27 @@ class Projectile {
         this.boundingBox.setPosition(this.center.x, this.center.y);
     }
 
-    resetPosition() {
-        this.center.x = this.originalCenter.x;
-		this.center.y = this.originalCenter.y;
-        this.boundingBox.setPosition(this.center.x, this.center.y);
-    }
-
     translatePosition(dx, dy) {
         this.center.x += dx;
 		this.center.y += dy;
         this.boundingBox.translate(dx, dy);
+    }
+
+    resetPosition() {
+        this.center.x = this.lastCenter.x;
+        this.center.y = this.lastCenter.y;
+        this.boundingBox.setPosition(this.center.x, this.center.y);
+    }
+
+    destroy(scene) {
+        scene.levelContent = scene.levelContent.filter(e => e !== this);
+        console.log("Projectile destroyed");
+    }
+    onHit(target, scene){
+        if (target.takeDamage) {
+            target.takeDamage(this.attack);
+        }
+        this.destroy(scene);
     }
 
 }
@@ -217,7 +177,7 @@ class Enemy {
     }
 
     draw(context) {
-        context.save();
+        context.save(); // DEBUG: per a que es esta linea?
 
         // Controlar transparencia según efectos
         if (this.isFlashing) {
@@ -254,7 +214,6 @@ class Enemy {
             this.shootTimer = 0;
             this.shoot();
         }
-
 
         // Manejar parpadeo al recibir daño
         if (this.isFlashing) {
@@ -311,7 +270,7 @@ class Enemy {
             this.translatePosition(offsetX, 0);
             for (let element of this.scene.levelContent) {
                 if (element === this) continue; // Skip self
-                if (element.boundingBox && element.isActive()) {
+                if (element.boundingBox && element.isActive && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert X movement
                         this.translatePosition(-offsetX, 0);
@@ -341,7 +300,7 @@ class Enemy {
             this.translatePosition(0, offsetY);
             for (let element of this.scene.levelContent) {
                 if (element === this) continue; // Skip self
-                if (element.boundingBox && element.isActive()) {
+                if (element.boundingBox && element.isActive && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert Y movement
                         this.translatePosition(0, -offsetY);
@@ -421,29 +380,20 @@ class Enemy {
         console.log("Enemy died (fading out)");
     }
 
-    //FIXME:
     shoot() {
         const direction = { x: this.lastDirection.x, y: this.lastDirection.y };
 
-        // Asegúrate de que no sea un vector nulo
+        // Asegúrate de que no sea un vector nulo. Solo occurre cuando el enemigo aún no se ha movido
         if (direction.x === 0 && direction.y === 0) return;
-
-        //Pequeño offset (que falta perfilar) para que no choque con la hitbox del personaje
-        const offsetDistance = 0.2; // Para que empiece un poco mas adelante
-
-        //const center = { x: this.center.x, y: this.center.y };
         const projectileStart = {
-            x: this.center.x + this.lastDirection.x * offsetDistance,
-            y: this.center.y + this.lastDirection.y * offsetDistance
+            x: this.center.x,
+            y: this.center.y
         };
-        const projectile = new Projectile(projectileStart, 8, 8);
-        projectile.direction = { ...this.lastDirection };
-        projectile.lastDirection = { x: direction.x, y: direction.y };
-        projectile.scene = this.scene;
-
-        console.log("Projectile fired:", projectile);
-
-        //Añado el projectile a a escena para que se renderice 
+        const projectileDirection = { 
+            x: this.lastDirection.x, 
+            y: this.lastDirection.y 
+        };
+        const projectile = new Projectile(projectileStart, TILEWIDTH/2.0, TILEHEIGHT/2.0, projectileDirection, this);
         this.scene.levelContent = this.scene.levelContent.concat([projectile]);
     }
 

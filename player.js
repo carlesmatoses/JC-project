@@ -602,7 +602,7 @@ class Player {
             // Move X
             this.translatePosition(offsetX, 0);
             for (let element of this.scene.levelContent) {
-                if (element.boundingBox && element.isActive()) {
+                if (element.boundingBox && element.isActive && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert X movement
                         this.translatePosition(-offsetX, 0);
@@ -619,7 +619,7 @@ class Player {
             // Move Y
             this.translatePosition(0, offsetY);
             for (let element of this.scene.levelContent) {
-                if (element.boundingBox && element.isActive()) {
+                if (element.boundingBox && element.isActive  && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert Y movement
                         this.translatePosition(0, -offsetY);
