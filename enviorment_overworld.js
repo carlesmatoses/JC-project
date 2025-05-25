@@ -37,6 +37,7 @@ principal_chest.callback = function() {
 }
 
 const enemyOctoOver = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //Para testear
+const enemyOctoOver1 = new Enemy(0.4, 0.2, TILEWIDTH, 1/9); //Para testear
 
 
 //Remember the tile we work is on debug +1. Example debug says 103 we are working on the code on 104
@@ -545,12 +546,14 @@ const tile119 = [
 const tile120 = [
     new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.overworld, color="black", 
         drawing_settings={sx: 1120+8, sy: 896+8, sWidth: 160, sHeight: 128}), 
-    enter_dungeon,
-    special_tombstone,
-    new InvisibleWall(TILEWIDTH*9,3.5*TILEHEIGHT,TILEWIDTH,8*TILEHEIGHT),
-    new InvisibleWall(TILEWIDTH*7,TILEHEIGHT*4,TILEWIDTH*3,TILEHEIGHT),
-    new InvisibleWall(TILEWIDTH*2,5*TILEHEIGHT,TILEWIDTH*7,TILEHEIGHT),
-    new InvisibleWall(TILEWIDTH*0,0*TILEHEIGHT,TILEWIDTH,TILEHEIGHT*3),
+	    enter_dungeon,
+	    special_tombstone,
+	    new InvisibleWall(TILEWIDTH*9,3.5*TILEHEIGHT,TILEWIDTH,8*TILEHEIGHT),
+	    new InvisibleWall(TILEWIDTH*7,TILEHEIGHT*4,TILEWIDTH*3,TILEHEIGHT),
+	    new InvisibleWall(TILEWIDTH*2,5*TILEHEIGHT,TILEWIDTH*7,TILEHEIGHT),
+	    new InvisibleWall(TILEWIDTH*0,0*TILEHEIGHT,TILEWIDTH,TILEHEIGHT*3),
+	    enemyOctoOver,
+	    //enemyOctoOver1
 
 ];
 const tile121 = [
