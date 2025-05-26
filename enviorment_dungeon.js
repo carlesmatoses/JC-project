@@ -15,6 +15,55 @@
 // const wall3 = new BackgroundElement(9*TILEWIDTH, 0, TILEWIDTH, 9/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
 // const wall4 = new BackgroundElement(0, 8/9, 10*TILEWIDTH, 1/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
 
+// Statues
+// the two statues on the starting room
+const statue1 = new Statue(
+    4 * TILEWIDTH, 
+    1 * TILEHEIGHT,
+    ["What is 2 + 2?", "Choose the correct answer:"],
+    ["3", "4", "5"],
+    (selectedIndex, statue) => {
+        if (selectedIndex === 1) {
+            console.log("Correct answer!");
+            statue.translatePosition(-TILEWIDTH, 0); 
+            statue.boundingBox.x -= TILEWIDTH; 
+            statue.defaultX -= TILEWIDTH;
+            statue.callback(statue); 
+        } else {
+            console.log("Wrong answer! Try again.");
+        }
+    }
+);
+statue1.callback = function(statue) {
+    statue1.x = statue.x;
+    statue1.y = statue.y;
+    console.log("statue callback executed");
+}
+
+const statue2 = new Statue(
+    5 * TILEWIDTH, 
+    1 * TILEHEIGHT,
+    ["Which show is better?", ],
+    ["Futurama", "Simspons"],
+    (selectedIndex, statue) => {
+        if (selectedIndex === 0) {
+            console.log("Correct answer!");
+            statue.translatePosition(TILEWIDTH, 0); 
+            statue.boundingBox.x += TILEWIDTH; 
+            statue.defaultX += TILEWIDTH;
+            statue.callback(statue); 
+        } else {
+            console.log("Wrong answer! Try again.");
+        }
+    }
+);
+statue2.callback = function(statue) {
+    statue2.x = statue.x;
+    statue2.y = statue.y;
+    console.log("statue callback executed");
+}
+
+
 //Enemies
 const enemyOcto1 = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
 
@@ -232,6 +281,8 @@ const dungeon_tile26 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT ),
+    statue1,
+    statue2,
 ];
 const dungeon_tile27 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 512+5, sWidth: 160, sHeight: 128})];

@@ -21,8 +21,10 @@ gamestatemanager.pushState(menuState);
 //     `Press ${KEY_INVENTORY} to open the inventory`,
 // ]));
 
-function addDialog(text) {
-    gamestatemanager.pushState(new DialogState(gamestatemanager, text));
+function addDialog(text, options = null, onSelect = null) {
+    gamestatemanager.pushState(
+        new DialogState(gamestatemanager, text, options, onSelect)
+    );
 }
 
 var previousTimestamp;

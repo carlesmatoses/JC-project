@@ -430,10 +430,14 @@ class GameStateManager {
 }
 
 class DialogState {
-    constructor(gameStateManager, dialogList) {
+    constructor(gameStateManager, dialogList, options = null, onSelect = null) {
         this.gameStateManager = gameStateManager;
         this.dialogList = dialogList; // array of strings
         this.currentIndex = 0;
+
+		this.options = options;
+		this.selectedOption = 0;
+		this.onSelect = onSelect;
 
 		this.box = {
 			x: TILEWIDTH * 2,
@@ -478,7 +482,6 @@ class DialogState {
 			const lines = [];
 	
 			let currentLine = "";
-	
 			for (let word of words) {
 				if ((currentLine + word).length <= maxCharsPerLine) {
 					currentLine += word + " ";
@@ -490,29 +493,56 @@ class DialogState {
 			if (currentLine.length > 0) {
 				lines.push(currentLine.trim());
 			}
-			
-			// we get context canvas size in pixels
-			var sizeWidth = context.canvas.clientWidth / 160;
 
 			context.fillStyle = "white";
 			context.font = `${22}px 'tiny5', sans-serif`;
 			
-			let lineHeight = 26; // Adjust based on your font size
+			let lineHeight = 26;
 			let startY = this.box.y + 40;
 			
+			// Draw dialog lines
 			for (let i = 0; i < lines.length; i++) {
 				context.fillText(lines[i], this.box.x + 20, startY + i * lineHeight);
 			}
+
+			// Draw options if on last dialog
+			if (this.options && this.currentIndex === this.dialogList.length - 1) {
+				const optionsY = startY + lines.length * lineHeight + 20; // Add spacing
+				const optionSpacing = (this.box.width - 80) / this.options.length; // 80px padding (40 left/right)
+				this.options.forEach((option, i) => {
+					context.fillStyle = this.selectedOption === i ? "yellow" : "white";
+					context.fillText(
+						option,
+						this.box.x + 40 + i * optionSpacing,
+						optionsY
+					);
+				});
+			}
 		} else {
-			this.gameStateManager.popState(); // End conversation if no more text to show
+			// NOTE: This should probably be triggered externally, not inside draw()
+			this.gameStateManager.popState(); // End conversation
 		}
 	}
 
     handleInput(event) {
-        if (event.isPressed("KeyF")) { 
+		if (this.options && this.currentIndex === this.dialogList.length - 1) {
+			if (event.isPressed("ArrowUp") || event.isPressed("ArrowLeft")) {
+				this.selectedOption = (this.selectedOption - 1 + this.options.length) % this.options.length;
+			}
+			if (event.isPressed("ArrowDown") || event.isPressed("ArrowRight")) {
+				this.selectedOption = (this.selectedOption + 1) % this.options.length;
+			}
+
+			if (event.isPressed("Enter")) {
+				if (this.onSelect) {
+					this.onSelect(this.selectedOption); // Call the callback with the selected option
+				}
+				this.gameStateManager.popState();
+			}
+		} else if (event.isPressed("KeyF")) {
             this.currentIndex++;
             if (this.currentIndex >= this.dialogList.length) {
-                this.gameStateManager.popState(); // End conversation
+				this.gameStateManager.popState();
             }
         }
     }

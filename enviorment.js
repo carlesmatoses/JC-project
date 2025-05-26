@@ -333,14 +333,25 @@ class InvisibleWall extends BackgroundElement {
 }
 
 class Statue extends BackgroundElement {
-    constructor(x, y, dialog) {
+    constructor(x, y, dialog, options = null, onSelect = null) {
         super(x, y, TILEWIDTH, TILEHEIGHT, "statue", false, textures.statue, null, null);
         this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
         this.dialog = dialog; 
+        this.options = options; 
+        this.onSelect = onSelect;
     }
 
     interact(player) {
-        addDialog(this.dialog); 
+        addDialog(this.dialog, this.options, this.onSelect) // Show the dialog when interacting with the statue
+    }
+
+    draw(context) {
+        // call super.draw(context) to draw the statue texture
+        super.draw(context); // Draw the statue texture
+        if (DEBUG) {
+            // Draw the bounding box for debugging
+            console.log(this.x)
+        }
     }
 }
 
@@ -385,6 +396,10 @@ function createFirePlace(x, y) {
     };
     
     return element; // Return the fireplace element
+}
+function createStatue(x, y, dialog, options = null, onSelect = null) {
+    let element =  new Statue(x, y, dialog, options, onSelect);
+    return element;
 }
 function createAnimatedFloor(x, y, texture) {
     let element =  new BackgroundElement(x, y, TILEWIDTH, TILEHEIGHT, "animated_floor", true, texture = texture, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
@@ -524,13 +539,18 @@ class Level{
                 copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof Statue) {
-                // Create a new Statue instance
                 let copy = new Statue(
-                    element.x, element.y, element.dialog
+                    element.x, element.y, element.dialog, element.options, null
                 );
                 copy.globalReference = element;
-                copy.boundingBox = element.boundingBox; // Copy the bounding box
+                copy.boundingBox = element.boundingBox;
                 copy.callback = element.callback; 
+
+                // Rebind onSelect with proper 'copy' reference
+                if (element.onSelect) {
+                    copy.onSelect = (selectedIndex) => element.onSelect(selectedIndex, copy);
+                }
+
                 return copy;
             } else if (element instanceof BackgroundElement) {
                 // Create a new BackgroundElement instance
