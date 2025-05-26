@@ -11,6 +11,10 @@ class BoundingBox {
      * @returns boolean - True if the bounding boxes are colliding, false otherwise.
      */
     isColliding(other, epsilon = 0) {
+        // If either bounding box has zero width or height, no collision
+        if (this.width === 0 || this.height === 0 || other.width === 0 || other.height === 0) {
+            return false;
+        }
         // Check if this bounding box is colliding with another bounding box,
         // optionally expanding this box by epsilon for proximity checks
         const width = this.width + epsilon;
