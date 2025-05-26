@@ -733,3 +733,46 @@ class MenuCredits {
         }
     }
 }
+
+class DeathMenuState {
+    constructor(gameStateManager) {
+        this.gameStateManager = gameStateManager;
+        this.options = ["Start Again", "Exit"];
+        this.selectedOption = 0;
+    }
+
+    update(deltaTime) {}
+
+    draw(context) {
+        context.fillStyle = "rgba(0,0,0,0.8)";
+        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+        context.fillStyle = "white";
+        context.font = "48px 'tiny5', sans-serif";
+        context.fillText("You Died", context.canvas.width / 4, 100);
+        context.font = "32px 'tiny5', sans-serif";
+        this.options.forEach((option, i) => {
+            context.fillStyle = this.selectedOption === i ? "yellow" : "white";
+            context.fillText(option, context.canvas.width / 4, 200 + i * 50);
+        });
+    }
+
+    handleInput(input) {
+        if (input.isPressed("ArrowUp")) {
+            this.selectedOption = (this.selectedOption - 1 + this.options.length) % this.options.length;
+        }
+        if (input.isPressed("ArrowDown")) {
+            this.selectedOption = (this.selectedOption + 1) % this.options.length;
+        }
+        if (input.isPressed("Enter")) {
+            if (this.options[this.selectedOption] === "Start Again") {
+                this.gameStateManager.popState(); // Remove death menu
+                this.gameStateManager.popState(); // Remove current scene
+                this.gameStateManager.pushState(new Scene(this.gameStateManager)); // Start new scene
+            } else if (this.options[this.selectedOption] === "Exit") {
+                this.gameStateManager.popState(); // Remove death menu
+                this.gameStateManager.popState(); // Remove current scene
+                this.gameStateManager.pushState(new MenuState(this.gameStateManager)); // Go to main menu
+            }
+        }
+    }
+}

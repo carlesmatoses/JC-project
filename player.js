@@ -845,7 +845,8 @@ class Player {
         this.stats.health -= damage;
         if (this.stats.health <= 0) {
             console.log("Player has died");
-            this.stats.health = this.stats.getHealth().maxHealth; // Reset health on death
+            this.scene.gameStateManager.pushState(new DeathMenuState(this.scene.gameStateManager));
+
         }
 
         // Activate immunity after taking damage
