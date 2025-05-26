@@ -63,6 +63,62 @@ statue2.callback = function(statue) {
     console.log("statue callback executed");
 }
 
+// GATES
+const gate1 = new Portcullis(
+    9 * TILEWIDTH, 
+    3 * TILEHEIGHT, 
+)
+
+// ROTORES
+const rotor0 = new Rotor(TILEWIDTH*2, TILEHEIGHT*2, identifier=0, neighbors=[1], current_color=2);
+const rotor1 = new Rotor(TILEWIDTH*7, TILEHEIGHT*2, identifier=1, neighbors=[2], current_color=0);
+const rotor2 = new Rotor(TILEWIDTH*2, TILEHEIGHT*5, identifier=2, neighbors=[3], current_color=1);
+const rotor3 = new Rotor(TILEWIDTH*7, TILEHEIGHT*5, identifier=3, neighbors=[0], current_color=3);
+
+const hidden_chest =  new Chest(TILEWIDTH*12, TILEHEIGHT*12);
+hidden_chest.content = BraceletStrength;
+hidden_chest.callback = function() {
+    console.log("Chest callback executed");
+    hidden_chest.open();
+}
+
+function customOnSolved(player) {
+    // Possible chest positions
+    const positions = [
+        { x: TILEWIDTH, y: TILEHEIGHT },
+        { x: TILEWIDTH * 8, y: TILEHEIGHT * 6 }
+    ];
+
+    // Calculate distances from player to each position
+    const distances = positions.map(pos => {
+        const dx = player.x - pos.x;
+        const dy = player.y - pos.y;
+        return dx * dx + dy * dy; // squared distance
+    });
+
+    // Find the index of the furthest position
+    const furthestIndex = distances[0] > distances[1] ? 0 : 1;
+    const pos = positions[furthestIndex];
+    hidden_chest.x = pos.x;
+    hidden_chest.y = pos.y;
+    hidden_chest.boundingBox.x = pos.x+ TILEWIDTH / 2; 
+    hidden_chest.boundingBox.y = pos.y+ TILEHEIGHT / 2; 
+
+    const chest = player.scene.levelContent.find(obj => obj instanceof Chest);
+    if (chest) {
+        chest.x = pos.x;
+        chest.y = pos.y;
+        chest.boundingBox.x = pos.x+ TILEWIDTH / 2; 
+        chest.boundingBox.y = pos.y+ TILEHEIGHT / 2; 
+        chest.defaultX = pos.x;
+        chest.defaultY = pos.y;
+    }
+
+}
+rotor0.onSolved = customOnSolved;
+rotor1.onSolved = customOnSolved;
+rotor2.onSolved = customOnSolved;
+rotor3.onSolved = customOnSolved;
 
 //Enemies
 const enemyOcto1 = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
@@ -220,6 +276,10 @@ const dungeon_tile20 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     createVase(8*TILEWIDTH, TILEHEIGHT*2),
     createVase(TILEWIDTH, 6*TILEHEIGHT),
     createVase(8*TILEWIDTH, 6*TILEHEIGHT),
+
+    new Enemy(TILEWIDTH*2, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
+    new Enemy(TILEWIDTH*4, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT),
+    gate1,
 ];
 const dungeon_tile21 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 384+4, sWidth: 160, sHeight: 128}),
@@ -230,6 +290,13 @@ const dungeon_tile21 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(8*TILEWIDTH, 7*TILEHEIGHT, 7*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(9*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
     new InvisibleWall(9*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+
+    rotor0, 
+    rotor1, 
+    rotor2, 
+    rotor3, 
+    hidden_chest,
+
 ];
 const dungeon_tile22 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 384+4, sWidth: 160, sHeight: 128}),
@@ -325,6 +392,12 @@ const level28 = new Level(27, dungeon_tile28);
 const level29 = new Level(28, dungeon_tile29);
 const level30 = new Level(29, dungeon_tile30);
 
+level20.onAllEnemiesDefeated = function() {
+    // Open the door here
+    // For example, set door.active = true or remove an InvisibleWall
+    console.log("All enemies defeated! Door opens.");
+    // door.open(); or scene.levelContent.push(new Door(...));
+};
 
 world.maps["dungeon1"].setLevels([
     level1, level2, level3, level4, level5, level6,

@@ -198,6 +198,19 @@ class Scene{
 					element.activate(); // Activate the door if the player is not colliding with it
 			}
 		});
+
+		// Check for remaining enemies
+		const enemiesLeft = this.levelContent.some(e => e.type === "enemy");
+		if (!enemiesLeft && typeof world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated === "function") {
+			world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated();
+			this.levelContent.forEach(element => {
+				if (element.type === "portcullis" && typeof element.open === "function") {
+					element.open();
+				}
+			});
+			// Prevent multiple triggers
+			world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated = null;
+		}
 	}
 
 	/**

@@ -709,12 +709,16 @@ class Player {
         );
 
         for (let element of this.scene.levelContent) {
-            if (element.boundingBox && element.type === 'enemy' && attackBox.isColliding(element.boundingBox)) {
-                console.log("collision with enemy: ", element);
+            if (element.boundingBox && attackBox.isColliding(element.boundingBox)) {
+                console.log("Colisión de ataque con:", element);
                 if (element.takeDamage) {
                     element.takeDamage(this.stats.getTotalStats().attack);
                 }
+                if (element.onAttackCollision) {
+                    element.onAttackCollision(this); // Call the onAttackCollision method of the element
+                }
             }
+
         }
     }
 

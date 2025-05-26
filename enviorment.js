@@ -254,6 +254,102 @@ class Door extends BackgroundElement {
     }
 }
 
+class Portcullis extends BackgroundElement {
+    constructor(x, y) {
+        super(x, y, TILEWIDTH, TILEHEIGHT*2, "portcullis", false, textures.portcullis, null, null);
+        this.boundingBox = new BoundingBox(this.x+this.width*0.5, this.y+this.height*0.5, TILEWIDTH, TILEHEIGHT*2); // Bounding box for collision detection
+        this.isOpen = false; // Whether the portcullis is open or not
+        this.callback = null; // Optional callback function for when the portcullis is opened
+    
+        if (this.isOpen) {
+            this.boundingBox.width = 0; // Set width for closed state
+            this.boundingBox.height = 0; // Set height for closed state
+        } // Set width for closed state
+    }
+    open() {
+        if (this.callback) {
+            this.callback();
+        }
+        
+        this.globalReference.isOpen = true; 
+        this.globalReference.boundingBox.width = 0; 
+        this.globalReference.boundingBox.height = 0;
+        
+        this.isOpen = true; 
+        this.boundingBox.width = 0;
+        this.boundingBox.height = 0;
+    }
+    close() {
+        this.isOpen = false; // Close the portcullis
+        this.boundingBox.width = TILEWIDTH;
+        this.boundingBox.height = TILEHEIGHT*2;
+    }
+    isOpened() {
+        return this.isOpen; // Check if the portcullis is open
+    }
+
+    draw(context) {
+        // Calculate sprite frame width (subtract 2px for separators, divide by 3)
+        const spriteWidth = (this.texture.img.width - 2) / 3;
+        const spriteHeight = this.texture.img.height;
+        // Animation timing (t seconds total)
+        const ANIMATION_DURATION = 0.4; // seconds (adjust as needed)
+        if (this.animationTimer === undefined) {
+            this.animationTimer = 0;
+            this.animationFrame = this.isOpen ? 2 : 0;
+            this.animating = false;
+            this.lastState = this.isOpen;
+        }
+
+        // Detect state change and start animation
+        if (this.lastState !== this.isOpen) {
+            this.animating = true;
+            this.animationTimer = 0;
+            this.lastState = this.isOpen;
+        }
+
+        // Animate if needed
+        if (this.animating) {
+            this.animationTimer += (context.deltaTime || 16) / 1000; // deltaTime in ms to seconds
+            let progress = Math.min(this.animationTimer / ANIMATION_DURATION, 1);
+            if (this.isOpen) {
+                // Opening: 0 -> 1 -> 2
+                if (progress < 0.5) this.animationFrame = 1;
+                else this.animationFrame = 2;
+            } else {
+                // Closing: 2 -> 1 -> 0
+                if (progress < 0.5) this.animationFrame = 1;
+                else this.animationFrame = 0;
+            }
+            if (progress >= 1) {
+                this.animating = false;
+                this.animationFrame = this.isOpen ? 2 : 0;
+            }
+        } else {
+            this.animationFrame = this.isOpen ? 2 : 0;
+        }
+
+        // Draw the correct frame
+        let pos = transform(this.x, this.y, context);
+        let size = transform(this.width, this.height, context);
+        context.drawImage(
+            this.texture.img,
+            this.animationFrame * (spriteWidth + 1), // +1 for separator pixel
+            0,
+            spriteWidth,
+            spriteHeight,
+            pos.x,
+            pos.y,
+            size.x,
+            size.y
+        );
+
+        if (DEBUG) {
+            this.boundingBox.draw(context);
+        }
+    }
+}
+
 class Chest extends BackgroundElement {
     constructor(x, y) {
         super(x, y, TILEWIDTH, TILEHEIGHT, "chest", false, textures.chest, null, null);
@@ -318,7 +414,6 @@ class Tombstone extends BackgroundElement {
         this.isPushable = true; // Tombstones are pushable
         this.callback = null; // Optional callback function for when the tombstone is pushed
     }
-
 }
 
 class InvisibleWall extends BackgroundElement {
@@ -355,6 +450,132 @@ class Statue extends BackgroundElement {
         if (DEBUG) {
             // Draw the bounding box for debugging
             console.log(this.x)
+        }
+    }
+}
+
+class Rotor extends BackgroundElement {
+    constructor(x, y, identifier = 0, neighbors = [], current_color = 0) {
+        super(x, y, TILEWIDTH, TILEHEIGHT, "rotor", false, textures.rotor, null, null);
+        this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
+        this.identifier = identifier;
+        this.neighbors = neighbors; 
+        this.current_color = current_color;
+        this.color_seq = ["red", "green", "blue", "yellow"];
+        this.onSolved = null;
+        this.texture_red = textures.rotor_red;
+        this.texture_green = textures.rotor_green;
+        this.texture_blue = textures.rotor_blue;
+        this.texture_yellow = textures.rotor_yellow;
+
+        // set inital texture based on current_color
+        switch (this.current_color) {
+            case 0:
+                this.texture = this.texture_red;
+                break;
+            case 1:
+                this.texture = this.texture_green;
+                break;
+            case 2:
+                this.texture = this.texture_blue;
+                break;
+            case 3:
+                this.texture = this.texture_yellow;
+                break;
+            default:
+                this.texture = this.texture_red; // Default to red if color is invalid
+        }
+    }
+    
+    onAttackCollision(player) {
+        let elements = player.scene.levelContent;
+        this.current_color = (this.current_color + 1) % 4;
+        for (let element of elements) {
+            if (element instanceof Rotor) {
+                if (this.neighbors.includes(element.identifier)) {
+                    element.current_color = (element.current_color + 1) % 4;
+                }
+            }
+        }
+        // Check if all Rotors have the same current_color as this Rotor
+        let allSame = elements
+            .filter(e => e instanceof Rotor)
+            .every(e => e.current_color === this.current_color);
+        if (allSame) {
+            console.log("All Rotors have the same color:", this.color_seq[this.current_color]);
+            // You can trigger a callback or event here if needed
+            this.onSolved(player); 
+        }
+    }
+
+    draw(context) {
+        let pos = transform(this.x, this.y, context);
+        let size = transform(this.width, this.height, context);
+
+        // Animation setup
+        const SPRITE_COUNT = 4;
+        const SPRITE_WIDTH = 16;
+        const SPRITE_HEIGHT = 16;
+        const SEPARATOR = 1;
+        const ANIMATION_DURATION = 200; // ms
+
+        // Animation state
+        if (this.animationTimer === undefined) {
+            this.animationTimer = 0;
+            this.animating = false;
+            this.animationFrame = 0;
+            this.lastColor = this.current_color;
+        }
+
+        // Detect color change to start animation
+        if (this.lastColor !== this.current_color) {
+            this.animating = true;
+            this.animationTimer = 0;
+            this.lastColor = this.current_color;
+            this.animationFrame = 0;
+        }
+
+        // Animate if needed
+        if (this.animating) {
+            this.animationTimer += (context.deltaTime || 16);
+            let progress = Math.min(this.animationTimer / ANIMATION_DURATION, 1);
+            // Animation: iterate over all frames, then stop at frame 0
+            this.animationFrame = Math.floor(progress * SPRITE_COUNT);
+            if (this.animationFrame >= SPRITE_COUNT) {
+                this.animationFrame = 0;
+                this.animating = false;
+                // Set texture to the corresponding color when animation ends
+                switch (this.current_color) {
+                    case 0:
+                        this.texture = this.texture_red;
+                        break;
+                    case 1:
+                        this.texture = this.texture_green;
+                        break;
+                    case 2:
+                        this.texture = this.texture_blue;
+                        break;
+                    case 3:
+                        this.texture = this.texture_yellow;
+                        break;
+                }
+            }
+        } else {
+            this.animationFrame = 0;
+        }
+
+        // Draw the sprite
+        let sx = this.animationFrame * (SPRITE_WIDTH + SEPARATOR);
+        let sy = 0;
+
+        context.drawImage(
+            this.texture.img,
+            sx, sy, SPRITE_WIDTH, SPRITE_HEIGHT,
+            pos.x, pos.y, size.x, size.y
+        );
+
+        if (DEBUG) {
+            this.boundingBox.draw(context);
         }
     }
 }
@@ -548,13 +769,36 @@ class Level{
                 );
                 copy.globalReference = element;
                 copy.boundingBox = element.boundingBox;
-                copy.callback = element.callback; 
+                copy.callback = element.callback;
 
                 // Rebind onSelect with proper 'copy' reference
                 if (element.onSelect) {
                     copy.onSelect = (selectedIndex) => element.onSelect(selectedIndex, copy);
                 }
 
+                return copy;
+            } else if (element instanceof Portcullis) { 
+                // Create a new Portcullis instance
+                let copy = new Portcullis(
+                    element.x, element.y
+                );
+                copy.boundingBox =  element.boundingBox; 
+                copy.globalReference = element;
+                copy.isOpen = element.isOpen; // Copy the isOpen state
+                copy.callback = element.callback; 
+                return copy;
+            }else if (element instanceof Rotor) {
+                // Create a new Rotor instance
+                let copy = new Rotor(
+                    element.x, element.y, 
+                    element.identifier,
+                    element.neighbors,
+                    element.current_color
+                );
+                copy.onSolved = element.onSolved; // Copy the onSolved callback
+                copy.globalReference = element;
+                copy.boundingBox = element.boundingBox; 
+                copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof BackgroundElement) {
                 // Create a new BackgroundElement instance

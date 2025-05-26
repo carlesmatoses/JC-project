@@ -42,4 +42,10 @@ const textures = {
 	statue: new Texture("imgs/statue.png"),
 	enemy: new Texture("imgs/enemies/Octorok.png"),
 	hearts: new Texture("imgs/hearts.png"),
+	portcullis: new Texture("imgs/gate_right.png"),
+	rotor: new Texture("imgs/rotor.png"),
+	rotor_red: new Texture("imgs/rotor_red.png"),
+	rotor_blue: new Texture("imgs/rotor_blue.png"),
+	rotor_green: new Texture("imgs/rotor_green.png"),
+	rotor_yellow: new Texture("imgs/rotor_yellow.png"),
 }
