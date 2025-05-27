@@ -120,6 +120,12 @@ rotor1.onSolved = customOnSolved;
 rotor2.onSolved = customOnSolved;
 rotor3.onSolved = customOnSolved;
 
+
+const rotor4 = new Rotor(TILEWIDTH*3, TILEHEIGHT*2, identifier=0, neighbors=[1], current_color=2);
+const rotor5 = new Rotor(TILEWIDTH*6, TILEHEIGHT*2, identifier=1, neighbors=[3], current_color=0);
+const rotor6 = new Rotor(TILEWIDTH*3, TILEHEIGHT*5, identifier=2, neighbors=[3], current_color=1);
+const rotor7 = new Rotor(TILEWIDTH*6, TILEHEIGHT*5, identifier=3, neighbors=[1], current_color=3);
+
 //Enemies
 const enemyOcto1 = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
 
@@ -192,6 +198,16 @@ const dungeon_tile11 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+
+    createFirePlace(TILEWIDTH*2, TILEHEIGHT*1),
+    createFirePlace(TILEWIDTH*7, TILEHEIGHT*1),
+    createFirePlace(TILEWIDTH*2, TILEHEIGHT*6),
+    createFirePlace(TILEWIDTH*7, TILEHEIGHT*6),
+
+    rotor4,
+    rotor5,
+    rotor6,
+    rotor7,
 ];   
 const dungeon_tile12 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 128+2, sWidth: 160, sHeight: 128}),

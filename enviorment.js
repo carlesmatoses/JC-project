@@ -501,7 +501,7 @@ class Rotor extends BackgroundElement {
         let allSame = elements
             .filter(e => e instanceof Rotor)
             .every(e => e.current_color === this.current_color);
-        if (allSame) {
+        if (allSame && this.onSolved) {
             console.log("All Rotors have the same color:", this.color_seq[this.current_color]);
             // You can trigger a callback or event here if needed
             this.onSolved(player); 
