@@ -580,6 +580,60 @@ class Rotor extends BackgroundElement {
     }
 }
 
+class Lights extends BackgroundElement {
+    constructor(x, y, direction) {
+        super(x, y, TILEWIDTH, TILEHEIGHT, "lights", false, textures.lights, null, null);
+        this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
+        this.animationTimer = 0;
+        this.animationFrameIndex = 0;
+        this.direction = direction;
+    }
+    draw(context) {
+        // Animation parameters
+        const SPRITE_SIZE = 16;
+        const SPRITE_COLS = 4;
+        const SPRITE_ROWS = 4;
+        const NORMAL_DURATION = 160; // ms per frame
+        const LONG_DURATION = 800;   // 5 * 160ms
+
+        // Animation sequence: [0,1,2,3,2,1,0]
+        const sequence = [0, 1, 2, 3, 2, 1, 0];
+        const durations = [LONG_DURATION, NORMAL_DURATION, NORMAL_DURATION, NORMAL_DURATION, NORMAL_DURATION, NORMAL_DURATION, LONG_DURATION];
+
+        // Initialize animation state if needed
+        if (this.animationTimer === undefined) {
+            this.animationTimer = 0;
+            this.animationFrameIndex = 0;
+        }
+
+        // Advance animation timer
+        this.animationTimer += (context.deltaTime || 16);
+        if (this.animationTimer >= durations[this.animationFrameIndex]) {
+            this.animationTimer -= durations[this.animationFrameIndex];
+            this.animationFrameIndex = (this.animationFrameIndex + 1) % sequence.length;
+        }
+
+        // Determine which row to use based on direction (default to 0 if not set)
+        const row = typeof this.direction === "number" ? this.direction % SPRITE_ROWS : 0;
+        const frame = sequence[this.animationFrameIndex];
+        const sx = frame * SPRITE_SIZE + 1 * frame;
+        const sy = row * SPRITE_SIZE + 1 * row;
+
+        let pos = transform(this.x, this.y, context);
+        let size = transform(this.width, this.height, context);
+
+        context.drawImage(
+            this.texture.img,
+            sx, sy, SPRITE_SIZE, SPRITE_SIZE,
+            pos.x, pos.y, size.x, size.y
+        );
+
+        if (DEBUG) {
+            this.boundingBox.draw(context);
+        }
+    }
+}
+
 class FloatingFloor extends BackgroundElement{
     constructor(x, y, uses = 3){
         super(x, y, TILEWIDTH, TILEHEIGHT, "floating_floor", true, null, "cyan", null);
@@ -879,6 +933,16 @@ class Level{
                 copy.globalReference = element;
                 copy.boundingBoxPressure = element.boundingBoxPressure; 
                 copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof Lights) {
+                // Create a new Lights instance
+                let copy = new Lights(
+                    element.x, element.y, element.direction
+                );
+                copy.globalReference = element;
+                copy.boundingBox = element.boundingBox; 
+                copy.direction = element.direction; // Copy the direction
+                copy.update = element.update; // Copy the update method
                 return copy;
             } else if (element instanceof BackgroundElement) {
                 // Create a new BackgroundElement instance
