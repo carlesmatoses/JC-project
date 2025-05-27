@@ -404,8 +404,8 @@ const dungeon_tile23 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new Lights(TILEWIDTH*7, TILEHEIGHT*0, 0),
     new Lights(TILEWIDTH*9, TILEHEIGHT*2, 3),
     new Lights(TILEWIDTH*9, TILEHEIGHT*5, 3),
-    new Lights(TILEWIDTH*7, TILEHEIGHT*7.0+TILEHEIGHT/16, 0),
-    new Lights(TILEWIDTH*2, TILEHEIGHT*7.0+TILEHEIGHT/16, 0),
+    new Lights(TILEWIDTH*7, TILEHEIGHT*7, 1),
+    new Lights(TILEWIDTH*2, TILEHEIGHT*7, 1),
 ];
 const dungeon_tile24 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 384+4, sWidth: 160, sHeight: 128})];
