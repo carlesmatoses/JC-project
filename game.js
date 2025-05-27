@@ -5,7 +5,7 @@ const FRAME_RATE = 60;
 const TARGET_FPS = FRAME_RATE;
 const TIME_PER_FRAME = 1000 / FRAME_RATE;
 let DEBUG = false; // Set to true to enable debug mode
-let CREATIVE_MODE = true; // Set to true to enable creative mode
+let CREATIVE_MODE = false; // Set to true to enable creative mode
 
 var canvas = document.getElementById("game-layer");
 var context = this.canvas.getContext("2d");
