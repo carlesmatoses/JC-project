@@ -637,7 +637,7 @@ class Lights extends BackgroundElement {
 class FloatingFloor extends BackgroundElement{
     constructor(x, y, uses = 3){
         super(x, y, TILEWIDTH, TILEHEIGHT, "floating_floor", true, null, "cyan", null);
-        this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.2*TILEHEIGHT, TILEWIDTH*0.8, TILEHEIGHT*0.2); 
+        this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.2*TILEHEIGHT, TILEWIDTH*0.2, TILEHEIGHT*0.2); 
         this.uses = uses; // Number of uses before disappearing
         this.onCooldown = false; 
         this.cooldownTime = 1000; // ms

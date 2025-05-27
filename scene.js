@@ -198,7 +198,7 @@ class Scene{
 					element.activate(); // Activate the door if the player is not colliding with it
 			}
 			if (element instanceof FloatingFloor) {
-				if (element.boundingBoxPressure.isColliding(this.player.boundingBox, -0.04)) {
+				if (element.boundingBoxPressure.isColliding(this.player.boundingBox)) {
 					element.steptOn(this.player); 
 				}
     		}
