@@ -10,16 +10,10 @@ let CREATIVE_MODE = false; // Set to true to enable creative mode
 var canvas = document.getElementById("game-layer");
 var context = this.canvas.getContext("2d");
 var gamestatemanager = new GameStateManager();
-// var scene = new Scene(gamestatemanager);
-const menuState = new MenuState(gamestatemanager);
 
-// gamestatemanager.pushState(scene);
+const menuState = new MenuState(gamestatemanager);
 gamestatemanager.pushState(menuState);
-// gamestatemanager.pushState(new DialogState(gamestatemanager, [
-//     `${KEY_PRIMARY} is the primary button.   Press ${KEY_PRIMARY} to continue`, 
-//     `Press ${KEY_DEBUBG} to activiate`, 
-//     `Press ${KEY_INVENTORY} to open the inventory`,
-// ]));
+
 
 function addDialog(text, options = null, onSelect = null) {
     gamestatemanager.pushState(

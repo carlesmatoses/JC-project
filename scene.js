@@ -686,6 +686,12 @@ class MenuState {
             case "Start New Game":
                 this.gameStateManager.popState(); // Remove the menu
                 this.gameStateManager.pushState(new Scene(this.gameStateManager)); // Start the game
+				// Add an initial dialog state to the game state manager
+				this.gameStateManager.pushState(new DialogState(gamestatemanager, [
+					`${KEY_PRIMARY} is the primary button.   Press ${KEY_PRIMARY} to continue`, 
+					`Press ${KEY_DEBUBG} to activiate`, 
+					`Press ${KEY_INVENTORY} to open the inventory`,
+				]));
                 break;
             case "Load Game":
                 console.log("Load Game selected");
