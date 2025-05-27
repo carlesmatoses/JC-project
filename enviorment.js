@@ -255,45 +255,69 @@ class Door extends BackgroundElement {
 }
 
 class Portcullis extends BackgroundElement {
-    constructor(x, y) {
-        super(x, y, TILEWIDTH, TILEHEIGHT*2, "portcullis", false, textures.portcullis, null, null);
-        this.boundingBox = new BoundingBox(this.x+this.width*0.5, this.y+this.height*0.5, TILEWIDTH, TILEHEIGHT*2); // Bounding box for collision detection
-        this.isOpen = false; // Whether the portcullis is open or not
-        this.callback = null; // Optional callback function for when the portcullis is opened
-    
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} direction - 0 (horizontal), 1 (horizontal alt), 2 (vertical), 3 (vertical alt)
+     */
+    constructor(x, y, direction = 0) {
+        // For vertical (direction 2/3), height is 2 tiles, width is 1 tile
+        // For horizontal (direction 0/1), width is 2 tiles, height is 1 tile
+        let width = (direction === 2 || direction === 3) ? TILEWIDTH : TILEWIDTH * 2;
+        let height = (direction === 2 || direction === 3) ? TILEHEIGHT * 2 : TILEHEIGHT;
+        super(x, y, width, height, "portcullis", false, textures.portcullis, null, null);
+        this.direction = direction;
+        // Set bounding box at center
+        this.boundingBox = new BoundingBox(
+            this.x + this.width * 0.5,
+            this.y + this.height * 0.5,
+            width,
+            height
+        );
+        this.isOpen = false;
+        this.callback = null;
+
         if (this.isOpen) {
-            this.boundingBox.width = 0; // Set width for closed state
-            this.boundingBox.height = 0; // Set height for closed state
-        } // Set width for closed state
+            this.boundingBox.width = 0;
+            this.boundingBox.height = 0;
+        }
     }
+
     open() {
         if (this.callback) {
             this.callback();
         }
-        
-        this.globalReference.isOpen = true; 
-        this.globalReference.boundingBox.width = 0; 
-        this.globalReference.boundingBox.height = 0;
-        
-        this.isOpen = true; 
+        if (this.globalReference) {
+            this.globalReference.isOpen = true;
+            this.globalReference.boundingBox.width = 0;
+            this.globalReference.boundingBox.height = 0;
+        }
+        this.isOpen = true;
         this.boundingBox.width = 0;
         this.boundingBox.height = 0;
     }
+
     close() {
-        this.isOpen = false; // Close the portcullis
-        this.boundingBox.width = TILEWIDTH;
-        this.boundingBox.height = TILEHEIGHT*2;
+        this.isOpen = false;
+        if (this.direction === 2 || this.direction === 3) {
+            this.boundingBox.width = TILEWIDTH;
+            this.boundingBox.height = TILEHEIGHT * 2;
+        } else {
+            this.boundingBox.width = TILEWIDTH * 2;
+            this.boundingBox.height = TILEHEIGHT;
+        }
     }
+
     isOpened() {
-        return this.isOpen; // Check if the portcullis is open
+        return this.isOpen;
     }
 
     draw(context) {
-        // Calculate sprite frame width (subtract 2px for separators, divide by 3)
-        const spriteWidth = (this.texture.img.width - 2) / 3;
-        const spriteHeight = this.texture.img.height;
-        // Animation timing (t seconds total)
-        const ANIMATION_DURATION = 0.4; // seconds (adjust as needed)
+        const img = this.texture.img;
+        let sx = 0, sy = 0, sWidth = 0, sHeight = 0;
+
+        // Animation setup
+        const ANIMATION_DURATION = 0.4; // seconds
         if (this.animationTimer === undefined) {
             this.animationTimer = 0;
             this.animationFrame = this.isOpen ? 2 : 0;
@@ -310,14 +334,12 @@ class Portcullis extends BackgroundElement {
 
         // Animate if needed
         if (this.animating) {
-            this.animationTimer += (context.deltaTime || 16) / 1000; // deltaTime in ms to seconds
+            this.animationTimer += (context.deltaTime || 16) / 1000;
             let progress = Math.min(this.animationTimer / ANIMATION_DURATION, 1);
             if (this.isOpen) {
-                // Opening: 0 -> 1 -> 2
                 if (progress < 0.5) this.animationFrame = 1;
                 else this.animationFrame = 2;
             } else {
-                // Closing: 2 -> 1 -> 0
                 if (progress < 0.5) this.animationFrame = 1;
                 else this.animationFrame = 0;
             }
@@ -329,23 +351,55 @@ class Portcullis extends BackgroundElement {
             this.animationFrame = this.isOpen ? 2 : 0;
         }
 
-        // Draw the correct frame
+        // Sprite selection logic
+        if (this.direction === 0 || this.direction === 1) {
+            // Horizontal: 3 frames, 32x16, separated by 1px, y=0 or y=17
+            sWidth = 32;
+            sHeight = 16;
+            sx = this.animationFrame * (32 + 1);
+            sy = this.direction === 0 ? 0 : 17;
+        } else if (this.direction === 2 || this.direction === 3) {
+            // Vertical: 3 frames, 16x32, separated by 1px, y=34, direction 2: frames 0-2, direction 3: frames 3-5
+            sWidth = 16;
+            sHeight = 32;
+            let frame = this.animationFrame;
+            let col = (this.direction === 2) ? frame : frame + 3;
+            sx = col * (16 + 1);
+            sy = 34;
+        }
+        console.log("Portcullis direction:", this.direction);
+
         let pos = transform(this.x, this.y, context);
         let size = transform(this.width, this.height, context);
+
         context.drawImage(
-            this.texture.img,
-            this.animationFrame * (spriteWidth + 1), // +1 for separator pixel
-            0,
-            spriteWidth,
-            spriteHeight,
-            pos.x,
-            pos.y,
-            size.x,
-            size.y
+            img,
+            sx, sy, sWidth, sHeight,
+            pos.x, pos.y, size.x, size.y
         );
 
         if (DEBUG) {
             this.boundingBox.draw(context);
+        }
+    }
+}
+
+class PortcullisKeyLock extends Portcullis {
+    constructor(x, y, key, direction = 0) {
+        super(x, y, direction);
+        this.key = key; 
+        this.texture = textures.portcullis_lock; 
+    }
+
+    interact(player) {
+        if (player.inventory.hasKey(this.key.id)) {
+            this.open(); // Open the portcullis if the player has the key
+            console.log("Portcullis opened with key:", this.key);
+            player.inventory.removeKey(this.key); // Remove the key from the player's inventory
+        } else {
+            console.log("Portcullis is locked! You need a key to open it.");
+            // Optionally, you can show a message to the player
+            addDialog(["This portcullis is locked! You need a key to open it."]);
         }
     }
 }
@@ -381,6 +435,10 @@ class Chest extends BackgroundElement {
             player.inventory.addItem(this.content); // Add the content to the player's inventory
             player.inventory.assignToEmptySlot(this.content); // Assign the item to an empty slot in the inventory
             if(this.callback) this.callback(); // Call the callback function if provided
+
+            // we set a DialogState to show the content of the chest
+            addDialog([`You found: ${this.content.name}`]);
+
         } else {
             // this.close(); // Close the chest if it is already open
             console.log("Chest has already been oppened!");
@@ -902,10 +960,21 @@ class Level{
                 }
 
                 return copy;
+            } else if (element instanceof PortcullisKeyLock) {
+                // Create a new PortcullisKeyLock instance
+                let copy = new PortcullisKeyLock(
+                    element.x, element.y, element.key, element.direction
+                );
+                copy.boundingBox =  element.boundingBox; 
+                copy.globalReference = element;
+                copy.isOpen = element.isOpen; // Copy the isOpen state
+                copy.callback = element.callback; 
+                copy.texture = element.texture; 
+                return copy;
             } else if (element instanceof Portcullis) { 
                 // Create a new Portcullis instance
                 let copy = new Portcullis(
-                    element.x, element.y
+                    element.x, element.y, element.direction
                 );
                 copy.boundingBox =  element.boundingBox; 
                 copy.globalReference = element;

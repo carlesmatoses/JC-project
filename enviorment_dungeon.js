@@ -67,6 +67,14 @@ statue2.callback = function(statue) {
 const gate1 = new Portcullis(
     9 * TILEWIDTH, 
     3 * TILEHEIGHT, 
+    2,
+)
+
+const keyA = new Key("A", "Door Key");
+const locked_gate1 = new PortcullisKeyLock(
+    4 * TILEWIDTH, 
+    0 * TILEHEIGHT, 
+    keyA,
 )
 
 // ROTORES
@@ -76,7 +84,7 @@ const rotor2 = new Rotor(TILEWIDTH*2, TILEHEIGHT*5, identifier=2, neighbors=[3],
 const rotor3 = new Rotor(TILEWIDTH*7, TILEHEIGHT*5, identifier=3, neighbors=[0], current_color=3);
 
 const hidden_chest =  new Chest(TILEWIDTH*12, TILEHEIGHT*12);
-hidden_chest.content = BraceletStrength;
+hidden_chest.content = keyA;
 hidden_chest.callback = function() {
     console.log("Chest callback executed");
     hidden_chest.open();
@@ -383,6 +391,8 @@ const dungeon_tile22 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new FloatingFloor(7*TILEWIDTH, 4*TILEHEIGHT,3),
     new FloatingFloor(7*TILEWIDTH, 5*TILEHEIGHT,3),
     new FloatingFloor(7*TILEWIDTH, 6*TILEHEIGHT,3),
+
+    locked_gate1,
 ];
 const dungeon_tile23 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 384+4, sWidth: 160, sHeight: 128}),

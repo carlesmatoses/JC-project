@@ -109,12 +109,21 @@ class Slot{
 
 }
 
+class Key {
+    constructor(id, name, icon=null) {
+        this.id = id;
+        this.name = name;
+        this.icon = icon; 
+    }
+}
+
 // Inventory.js
 class Inventory {
     constructor(player) {
         this.player = player;
         this.stats = player.stats;
         this.money = 0;
+        this.keys = new Map(); // key: key.id, value: Key object
         this.items = new Map(); // key: item.name, value: { item, quantity }
         this.resolution = 4;
         
@@ -165,8 +174,11 @@ class Inventory {
         this.equipped.right.drawUI(context,TILEWIDTH*3,TILEHEIGHT*8);
     }
 
-
     addItem(item, quantity = 1) {
+        if (item instanceof Key) {
+            this.addKey(item);
+            return;
+        }
         if (this.items.has(item.name)) {
             this.items.get(item.name).quantity += quantity;
         } else {
@@ -219,6 +231,7 @@ class Inventory {
         currentEquipped.setItem(item);
         if (item.effects) this.stats.applyEffects(item.effects);
     }
+
     equipSelectedItem(hand) {
         const selectedSlot = this.getSlot(this.selectedRow, this.selectedCol);
         const item = selectedSlot.getItem();
@@ -267,6 +280,26 @@ class Inventory {
         Object.values(this.slots).forEach(slot => slot.selected = false);
         const selected = this.getSlot(this.selectedRow, this.selectedCol);
         if (selected) selected.select();
+    }
+
+    addKey(key) {
+        if (this.keys.has(key.id)) {
+            console.error("Key already exists:", key.id);
+            return;
+        }
+        this.keys.set(key.id, key);
+    }
+
+    hasKey(keyId) {
+        return this.keys.has(keyId);
+    }
+
+    removeKey(key) {
+        if (!this.keys.has(key.id)) {
+            console.error("Key not found:", key.id);
+            return;
+        }
+        this.keys.delete(key.id);
     }
 }
 
