@@ -580,6 +580,77 @@ class Rotor extends BackgroundElement {
     }
 }
 
+class FloatingFloor extends BackgroundElement{
+    constructor(x, y, uses = 3){
+        super(x, y, TILEWIDTH, TILEHEIGHT, "floating_floor", true, null, "cyan", null);
+        this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.2*TILEHEIGHT, TILEWIDTH*0.8, TILEHEIGHT*0.2); 
+        this.uses = uses; // Number of uses before disappearing
+        this.onCooldown = false; 
+        this.cooldownTime = 1000; // ms
+        this.cooldownTimer = 0;
+        this.texture = textures.floating_floor; 
+    }
+
+    steptOn(player) {
+        if (!this.onCooldown && this.uses > 0) {
+            this.uses -= 1;
+            this.onCooldown = true;
+            this.cooldownTimer = this.cooldownTime;
+            if (this.uses <= 0) {
+                this.active = false; // Or remove from scene in update
+                if (player && typeof player.takeDamage === "function") {
+                    player.takeDamage(10);
+                    console.log("Floating floor disappeared, player took damage!");
+                }
+            } 
+            switch (this.uses) {
+                case 3:
+                    this.color = "green";
+                    break;
+                case 2:
+                    this.color = "yellow";
+                    break;
+                case 1:
+                    this.color = "red";
+                    break;
+                default:
+                    this.color = null;
+            }
+        } else if  (!this.onCooldown && this.uses <= 0){
+            // floor is broken, user will fall  to the void
+            player.takeDamage(10);
+        }
+    }
+
+    update(deltaTime) {
+        super.update(deltaTime);
+        if (this.onCooldown) {
+            this.cooldownTimer -= deltaTime;
+            if (this.cooldownTimer <= 0) {
+                this.onCooldown = false;
+                this.cooldownTimer = 0;
+            }
+        }
+    }
+
+    draw(context) {
+        if (this.texture && this.uses > 0) {
+            let pos = transform(this.x, this.y, context);
+            let size = transform(this.width, this.height, context);
+            let sx = 0;
+            if (this.uses === 3) sx = 0;
+            else if (this.uses === 2) sx = 16;
+            else if (this.uses === 1) sx = 32;
+            context.drawImage(this.texture.img, sx, 0, 16, 16, pos.x, pos.y, size.x, size.y);
+        } else {
+            this.texture = null;
+        }
+        if (DEBUG) {
+            this.boundingBoxPressure.draw(context);
+        }
+    }
+}
+
 function createVase(x, y){
     let element =  new BackgroundElement(x, y, TILEWIDTH, TILEHEIGHT, "vase", false, texture = textures.vase, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
     element.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT); // Bounding box for collision detection
@@ -787,7 +858,7 @@ class Level{
                 copy.isOpen = element.isOpen; // Copy the isOpen state
                 copy.callback = element.callback; 
                 return copy;
-            }else if (element instanceof Rotor) {
+            } else if (element instanceof Rotor) {
                 // Create a new Rotor instance
                 let copy = new Rotor(
                     element.x, element.y, 
@@ -798,6 +869,15 @@ class Level{
                 copy.onSolved = element.onSolved; // Copy the onSolved callback
                 copy.globalReference = element;
                 copy.boundingBox = element.boundingBox; 
+                copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof FloatingFloor) {
+                // Create a new FloatingFloor instance
+                let copy = new FloatingFloor(
+                    element.x, element.y, element.uses
+                );
+                copy.globalReference = element;
+                copy.boundingBoxPressure = element.boundingBoxPressure; 
                 copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof BackgroundElement) {

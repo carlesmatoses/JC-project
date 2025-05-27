@@ -197,6 +197,11 @@ class Scene{
 			if (element.type==="door" && !element.isActive() && !element.isColliding(this.player.x, this.player.y, this.player.width, this.player.height)) {
 					element.activate(); // Activate the door if the player is not colliding with it
 			}
+			if (element instanceof FloatingFloor) {
+				if (element.boundingBoxPressure.isColliding(this.player.boundingBox, -0.04)) {
+					element.steptOn(this.player); 
+				}
+    		}
 		});
 
 		// Check for remaining enemies

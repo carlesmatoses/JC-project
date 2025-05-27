@@ -48,4 +48,5 @@ const textures = {
 	rotor_blue: new Texture("imgs/rotor_blue.png"),
 	rotor_green: new Texture("imgs/rotor_green.png"),
 	rotor_yellow: new Texture("imgs/rotor_yellow.png"),
+	floating_floor: new Texture("imgs/floating_floor.png"),
 }
