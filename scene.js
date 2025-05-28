@@ -165,6 +165,15 @@ class Scene{
 				}
 			});
 		}
+		if (input.isPressed('KeyM')) { // key for teleporting to first boss
+			console.log("Teleporting to first boss level");
+			this.levelTransitionDoorAnimation(
+				15,
+				"dungeon1",
+				{ x: 0.5, y: 0.5 }, 
+				this.screen_switch_time
+			); 
+		}
 
 		// additionally handle player input
 		this.player.handleInput(input);
@@ -362,7 +371,6 @@ class Scene{
 		this.levelContent.forEach((element) => {
 			if (element.type === 'enemy') {
 				element.scene = this; // Assign the scene reference
-				console.log("Assigning scene reference to enemy element", element);
 			}
 		});
 	}
@@ -655,7 +663,6 @@ class MenuState {
         context.fillStyle = "white";
         context.font = "32px 'Press Start 2P', sans-serif";
         context.fillText("Principal Menu", context.canvas.width / UPSCALE, 100);
-		console.log(context.canvas.width);
 
         // Draw the menu options
         context.font = "24px 'Press Start 2P', sans-serif";
