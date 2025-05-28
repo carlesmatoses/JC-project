@@ -795,6 +795,10 @@ class FloatingMoney extends BackgroundElement{
 
             // remove the floating heart from the scene
             player.scene.levelContent = player.scene.levelContent.filter(element => element !== this);
+
+            // remove the floating money from the permanent scene
+            const global_level = player.scene.getLevel();
+            global_level.removeElement(this.globalReference); 
         }
     }
 }
@@ -1089,6 +1093,11 @@ class Level{
                 return null; // Handle unexpected types gracefully
             }
         });
+    }
+
+    removeElement(element) {
+        // Remove an element from the level's background elements
+        this.background_elements = this.background_elements.filter(el => el !== element);
     }
 }
 

@@ -410,6 +410,11 @@ class Scene{
 			this.debug_text.draw(context);
 		}
 	}
+
+	getLevel(levelID=this.levelID) {
+		// Get the level object by its ID
+		return world.maps[this.mapID].getLevel(levelID);
+	}
 }
 
 class GameStateManager {
