@@ -9,6 +9,7 @@ const PLAYSCREENWIDTH = TILEWIDTH * 10;
 const PLAYSCREENHEIGHT = TILEHEIGHT * 8;
 const UIWIDTH = TILEWIDTH * 10;
 const UIHEIGHT = TILEHEIGHT * 1;
+const UPSCALE = 4;
 
 // KEYS
 const KEY_PRIMARY          = "KeyF";  //FIXME: MODIFICAR TECLA a OTRA
@@ -19,12 +20,13 @@ const KEY_LEFT             = "ArrowLeft";
 const KEY_RIGHT            = "ArrowRight"; 
 const KEY_DEBUBG           = "KeyB";  //FIXME: MODIFICAR TECLA a OTRA
 const KEY_INVENTORY        = "KeyI";  //FIXME: Modificar tecla a otra
+const KEY_INVULNERABLE     = "KeyG"; 
 
 //NEW
 const KEY_SHIELD           = "KeyX";
+const KEY_ESCAPE            = "Escape";
 /*
 //TODO: Quitar hardcode y poner bien las global variables
-const KEY_INVULNERABLE     = "KeyG"; 
 const KEY_USE_SP_OBJECT    = "KeyC"; 
 const KEY_HEAL             = "KeyH";
 const KEY_SKIP_MBOSS       = "KeyM"; 

@@ -5,21 +5,20 @@ const FRAME_RATE = 60;
 const TARGET_FPS = FRAME_RATE;
 const TIME_PER_FRAME = 1000 / FRAME_RATE;
 let DEBUG = false; // Set to true to enable debug mode
-
+let CREATIVE_MODE = false; // Set to true to enable creative mode
 
 var canvas = document.getElementById("game-layer");
 var context = this.canvas.getContext("2d");
 var gamestatemanager = new GameStateManager();
-var scene = new Scene(gamestatemanager);
-gamestatemanager.pushState(scene);
-gamestatemanager.pushState(new DialogState(gamestatemanager, [
-    `${KEY_PRIMARY} is the primary button.   Press ${KEY_PRIMARY} to continue`, 
-    `Press ${KEY_DEBUBG} to activiate`, 
-    `Press ${KEY_INVENTORY} to open the inventory`,
-]));
 
-function addDialog(text) {
-    gamestatemanager.pushState(new DialogState(gamestatemanager, text));
+const menuState = new MenuState(gamestatemanager);
+gamestatemanager.pushState(menuState);
+
+
+function addDialog(text, options = null, onSelect = null) {
+    gamestatemanager.pushState(
+        new DialogState(gamestatemanager, text, options, onSelect)
+    );
 }
 
 var previousTimestamp;
@@ -85,7 +84,7 @@ function calculateFPS(deltaTime) {
 	frameTimeCumulative += deltaTime;
     if (frameTimeCumulative >= 1000) {  // Update FPS every 1 second
         fps = frameCount;
-		scene.frameCount = fps;
+		// scene.frameCount = fps;
         frameCount = 0;
 		frameTimeCumulative = 0;
 
@@ -99,7 +98,7 @@ function calculateLag(deltaTime) {
     while (lag >= TIME_PER_FRAME) {
 		lag -= TIME_PER_FRAME;
     }
-	scene.lag = lag;
+	// scene.lag = lag;
 }
 
 // Initialization
@@ -123,7 +122,7 @@ function frameUpdate(timestamp) {
 	gamestatemanager.handleInput(keyboardInput);
 
 	// Draw the scene
-	scene.currentTime = timestamp;
+	// scene.currentTime = timestamp;
 	gamestatemanager.render(context);
 
 	// update time

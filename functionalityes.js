@@ -1,7 +1,7 @@
 function transform(x, y, ctx) {
     return {
         x: Math.floor(x * ctx.canvas.width),
-        y: Math.floor(y * ctx.canvas.height)
+        y: Math.ceil(y * ctx.canvas.height)
     };
 }
 

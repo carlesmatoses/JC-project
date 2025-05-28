@@ -1,3 +1,92 @@
+class Projectile {
+    constructor(center, width, height, direction, parent) {
+        this.width = width; 
+        this.height = height; 
+        this.center = { x: center.x, y: center.y };
+        this.lastCenter = { x: center.x, y: center.y }; // Last position for collision detection
+        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width, height);
+        this.attack = 0.5;
+        this.speed = 0.0001;
+        this.direction = direction;   
+        this.render_layer = -1;
+        this.texture = textures.hearts; // Texture for the projectile
+        this.parent = parent;
+    }
+
+    draw(context) {
+        // Dibujar el proyectil como un rectángulo
+        let topleftcorner = {
+            x: this.center.x - this.width / 2,
+            y: this.center.y - this.height / 2
+        };
+        let pos = transform(topleftcorner.x, topleftcorner.y, context);
+        let size = transform(this.width, this.height, context);
+        
+        context.fillStyle = "red"; // Color del proyectil
+        context.fillRect(pos.x, pos.y, size.x, size.y);
+        context.restore();
+
+        // Dibujar la textura del proyectil
+        // if (this.texture && this.texture.isLoaded()) {
+        //     context.drawImage(this.texture.img, pos.x, pos.y, size.x, size.y);
+        // }
+
+        if(DEBUG){
+            this.boundingBox.draw(context);
+        }
+    }
+
+    update(deltaTime) {
+        // Calcular desplazamiento en base a la dirección y velocidad del projectile
+        const offsetX = this.direction.x * this.speed * deltaTime;
+        const offsetY = this.direction.y * this.speed * deltaTime;
+        this.translatePosition(offsetX, offsetY);
+        this.lastCenter.x = this.center.x;
+        this.lastCenter.y = this.center.y;
+
+        // kill it if its out of bounds
+        if (
+            this.center.x + this.width / 2 < 0 ||
+            this.center.x - this.width / 2 > 1 ||
+            this.center.y + this.height / 2 < 0 ||
+            this.center.y - this.height / 2 > TILEHEIGHT * 8
+        ) {
+            this.destroy(this.parent.scene);
+        }
+    }
+
+    setPosition(x, y) {
+        this.center.x = x;
+        this.center.y = y;
+        this.boundingBox.setPosition(this.center.x, this.center.y);
+    }
+
+    translatePosition(dx, dy) {
+        this.center.x += dx;
+		this.center.y += dy;
+        this.boundingBox.translate(dx, dy);
+    }
+
+    resetPosition() {
+        this.center.x = this.lastCenter.x;
+        this.center.y = this.lastCenter.y;
+        this.boundingBox.setPosition(this.center.x, this.center.y);
+    }
+
+    destroy(scene) {
+        scene.levelContent = scene.levelContent.filter(e => e !== this);
+        console.log("Projectile destroyed");
+    }
+    onHit(target, scene){
+        if (target.takeDamage) {
+            target.takeDamage(this.attack);
+        }
+        this.destroy(scene);
+    }
+
+}
+
+
 class Enemy {
     constructor(x, y, width, height, texture =  textures.enemy) {
         this.x = x; // X position
@@ -7,17 +96,26 @@ class Enemy {
         this.height = height; // Height of the player
         this.render_layer = 0   ; //this.render_layer = -1;
         this.center = { x: x+width / 2, y: y+height / 2 }; // local center 
-        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.8, height*0.8);
+        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.9, height*0.9);
         this.type = "enemy";
         this.scene = null;
 
-        //Cara a futuro
+        //Effect Sounds
+        this.takeDamageSound = AudioFX("audio/Minecraft_Damage-SoundEffect.wav");
+
+        //FIXME: Al poner su texture se bugea no se porque
+        this.texture = texture; // Texture (sprites) for the player //OLD
+
+        //Effect Sounds
+        this.takeDamageSound = AudioFX("audio/Minecraft_Damage-SoundEffect.wav");
+
+        //Stats
         this.life = true; // CSi la unidad esta viva o muerta
-        this.health = 1; //Cantidad de vida del enemigo.
-        this.stats = new Stats(100, 10, 5, 5, 0.00005); 
+        // this.health = 1; //Cantidad de vida del enemigo.
+        this.stats = new Stats(20, 0.5, 5, 5, 0.00005); 
 
         // movementS
-        this.speed = 0.00005; //Modified 
+        this.speed = 0.001; //TODO: Revisar velocidad correcta para que no vaya ni muy lento ni muy rapido. Tambien revisar sis e usa esto
         this.direction = { x: 0, y: 0 }; // Normalized movement vector
         this.lastDirection = { x: 0, y: 0 };; // Direction the player is facing
         this.moving = false; // Whether the player is moving
@@ -25,6 +123,21 @@ class Enemy {
         // Tiempo para cambiar de dirección
 		this.changeDirTimer = 0;
 		this.timeToChange = 1000 + Math.random() * 2000; // entre 1 y 3 segundos
+
+        //Timers de daño y muerte
+        this.isFlashing = false;
+        this.flashTimer = 0;
+        this.flashDuration = 300; // ms
+        this.flashInterval = 100; // ms
+
+        this.isFading = false;
+        this.fadeAlpha = 1;
+        this.fadeSpeed = 0.005; // por ms
+
+        //timer de proyectil
+        this.shootTimer = 0;
+        this.shootInterval = 10000; // ms  
+
 
         // Crear sprite 
 		this.sprite = new Sprite(this.x, this.y, this.width, this.height, 10, texture); // 10 fps
@@ -64,24 +177,77 @@ class Enemy {
     }
 
     draw(context) {
-        this.sprite.x  = this.x;
-        this.sprite.y  = this.y;
-        this.sprite.draw();
-        
-        if (DEBUG){
+        context.save(); // DEBUG: per a que es esta linea?
+
+        // Controlar transparencia según efectos
+        if (this.isFlashing) {
+            //console.log("Daño recibido draw");
+            const mod = Math.floor(this.flashTimer / this.flashInterval) % 2;
+            context.globalAlpha = (mod === 0) ? 0 : 1;
+        } else if (this.isFading) {
+            console.log("Enemigo muriendose draw");
+            context.globalAlpha = this.fadeAlpha;
+        } else {
+            context.globalAlpha = 1;
+        }
+
+        this.sprite.x = this.x;
+        this.sprite.y = this.y;
+        this.sprite.draw(context);
+
+        context.restore();
+
+        if (DEBUG) {
             this.boundingBox.draw(context);
         }
+
     }
 
-    
-    //OLD
+
     update(deltaTime) {
+
+        if (!this.life && !this.isFading) return; 
+
+        this.shootTimer += deltaTime;
+
+        if (this.shootTimer >= this.shootInterval) {
+            this.shootTimer = 0;
+            this.shoot();
+        }
+
+        // Manejar parpadeo al recibir daño
+        if (this.isFlashing) {
+            //console.log("Daño recibido");
+            this.flashTimer += deltaTime;
+            if (this.flashTimer >= this.flashDuration) {
+                this.isFlashing = false;
+                this.flashTimer = 0;
+            }
+        }
+
+        // Manejar desvanecimiento al morir
+        if (this.isFading) {
+            console.log("Enemigo muriendose");
+            this.fadeAlpha -= this.fadeSpeed * deltaTime;
+            if (this.fadeAlpha <= 0) {
+                this.fadeAlpha = 0;
+                this.isFading = false;
+                //Elimina el enemigo
+                if (this.scene) {
+                    this.scene.levelContent = this.scene.levelContent.filter(e => e !== this);
+                }
+            }
+        }
+
+        if (!this.life) return;
+
         // Actualiza temporizador para cambiar dirección
 		this.changeDirTimer += deltaTime;
 		if (this.changeDirTimer >= this.timeToChange) {
 			this.changeDirTimer = 0;
 			this.timeToChange = 1000 + Math.random() * 2000;
-			this.setDirection(this.getRandomDirection().x, this.getRandomDirection().y);
+            let direction = this.getRandomDirection();
+            this.setDirection(direction.x, direction.y);
 		}
         
         // Normalize direction to prevent diagonal speed boost
@@ -104,7 +270,7 @@ class Enemy {
             this.translatePosition(offsetX, 0);
             for (let element of this.scene.levelContent) {
                 if (element === this) continue; // Skip self
-                if (element.boundingBox && element.isActive()) {
+                if (element.boundingBox && element.isActive && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert X movement
                         this.translatePosition(-offsetX, 0);
@@ -134,7 +300,7 @@ class Enemy {
             this.translatePosition(0, offsetY);
             for (let element of this.scene.levelContent) {
                 if (element === this) continue; // Skip self
-                if (element.boundingBox && element.isActive()) {
+                if (element.boundingBox && element.isActive && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert Y movement
                         this.translatePosition(0, -offsetY);
@@ -184,6 +350,53 @@ class Enemy {
         }
        
     }
+
+    
+    takeDamage(damageAmount) {
+        if (!this.life) return; // Si ya está muerto, ignorar
+
+        this.stats.health -= damageAmount;
+
+        console.log(`Enemy took ${damageAmount} damage. Remaining health: ${this.stats.health }`);
+
+        this.takeDamageSound.play();
+
+        // Activar parpadeo
+        this.isFlashing = true;
+        this.flashTimer = 0;
+    
+        if (this.stats.health <= 0) {
+            this.die();
+        }
+
+    }
+
+    die() {
+        if (!this.life) return;
+
+        this.life = false;
+        this.isFading = true;
+        this.fadeAlpha = 1;
+        console.log("Enemy died (fading out)");
+    }
+
+    shoot() {
+        const direction = { x: this.lastDirection.x, y: this.lastDirection.y };
+
+        // Asegúrate de que no sea un vector nulo. Solo occurre cuando el enemigo aún no se ha movido
+        if (direction.x === 0 && direction.y === 0) return;
+        const projectileStart = {
+            x: this.center.x,
+            y: this.center.y
+        };
+        const projectileDirection = { 
+            x: this.lastDirection.x, 
+            y: this.lastDirection.y 
+        };
+        const projectile = new Projectile(projectileStart, TILEWIDTH/2.0, TILEHEIGHT/2.0, projectileDirection, this);
+        this.scene.levelContent = this.scene.levelContent.concat([projectile]);
+    }
+
     
     setDirection(dx, dy) {
         this.direction.x = dx;
@@ -224,7 +437,7 @@ class Enemy {
     }
 
     isActive() {
-        return this.life;
+        return this.life || this.isFading;
     }
 }
 

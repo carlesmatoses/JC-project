@@ -1,4 +1,3 @@
-
 class Stats{
     constructor(health, attack, defense, strength, speed) {
         this.health = health;
@@ -110,11 +109,21 @@ class Slot{
 
 }
 
+class Key {
+    constructor(id, name, icon=null) {
+        this.id = id;
+        this.name = name;
+        this.icon = icon; 
+    }
+}
+
 // Inventory.js
 class Inventory {
     constructor(player) {
         this.player = player;
         this.stats = player.stats;
+        this.money = 0;
+        this.keys = new Map(); // key: key.id, value: Key object
         this.items = new Map(); // key: item.name, value: { item, quantity }
         this.resolution = 4;
         
@@ -129,6 +138,7 @@ class Inventory {
         this.getSlot(0, 0).select();
 
         this.healthBar = new HealthBar(); 
+        this.moneyDisplay = new MoneyDisplay(0.5,0);
 
     }
 
@@ -155,6 +165,7 @@ class Inventory {
         this.equipped.right.draw(context);
 
         this.healthBar.draw(context, this.player.stats.getHealth().maxHealth, this.player.stats.getHealth().health, UIWIDTH / 10 * 6.5, 0);
+        this.moneyDisplay.draw(context, this.money);
     }
 
     drawUI(context) {
@@ -163,8 +174,11 @@ class Inventory {
         this.equipped.right.drawUI(context,TILEWIDTH*3,TILEHEIGHT*8);
     }
 
-
     addItem(item, quantity = 1) {
+        if (item instanceof Key) {
+            this.addKey(item);
+            return;
+        }
         if (this.items.has(item.name)) {
             this.items.get(item.name).quantity += quantity;
         } else {
@@ -217,6 +231,7 @@ class Inventory {
         currentEquipped.setItem(item);
         if (item.effects) this.stats.applyEffects(item.effects);
     }
+
     equipSelectedItem(hand) {
         const selectedSlot = this.getSlot(this.selectedRow, this.selectedCol);
         const item = selectedSlot.getItem();
@@ -266,6 +281,26 @@ class Inventory {
         const selected = this.getSlot(this.selectedRow, this.selectedCol);
         if (selected) selected.select();
     }
+
+    addKey(key) {
+        if (this.keys.has(key.id)) {
+            console.error("Key already exists:", key.id);
+            return;
+        }
+        this.keys.set(key.id, key);
+    }
+
+    hasKey(keyId) {
+        return this.keys.has(keyId);
+    }
+
+    removeKey(key) {
+        if (!this.keys.has(key.id)) {
+            console.error("Key not found:", key.id);
+            return;
+        }
+        this.keys.delete(key.id);
+    }
 }
 
 
@@ -285,7 +320,7 @@ class Player {
         this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, (width)/4, (height)/4);
 
         // inventory
-        this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
+        this.stats = new Stats(9, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
         this.inventory = new Inventory(this);
 
         //Audio
@@ -303,7 +338,12 @@ class Player {
 
         //defend
         this.isDefending = false;
+        this.defendingTimer = 0;
 
+        // Inmunity
+        this.isImmune = false; // Immunity flag
+        this.immunityTimer = 0; // Timer to track immunity duration
+        this.immunityDuration = 1000; // 1 second of immunity (in milliseconds)
 
 		// Sprite y animaciones Player
 		this.texture = new Texture(texture);
@@ -395,7 +435,7 @@ class Player {
     draw(context) {
         this.sprite.x = this.x;
         this.sprite.y = this.y;
-		this.sprite.draw();
+        this.sprite.draw();
 
         if (this.isAttacking) {
             //console.log("dibujando espada");
@@ -407,15 +447,32 @@ class Player {
             this.handBoundingBox.draw(context);
             
             // Draw a circle in the center of the player for debugging
-            let centerPixels = transform(this.center.x,this.center.y,context) 
+            let centerPixels = transform(this.center.x, this.center.y, context);
             context.beginPath();
             context.arc(centerPixels.x, centerPixels.y, 8, 0, 2 * Math.PI);
             context.fillStyle = "red";
             context.fill();
+
+            // Draw a blue dot if player is immune
+            if (this.isImmune) {
+                context.beginPath();
+                context.arc(centerPixels.x, centerPixels.y, 4, 0, 2 * Math.PI);
+                context.fillStyle = "blue";
+                context.fill();
+            }
         }
     }
 
     update(deltaTime) {
+        // Handle immunity timer
+        if (this.isImmune) {
+            this.immunityTimer += deltaTime;
+            if (this.immunityTimer >= this.immunityDuration) {
+                this.isImmune = false; // End immunity
+                this.immunityTimer = 0; // Reset timer
+            }
+        }
+
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
 
@@ -438,7 +495,7 @@ class Player {
             let offset = transform(this.center.x, this.center.y , context); 
             offset = {x:this.center.x - this.width/2.0 ,y:this.center.y - this.height/2.0};
         
-            //FIXME: Arreglar donde se renderiza la espada dependiendo el frame de la animacion
+            
             if (this.lastDirection.x === -1) {
                 if (this.swordSprite.currentAnimation != this.SWORD_LEFT){
                     this.swordSprite.setAnimation(this.SWORD_LEFT);
@@ -550,21 +607,15 @@ class Player {
             return; // no mover durante ataque
         }
 
-        //FIXME: Arreglar
+
         if (this.isDefending) {
-            
-            if (this.lastDirection.y === 1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_DOWN) {
-                this.sprite.setAnimation(this.ANIM_DEFEND_DOWN);
-            } else if (this.lastDirection.y === -1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_UP) {
-                this.sprite.setAnimation(this.ANIM_DEFEND_UP);
-            } else if (this.lastDirection.x === -1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_LEFT) {
-                this.sprite.setAnimation(this.ANIM_DEFEND_LEFT);
-            } else if (this.lastDirection.x === 1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_RIGHT) {
-                this.sprite.setAnimation(this.ANIM_DEFEND_RIGHT);
-            }
+            if (this.direction.x === -1) this.sprite.setAnimation(this.ANIM_DEFEND_LEFT);
+            else if (this.direction.x === 1) this.sprite.setAnimation(this.ANIM_DEFEND_RIGHT);
+            else if (this.direction.y === -1) this.sprite.setAnimation(this.ANIM_DEFEND_UP);
+            else if (this.direction.y === 1) this.sprite.setAnimation(this.ANIM_DEFEND_DOWN);
         
-            this.sprite.update(deltaTime); // actualizar animación de defensa
-            console.log("Estoy defendiendo!");
+            this.sprite.update(deltaTime);
+            return;
         }
         
         
@@ -584,7 +635,7 @@ class Player {
             // Move X
             this.translatePosition(offsetX, 0);
             for (let element of this.scene.levelContent) {
-                if (element.boundingBox && element.isActive()) {
+                if (element.boundingBox && element.isActive && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert X movement
                         this.translatePosition(-offsetX, 0);
@@ -601,7 +652,7 @@ class Player {
             // Move Y
             this.translatePosition(0, offsetY);
             for (let element of this.scene.levelContent) {
-                if (element.boundingBox && element.isActive()) {
+                if (element.boundingBox && element.isActive  && element.isActive()) {
                     if (this.boundingBox.isColliding(element.boundingBox)) {
                         // Revert Y movement
                         this.translatePosition(0, -offsetY);
@@ -691,12 +742,16 @@ class Player {
         );
 
         for (let element of this.scene.levelContent) {
-            if (element.boundingBox && element.type === 'enemy' && attackBox.isColliding(element.boundingBox)) {
-                console.log("collision with enemy: ", element);
+            if (element.boundingBox && attackBox.isColliding(element.boundingBox)) {
+                console.log("Colisión de ataque con:", element);
                 if (element.takeDamage) {
                     element.takeDamage(this.stats.getTotalStats().attack);
                 }
+                if (element.onAttackCollision) {
+                    element.onAttackCollision(this); // Call the onAttackCollision method of the element
+                }
             }
+
         }
     }
 
@@ -733,7 +788,7 @@ class Player {
         }
         
         //New: Attack press button
-        if (keyboard.isPressed('KeyZ') && !this.isAttacking) {
+        if (keyboard.isPressed('KeyZ') && !this.isAttacking && !this.isDefending) {
             //console.log("atacando");
             this.isAttacking = true;
             this.attackTimer = 0;
@@ -747,9 +802,12 @@ class Player {
             this.sprite.elapsedTime = 0;
         }
         
-        if (keyboard.isPressed('KeyX') && !this.isDefending) {
-            //console.log("atacando");
-            this.isDefending = true;
+        //Defense
+        if (keyboard.isHeld('KeyX') && !this.isDefending) {
+            
+            if (!this.isDefending) {
+                this.isDefending = true;
+            }
             
             if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_DEFEND_LEFT);
             else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_DEFEND_RIGHT);
@@ -758,10 +816,11 @@ class Player {
         
             this.sprite.currentKeyframe = 0;
             this.sprite.elapsedTime = 0;
+        }else{
+            if (this.isDefending) {
+                this.isDefending = false;
+            }
         }
-        
-
-
     }
 
     sameDirection(dir1, dir2) {
@@ -808,6 +867,28 @@ class Player {
         this.center.x = this.x + (this.width / 2);
         this.center.y = this.y + (this.height / 2);
         this.boundingBox.setPosition(this.center.x, this.center.y);
+    }
+
+    takeDamage(damage) {
+        if (typeof CREATIVE_MODE !== "undefined" && CREATIVE_MODE) {
+            console.log("Player is in CREATIVE_MODE, no damage taken!");
+            return;
+        }
+        if (this.isImmune) {
+            console.log("Player is immune to damage!");
+            return; // Ignore damage if immune
+        }
+
+        this.stats.health -= damage;
+        if (this.stats.health <= 0) {
+            console.log("Player has died");
+            this.scene.gameStateManager.pushState(new DeathMenuState(this.scene.gameStateManager));
+
+        }
+
+        // Activate immunity after taking damage
+        this.isImmune = true;
+        this.immunityTimer = 0; // Reset immunity timer
     }
 }
 

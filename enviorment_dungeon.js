@@ -15,6 +15,125 @@
 // const wall3 = new BackgroundElement(9*TILEWIDTH, 0, TILEWIDTH, 9/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
 // const wall4 = new BackgroundElement(0, 8/9, 10*TILEWIDTH, 1/9, type="wall", isWalkable=false, texture=null, color=null, drawing_settings=null);
 
+// Statues
+// the two statues on the starting room
+const statue1 = new Statue(
+    4 * TILEWIDTH, 
+    1 * TILEHEIGHT,
+    ["What is 2 + 2?", "Choose the correct answer:"],
+    ["3", "4", "5"],
+    (selectedIndex, statue) => {
+        if (selectedIndex === 1) {
+            console.log("Correct answer!");
+            statue.translatePosition(-TILEWIDTH, 0); 
+            statue.boundingBox.x -= TILEWIDTH; 
+            statue.defaultX -= TILEWIDTH;
+            statue.callback(statue); 
+        } else {
+            console.log("Wrong answer! Try again.");
+        }
+    }
+);
+statue1.callback = function(statue) {
+    statue1.x = statue.x;
+    statue1.y = statue.y;
+    console.log("statue callback executed");
+}
+
+const statue2 = new Statue(
+    5 * TILEWIDTH, 
+    1 * TILEHEIGHT,
+    ["Which show is better?", ],
+    ["Futurama", "Simspons"],
+    (selectedIndex, statue) => {
+        if (selectedIndex === 0) {
+            console.log("Correct answer!");
+            statue.translatePosition(TILEWIDTH, 0); 
+            statue.boundingBox.x += TILEWIDTH; 
+            statue.defaultX += TILEWIDTH;
+            statue.callback(statue); 
+        } else {
+            console.log("Wrong answer! Try again.");
+        }
+    }
+);
+statue2.callback = function(statue) {
+    statue2.x = statue.x;
+    statue2.y = statue.y;
+    console.log("statue callback executed");
+}
+
+// GATES
+const gate1 = new Portcullis(
+    9 * TILEWIDTH, 
+    3 * TILEHEIGHT, 
+    2,
+)
+
+const keyA = new Key("A", "Door Key");
+const locked_gate1 = new PortcullisKeyLock(
+    4 * TILEWIDTH, 
+    0 * TILEHEIGHT, 
+    keyA,
+)
+
+// ROTORES
+const rotor0 = new Rotor(TILEWIDTH*2, TILEHEIGHT*2, identifier=0, neighbors=[1], current_color=2);
+const rotor1 = new Rotor(TILEWIDTH*7, TILEHEIGHT*2, identifier=1, neighbors=[2], current_color=0);
+const rotor2 = new Rotor(TILEWIDTH*2, TILEHEIGHT*5, identifier=2, neighbors=[3], current_color=1);
+const rotor3 = new Rotor(TILEWIDTH*7, TILEHEIGHT*5, identifier=3, neighbors=[0], current_color=3);
+
+const hidden_chest =  new Chest(TILEWIDTH*12, TILEHEIGHT*12);
+hidden_chest.content = keyA;
+hidden_chest.callback = function() {
+    console.log("Chest callback executed");
+    hidden_chest.open();
+}
+
+function customOnSolved(player) {
+    // Possible chest positions
+    const positions = [
+        { x: TILEWIDTH, y: TILEHEIGHT },
+        { x: TILEWIDTH * 8, y: TILEHEIGHT * 6 }
+    ];
+
+    // Calculate distances from player to each position
+    const distances = positions.map(pos => {
+        const dx = player.x - pos.x;
+        const dy = player.y - pos.y;
+        return dx * dx + dy * dy; // squared distance
+    });
+
+    // Find the index of the furthest position
+    const furthestIndex = distances[0] > distances[1] ? 0 : 1;
+    const pos = positions[furthestIndex];
+    hidden_chest.x = pos.x;
+    hidden_chest.y = pos.y;
+    hidden_chest.boundingBox.x = pos.x+ TILEWIDTH / 2; 
+    hidden_chest.boundingBox.y = pos.y+ TILEHEIGHT / 2; 
+
+    const chest = player.scene.levelContent.find(obj => obj instanceof Chest);
+    if (chest) {
+        chest.x = pos.x;
+        chest.y = pos.y;
+        chest.boundingBox.x = pos.x+ TILEWIDTH / 2; 
+        chest.boundingBox.y = pos.y+ TILEHEIGHT / 2; 
+        chest.defaultX = pos.x;
+        chest.defaultY = pos.y;
+    }
+
+}
+rotor0.onSolved = customOnSolved;
+rotor1.onSolved = customOnSolved;
+rotor2.onSolved = customOnSolved;
+rotor3.onSolved = customOnSolved;
+
+
+const rotor4 = new Rotor(TILEWIDTH*3, TILEHEIGHT*2, identifier=0, neighbors=[1], current_color=2);
+const rotor5 = new Rotor(TILEWIDTH*6, TILEHEIGHT*2, identifier=1, neighbors=[3], current_color=0);
+const rotor6 = new Rotor(TILEWIDTH*3, TILEHEIGHT*5, identifier=2, neighbors=[3], current_color=1);
+const rotor7 = new Rotor(TILEWIDTH*6, TILEHEIGHT*5, identifier=3, neighbors=[1], current_color=3);
+
 //Enemies
 const enemyOcto1 = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
 
@@ -87,6 +206,16 @@ const dungeon_tile11 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+
+    createFirePlace(TILEWIDTH*2, TILEHEIGHT*1),
+    createFirePlace(TILEWIDTH*7, TILEHEIGHT*1),
+    createFirePlace(TILEWIDTH*2, TILEHEIGHT*6),
+    createFirePlace(TILEWIDTH*7, TILEHEIGHT*6),
+
+    rotor4,
+    rotor5,
+    rotor6,
+    rotor7,
 ];   
 const dungeon_tile12 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 128+2, sWidth: 160, sHeight: 128}),
@@ -120,6 +249,36 @@ const dungeon_tile17 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+
+    new FloatingFloor(3*TILEWIDTH, 2*TILEHEIGHT),
+    new FloatingFloor(4*TILEWIDTH, 2*TILEHEIGHT),
+    new FloatingFloor(5*TILEWIDTH, 2*TILEHEIGHT),
+    new FloatingFloor(6*TILEWIDTH, 2*TILEHEIGHT),
+
+    new FloatingFloor(3*TILEWIDTH, 3*TILEHEIGHT),
+    new FloatingFloor(4*TILEWIDTH, 3*TILEHEIGHT),
+    new FloatingFloor(5*TILEWIDTH, 3*TILEHEIGHT),
+    new FloatingFloor(6*TILEWIDTH, 3*TILEHEIGHT),
+
+    new FloatingFloor(3*TILEWIDTH, 4*TILEHEIGHT),
+    new FloatingFloor(4*TILEWIDTH, 4*TILEHEIGHT),
+    new FloatingFloor(5*TILEWIDTH, 4*TILEHEIGHT),
+    new FloatingFloor(6*TILEWIDTH, 4*TILEHEIGHT),
+
+    new FloatingFloor(3*TILEWIDTH, 5*TILEHEIGHT),
+    new FloatingFloor(4*TILEWIDTH, 5*TILEHEIGHT),
+    new FloatingFloor(5*TILEWIDTH, 5*TILEHEIGHT),
+    new FloatingFloor(6*TILEWIDTH, 5*TILEHEIGHT),
+
+    new FloatingFloor(2*TILEWIDTH, 3*TILEHEIGHT,1),
+    new FloatingFloor(2*TILEWIDTH, 4*TILEHEIGHT,2),
+    new FloatingFloor(7*TILEWIDTH, 3*TILEHEIGHT),
+    new FloatingFloor(7*TILEWIDTH, 4*TILEHEIGHT),
+
+    new FloatingFloor(1*TILEWIDTH, 4*TILEHEIGHT,0),
+    new FloatingFloor(1*TILEWIDTH, 3*TILEHEIGHT,0),
+    new FloatingFloor(8*TILEWIDTH, 3*TILEHEIGHT,0),
+    new FloatingFloor(8*TILEWIDTH, 4*TILEHEIGHT,0),
 ];
 const dungeon_tile18 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 256+3, sWidth: 160, sHeight: 128})];
@@ -171,6 +330,10 @@ const dungeon_tile20 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     createVase(8*TILEWIDTH, TILEHEIGHT*2),
     createVase(TILEWIDTH, 6*TILEHEIGHT),
     createVase(8*TILEWIDTH, 6*TILEHEIGHT),
+
+    new Enemy(TILEWIDTH*2, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
+    new Enemy(TILEWIDTH*4, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT),
+    gate1,
 ];
 const dungeon_tile21 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 384+4, sWidth: 160, sHeight: 128}),
@@ -181,6 +344,13 @@ const dungeon_tile21 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(8*TILEWIDTH, 7*TILEHEIGHT, 7*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(9*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
     new InvisibleWall(9*TILEWIDTH, 6*TILEHEIGHT, TILEWIDTH, TILEHEIGHT*3 ),
+
+    rotor0, 
+    rotor1, 
+    rotor2, 
+    rotor3, 
+    hidden_chest,
+
 ];
 const dungeon_tile22 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 384+4, sWidth: 160, sHeight: 128}),
@@ -193,6 +363,36 @@ const dungeon_tile22 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+
+    new FloatingFloor(2*TILEWIDTH, 1*TILEHEIGHT,3),
+    new FloatingFloor(2*TILEWIDTH, 2*TILEHEIGHT,3),
+    new FloatingFloor(2*TILEWIDTH, 3*TILEHEIGHT,3),
+    new FloatingFloor(2*TILEWIDTH, 4*TILEHEIGHT,3),
+    new FloatingFloor(2*TILEWIDTH, 5*TILEHEIGHT,2),
+    new FloatingFloor(2*TILEWIDTH, 6*TILEHEIGHT,3),
+    new FloatingFloor(3*TILEWIDTH, 1*TILEHEIGHT,3),
+    new FloatingFloor(3*TILEWIDTH, 2*TILEHEIGHT,1),
+    new FloatingFloor(3*TILEWIDTH, 3*TILEHEIGHT,3),
+    new FloatingFloor(3*TILEWIDTH, 4*TILEHEIGHT,3),
+    new FloatingFloor(3*TILEWIDTH, 5*TILEHEIGHT,3),
+    new FloatingFloor(4*TILEWIDTH, 3*TILEHEIGHT,1),
+    new FloatingFloor(4*TILEWIDTH, 4*TILEHEIGHT,3),
+    new FloatingFloor(4*TILEWIDTH, 5*TILEHEIGHT,3),
+    new FloatingFloor(5*TILEWIDTH, 3*TILEHEIGHT,3),
+    new FloatingFloor(5*TILEWIDTH, 4*TILEHEIGHT,3),
+    new FloatingFloor(5*TILEWIDTH, 5*TILEHEIGHT,3),
+    new FloatingFloor(6*TILEWIDTH, 3*TILEHEIGHT,3),
+    new FloatingFloor(6*TILEWIDTH, 4*TILEHEIGHT,3),
+    new FloatingFloor(6*TILEWIDTH, 5*TILEHEIGHT,2),
+    new FloatingFloor(6*TILEWIDTH, 6*TILEHEIGHT,3),
+    new FloatingFloor(7*TILEWIDTH, 1*TILEHEIGHT,3),
+    new FloatingFloor(7*TILEWIDTH, 2*TILEHEIGHT,3),
+    new FloatingFloor(7*TILEWIDTH, 3*TILEHEIGHT,3),
+    new FloatingFloor(7*TILEWIDTH, 4*TILEHEIGHT,3),
+    new FloatingFloor(7*TILEWIDTH, 5*TILEHEIGHT,3),
+    new FloatingFloor(7*TILEWIDTH, 6*TILEHEIGHT,3),
+
+    locked_gate1,
 ];
 const dungeon_tile23 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 384+4, sWidth: 160, sHeight: 128}),
@@ -205,6 +405,17 @@ const dungeon_tile23 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
+    
+    new InvisibleWall(5*TILEWIDTH, 3*TILEHEIGHT, TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(4*TILEWIDTH, 4*TILEHEIGHT, TILEWIDTH, TILEHEIGHT ),
+    new InvisibleWall(3*TILEWIDTH, 5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT ),
+
+    new Lights(TILEWIDTH*2, TILEHEIGHT*0, 0),
+    new Lights(TILEWIDTH*7, TILEHEIGHT*0, 0),
+    new Lights(TILEWIDTH*9, TILEHEIGHT*2, 3),
+    new Lights(TILEWIDTH*9, TILEHEIGHT*5, 3),
+    new Lights(TILEWIDTH*7, TILEHEIGHT*7, 1),
+    new Lights(TILEWIDTH*2, TILEHEIGHT*7, 1),
 ];
 const dungeon_tile24 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 384+4, sWidth: 160, sHeight: 128})];
@@ -232,6 +443,8 @@ const dungeon_tile26 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT ),
+    statue1,
+    statue2,
 ];
 const dungeon_tile27 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 512+5, sWidth: 160, sHeight: 128})];
@@ -274,6 +487,12 @@ const level28 = new Level(27, dungeon_tile28);
 const level29 = new Level(28, dungeon_tile29);
 const level30 = new Level(29, dungeon_tile30);
 
+level20.onAllEnemiesDefeated = function() {
+    // Open the door here
+    // For example, set door.active = true or remove an InvisibleWall
+    console.log("All enemies defeated! Door opens.");
+    // door.open(); or scene.levelContent.push(new Door(...));
+};
 
 world.maps["dungeon1"].setLevels([
     level1, level2, level3, level4, level5, level6,

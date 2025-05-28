@@ -10,11 +10,18 @@ class BoundingBox {
      * @param {BoundingBox} other - The other bounding box to check for collision.
      * @returns boolean - True if the bounding boxes are colliding, false otherwise.
      */
-    isColliding(other) {
-        // Check if this bounding box is colliding with another bounding box
+    isColliding(other, epsilon = 0) {
+        // If either bounding box has zero width or height, no collision
+        if (this.width === 0 || this.height === 0 || other.width === 0 || other.height === 0) {
+            return false;
+        }
+        // Check if this bounding box is colliding with another bounding box,
+        // optionally expanding this box by epsilon for proximity checks
+        const width = this.width + epsilon;
+        const height = this.height + epsilon;
         return (
-            Math.abs(this.x - other.x) < (this.width + other.width) / 2 &&
-            Math.abs(this.y - other.y) < (this.height + other.height) / 2
+            Math.abs(this.x - other.x) < (width + other.width) / 2 &&
+            Math.abs(this.y - other.y) < (height + other.height) / 2
         );
     }
 
@@ -247,6 +254,156 @@ class Door extends BackgroundElement {
     }
 }
 
+class Portcullis extends BackgroundElement {
+    /**
+     * @param {number} x
+     * @param {number} y
+     * @param {number} direction - 0 (horizontal), 1 (horizontal alt), 2 (vertical), 3 (vertical alt)
+     */
+    constructor(x, y, direction = 0) {
+        // For vertical (direction 2/3), height is 2 tiles, width is 1 tile
+        // For horizontal (direction 0/1), width is 2 tiles, height is 1 tile
+        let width = (direction === 2 || direction === 3) ? TILEWIDTH : TILEWIDTH * 2;
+        let height = (direction === 2 || direction === 3) ? TILEHEIGHT * 2 : TILEHEIGHT;
+        super(x, y, width, height, "portcullis", false, textures.portcullis, null, null);
+        this.direction = direction;
+        // Set bounding box at center
+        this.boundingBox = new BoundingBox(
+            this.x + this.width * 0.5,
+            this.y + this.height * 0.5,
+            width,
+            height
+        );
+        this.isOpen = false;
+        this.callback = null;
+
+        if (this.isOpen) {
+            this.boundingBox.width = 0;
+            this.boundingBox.height = 0;
+        }
+    }
+
+    open() {
+        if (this.callback) {
+            this.callback();
+        }
+        if (this.globalReference) {
+            this.globalReference.isOpen = true;
+            this.globalReference.boundingBox.width = 0;
+            this.globalReference.boundingBox.height = 0;
+        }
+        this.isOpen = true;
+        this.boundingBox.width = 0;
+        this.boundingBox.height = 0;
+    }
+
+    close() {
+        this.isOpen = false;
+        if (this.direction === 2 || this.direction === 3) {
+            this.boundingBox.width = TILEWIDTH;
+            this.boundingBox.height = TILEHEIGHT * 2;
+        } else {
+            this.boundingBox.width = TILEWIDTH * 2;
+            this.boundingBox.height = TILEHEIGHT;
+        }
+    }
+
+    isOpened() {
+        return this.isOpen;
+    }
+
+    draw(context) {
+        const img = this.texture.img;
+        let sx = 0, sy = 0, sWidth = 0, sHeight = 0;
+
+        // Animation setup
+        const ANIMATION_DURATION = 0.4; // seconds
+        if (this.animationTimer === undefined) {
+            this.animationTimer = 0;
+            this.animationFrame = this.isOpen ? 2 : 0;
+            this.animating = false;
+            this.lastState = this.isOpen;
+        }
+
+        // Detect state change and start animation
+        if (this.lastState !== this.isOpen) {
+            this.animating = true;
+            this.animationTimer = 0;
+            this.lastState = this.isOpen;
+        }
+
+        // Animate if needed
+        if (this.animating) {
+            this.animationTimer += (context.deltaTime || 16) / 1000;
+            let progress = Math.min(this.animationTimer / ANIMATION_DURATION, 1);
+            if (this.isOpen) {
+                if (progress < 0.5) this.animationFrame = 1;
+                else this.animationFrame = 2;
+            } else {
+                if (progress < 0.5) this.animationFrame = 1;
+                else this.animationFrame = 0;
+            }
+            if (progress >= 1) {
+                this.animating = false;
+                this.animationFrame = this.isOpen ? 2 : 0;
+            }
+        } else {
+            this.animationFrame = this.isOpen ? 2 : 0;
+        }
+
+        // Sprite selection logic
+        if (this.direction === 0 || this.direction === 1) {
+            // Horizontal: 3 frames, 32x16, separated by 1px, y=0 or y=17
+            sWidth = 32;
+            sHeight = 16;
+            sx = this.animationFrame * (32 + 1);
+            sy = this.direction === 0 ? 0 : 17;
+        } else if (this.direction === 2 || this.direction === 3) {
+            // Vertical: 3 frames, 16x32, separated by 1px, y=34, direction 2: frames 0-2, direction 3: frames 3-5
+            sWidth = 16;
+            sHeight = 32;
+            let frame = this.animationFrame;
+            let col = (this.direction === 2) ? frame : frame + 3;
+            sx = col * (16 + 1);
+            sy = 34;
+        }
+        console.log("Portcullis direction:", this.direction);
+
+        let pos = transform(this.x, this.y, context);
+        let size = transform(this.width, this.height, context);
+
+        context.drawImage(
+            img,
+            sx, sy, sWidth, sHeight,
+            pos.x, pos.y, size.x, size.y
+        );
+
+        if (DEBUG) {
+            this.boundingBox.draw(context);
+        }
+    }
+}
+
+class PortcullisKeyLock extends Portcullis {
+    constructor(x, y, key, direction = 0) {
+        super(x, y, direction);
+        this.key = key; 
+        this.texture = textures.portcullis_lock; 
+    }
+
+    interact(player) {
+        if (player.inventory.hasKey(this.key.id)) {
+            this.open(); // Open the portcullis if the player has the key
+            console.log("Portcullis opened with key:", this.key);
+            player.inventory.removeKey(this.key); // Remove the key from the player's inventory
+        } else {
+            console.log("Portcullis is locked! You need a key to open it.");
+            // Optionally, you can show a message to the player
+            addDialog(["This portcullis is locked! You need a key to open it."]);
+        }
+    }
+}
+
 class Chest extends BackgroundElement {
     constructor(x, y) {
         super(x, y, TILEWIDTH, TILEHEIGHT, "chest", false, textures.chest, null, null);
@@ -278,6 +435,10 @@ class Chest extends BackgroundElement {
             player.inventory.addItem(this.content); // Add the content to the player's inventory
             player.inventory.assignToEmptySlot(this.content); // Assign the item to an empty slot in the inventory
             if(this.callback) this.callback(); // Call the callback function if provided
+
+            // we set a DialogState to show the content of the chest
+            addDialog([`You found: ${this.content.name}`]);
+
         } else {
             // this.close(); // Close the chest if it is already open
             console.log("Chest has already been oppened!");
@@ -311,7 +472,6 @@ class Tombstone extends BackgroundElement {
         this.isPushable = true; // Tombstones are pushable
         this.callback = null; // Optional callback function for when the tombstone is pushed
     }
-
 }
 
 class InvisibleWall extends BackgroundElement {
@@ -330,14 +490,276 @@ class InvisibleWall extends BackgroundElement {
 }
 
 class Statue extends BackgroundElement {
-    constructor(x, y, dialog) {
+    constructor(x, y, dialog, options = null, onSelect = null) {
         super(x, y, TILEWIDTH, TILEHEIGHT, "statue", false, textures.statue, null, null);
         this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
         this.dialog = dialog; 
+        this.options = options; 
+        this.onSelect = onSelect;
     }
 
     interact(player) {
-        addDialog(this.dialog); 
+        addDialog(this.dialog, this.options, this.onSelect) // Show the dialog when interacting with the statue
+    }
+
+    draw(context) {
+        // call super.draw(context) to draw the statue texture
+        super.draw(context); // Draw the statue texture
+        if (DEBUG) {
+            // Draw the bounding box for debugging
+            console.log(this.x)
+        }
+    }
+}
+
+class Rotor extends BackgroundElement {
+    constructor(x, y, identifier = 0, neighbors = [], current_color = 0) {
+        super(x, y, TILEWIDTH, TILEHEIGHT, "rotor", false, textures.rotor, null, null);
+        this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
+        this.identifier = identifier;
+        this.neighbors = neighbors; 
+        this.current_color = current_color;
+        this.color_seq = ["red", "green", "blue", "yellow"];
+        this.onSolved = null;
+        this.texture_red = textures.rotor_red;
+        this.texture_green = textures.rotor_green;
+        this.texture_blue = textures.rotor_blue;
+        this.texture_yellow = textures.rotor_yellow;
+
+        // set inital texture based on current_color
+        switch (this.current_color) {
+            case 0:
+                this.texture = this.texture_red;
+                break;
+            case 1:
+                this.texture = this.texture_green;
+                break;
+            case 2:
+                this.texture = this.texture_blue;
+                break;
+            case 3:
+                this.texture = this.texture_yellow;
+                break;
+            default:
+                this.texture = this.texture_red; // Default to red if color is invalid
+        }
+    }
+    
+    onAttackCollision(player) {
+        let elements = player.scene.levelContent;
+        this.current_color = (this.current_color + 1) % 4;
+        for (let element of elements) {
+            if (element instanceof Rotor) {
+                if (this.neighbors.includes(element.identifier)) {
+                    element.current_color = (element.current_color + 1) % 4;
+                }
+            }
+        }
+        // Check if all Rotors have the same current_color as this Rotor
+        let allSame = elements
+            .filter(e => e instanceof Rotor)
+            .every(e => e.current_color === this.current_color);
+        if (allSame && this.onSolved) {
+            console.log("All Rotors have the same color:", this.color_seq[this.current_color]);
+            // You can trigger a callback or event here if needed
+            this.onSolved(player); 
+        }
+    }
+
+    draw(context) {
+        let pos = transform(this.x, this.y, context);
+        let size = transform(this.width, this.height, context);
+
+        // Animation setup
+        const SPRITE_COUNT = 4;
+        const SPRITE_WIDTH = 16;
+        const SPRITE_HEIGHT = 16;
+        const SEPARATOR = 1;
+        const ANIMATION_DURATION = 200; // ms
+
+        // Animation state
+        if (this.animationTimer === undefined) {
+            this.animationTimer = 0;
+            this.animating = false;
+            this.animationFrame = 0;
+            this.lastColor = this.current_color;
+        }
+
+        // Detect color change to start animation
+        if (this.lastColor !== this.current_color) {
+            this.animating = true;
+            this.animationTimer = 0;
+            this.lastColor = this.current_color;
+            this.animationFrame = 0;
+        }
+
+        // Animate if needed
+        if (this.animating) {
+            this.animationTimer += (context.deltaTime || 16);
+            let progress = Math.min(this.animationTimer / ANIMATION_DURATION, 1);
+            // Animation: iterate over all frames, then stop at frame 0
+            this.animationFrame = Math.floor(progress * SPRITE_COUNT);
+            if (this.animationFrame >= SPRITE_COUNT) {
+                this.animationFrame = 0;
+                this.animating = false;
+                // Set texture to the corresponding color when animation ends
+                switch (this.current_color) {
+                    case 0:
+                        this.texture = this.texture_red;
+                        break;
+                    case 1:
+                        this.texture = this.texture_green;
+                        break;
+                    case 2:
+                        this.texture = this.texture_blue;
+                        break;
+                    case 3:
+                        this.texture = this.texture_yellow;
+                        break;
+                }
+            }
+        } else {
+            this.animationFrame = 0;
+        }
+
+        // Draw the sprite
+        let sx = this.animationFrame * (SPRITE_WIDTH + SEPARATOR);
+        let sy = 0;
+
+        context.drawImage(
+            this.texture.img,
+            sx, sy, SPRITE_WIDTH, SPRITE_HEIGHT,
+            pos.x, pos.y, size.x, size.y
+        );
+
+        if (DEBUG) {
+            this.boundingBox.draw(context);
+        }
+    }
+}
+
+class Lights extends BackgroundElement {
+    constructor(x, y, direction) {
+        super(x, y, TILEWIDTH, TILEHEIGHT, "lights", false, textures.lights, null, null);
+        this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
+        this.animationTimer = 0;
+        this.animationFrameIndex = 0;
+        this.direction = direction;
+    }
+    draw(context) {
+        // Animation parameters
+        const SPRITE_SIZE = 16;
+        const SPRITE_COLS = 4;
+        const SPRITE_ROWS = 4;
+        const NORMAL_DURATION = 160; // ms per frame
+        const LONG_DURATION = 800;   // 5 * 160ms
+
+        // Animation sequence: [0,1,2,3,2,1,0]
+        const sequence = [0, 1, 2, 3, 2, 1, 0];
+        const durations = [LONG_DURATION, NORMAL_DURATION, NORMAL_DURATION, NORMAL_DURATION, NORMAL_DURATION, NORMAL_DURATION, LONG_DURATION];
+
+        // Initialize animation state if needed
+        if (this.animationTimer === undefined) {
+            this.animationTimer = 0;
+            this.animationFrameIndex = 0;
+        }
+
+        // Advance animation timer
+        this.animationTimer += (context.deltaTime || 16);
+        if (this.animationTimer >= durations[this.animationFrameIndex]) {
+            this.animationTimer -= durations[this.animationFrameIndex];
+            this.animationFrameIndex = (this.animationFrameIndex + 1) % sequence.length;
+        }
+
+        // Determine which row to use based on direction (default to 0 if not set)
+        const row = typeof this.direction === "number" ? this.direction % SPRITE_ROWS : 0;
+        const frame = sequence[this.animationFrameIndex];
+        const sx = frame * SPRITE_SIZE + 1 * frame;
+        const sy = row * SPRITE_SIZE + 1 * row;
+
+        let pos = transform(this.x, this.y, context);
+        let size = transform(this.width, this.height, context);
+
+        context.drawImage(
+            this.texture.img,
+            sx, sy, SPRITE_SIZE, SPRITE_SIZE,
+            pos.x, pos.y, size.x, size.y
+        );
+
+        if (DEBUG) {
+            this.boundingBox.draw(context);
+        }
+    }
+}
+
+class FloatingFloor extends BackgroundElement{
+    constructor(x, y, uses = 3){
+        super(x, y, TILEWIDTH, TILEHEIGHT, "floating_floor", true, null, "cyan", null);
+        this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.2*TILEHEIGHT, TILEWIDTH*0.2, TILEHEIGHT*0.2); 
+        this.uses = uses; // Number of uses before disappearing
+        this.onCooldown = false; 
+        this.cooldownTime = 1000; // ms
+        this.cooldownTimer = 0;
+        this.texture = textures.floating_floor; 
+    }
+
+    steptOn(player) {
+        if (!this.onCooldown && this.uses > 0) {
+            this.uses -= 1;
+            this.onCooldown = true;
+            this.cooldownTimer = this.cooldownTime;
+            if (this.uses <= 0) {
+                this.active = false; // Or remove from scene in update
+                if (player && typeof player.takeDamage === "function") {
+                    player.takeDamage(10);
+                    console.log("Floating floor disappeared, player took damage!");
+                }
+            } 
+            switch (this.uses) {
+                case 3:
+                    this.color = "green";
+                    break;
+                case 2:
+                    this.color = "yellow";
+                    break;
+                case 1:
+                    this.color = "red";
+                    break;
+                default:
+                    this.color = null;
+            }
+        } else if  (!this.onCooldown && this.uses <= 0){
+            // floor is broken, user will fall  to the void
+            player.takeDamage(10);
+        }
+    }
+
+    update(deltaTime) {
+        super.update(deltaTime);
+        if (this.onCooldown) {
+            this.cooldownTimer -= deltaTime;
+            if (this.cooldownTimer <= 0) {
+                this.onCooldown = false;
+                this.cooldownTimer = 0;
+            }
+        }
+    }
+
+    draw(context) {
+        if (this.texture && this.uses > 0) {
+            let pos = transform(this.x, this.y, context);
+            let size = transform(this.width, this.height, context);
+            let sx = 0;
+            if (this.uses === 3) sx = 0;
+            else if (this.uses === 2) sx = 16;
+            else if (this.uses === 1) sx = 32;
+            context.drawImage(this.texture.img, sx, 0, 16, 16, pos.x, pos.y, size.x, size.y);
+        } else {
+            this.texture = null;
+        }
+        if (DEBUG) {
+            this.boundingBoxPressure.draw(context);
+        }
     }
 }
 
@@ -382,6 +804,10 @@ function createFirePlace(x, y) {
     };
     
     return element; // Return the fireplace element
+}
+function createStatue(x, y, dialog, options = null, onSelect = null) {
+    let element =  new Statue(x, y, dialog, options, onSelect);
+    return element;
 }
 function createAnimatedFloor(x, y, texture) {
     let element =  new BackgroundElement(x, y, TILEWIDTH, TILEHEIGHT, "animated_floor", true, texture = texture, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
@@ -521,13 +947,71 @@ class Level{
                 copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof Statue) {
-                // Create a new Statue instance
                 let copy = new Statue(
-                    element.x, element.y, element.dialog
+                    element.x, element.y, element.dialog, element.options, null
                 );
                 copy.globalReference = element;
-                copy.boundingBox = element.boundingBox; // Copy the bounding box
+                copy.boundingBox = element.boundingBox;
+                copy.callback = element.callback;
+
+                // Rebind onSelect with proper 'copy' reference
+                if (element.onSelect) {
+                    copy.onSelect = (selectedIndex) => element.onSelect(selectedIndex, copy);
+                }
+
+                return copy;
+            } else if (element instanceof PortcullisKeyLock) {
+                // Create a new PortcullisKeyLock instance
+                let copy = new PortcullisKeyLock(
+                    element.x, element.y, element.key, element.direction
+                );
+                copy.boundingBox =  element.boundingBox; 
+                copy.globalReference = element;
+                copy.isOpen = element.isOpen; // Copy the isOpen state
                 copy.callback = element.callback; 
+                copy.texture = element.texture; 
+                return copy;
+            } else if (element instanceof Portcullis) { 
+                // Create a new Portcullis instance
+                let copy = new Portcullis(
+                    element.x, element.y, element.direction
+                );
+                copy.boundingBox =  element.boundingBox; 
+                copy.globalReference = element;
+                copy.isOpen = element.isOpen; // Copy the isOpen state
+                copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof Rotor) {
+                // Create a new Rotor instance
+                let copy = new Rotor(
+                    element.x, element.y, 
+                    element.identifier,
+                    element.neighbors,
+                    element.current_color
+                );
+                copy.onSolved = element.onSolved; // Copy the onSolved callback
+                copy.globalReference = element;
+                copy.boundingBox = element.boundingBox; 
+                copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof FloatingFloor) {
+                // Create a new FloatingFloor instance
+                let copy = new FloatingFloor(
+                    element.x, element.y, element.uses
+                );
+                copy.globalReference = element;
+                copy.boundingBoxPressure = element.boundingBoxPressure; 
+                copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof Lights) {
+                // Create a new Lights instance
+                let copy = new Lights(
+                    element.x, element.y, element.direction
+                );
+                copy.globalReference = element;
+                copy.boundingBox = element.boundingBox; 
+                copy.direction = element.direction; // Copy the direction
+                copy.update = element.update; // Copy the update method
                 return copy;
             } else if (element instanceof BackgroundElement) {
                 // Create a new BackgroundElement instance
@@ -543,7 +1027,10 @@ class Level{
                 return copy;
             } else if (element instanceof Enemy){
                 return new Enemy(element.x, element.y, element.width, element.height, element.texture); 
-            }else {
+            } else if (element instanceof Projectile){
+                console.log("El elemento es un projectile");
+                return new Projectile(element.center, element.width, element.height);
+            } else {
                 console.warn("Unknown element type:", element);
                 return null; // Handle unexpected types gracefully
             }
