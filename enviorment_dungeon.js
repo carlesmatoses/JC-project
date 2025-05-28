@@ -645,7 +645,7 @@ level6.onEnter = function(scene) {
     // Additional setup for level 5 can be done here
 
     if (scene.firstTimeEntering === undefined) {
-        scene.player.scriptedMovement({x: 1, y: 0}, TILEWIDTH, 500, () => {
+        scene.player.scriptedMovement({x: 0, y: -1}, TILEWIDTH, 500, () => {
             scene.levelContent.forEach(obj => {
                 if (obj instanceof Portcullis) {
                         obj.close();
