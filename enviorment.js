@@ -765,6 +765,40 @@ class FloatingFloor extends BackgroundElement{
     }
 }
 
+class FloatingHeart extends BackgroundElement{
+    constructor(x, y){
+        super(x, y, TILEWIDTH, TILEHEIGHT, "floating_heart", true, textures.floating_heart, "blue", null);
+        this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.2*TILEHEIGHT, TILEWIDTH*0.2, TILEHEIGHT*0.2);
+    }
+
+    steptOn(player) {
+        console.log("Floating heart collected, player healed!");
+        if (player && typeof player.takeDamage === "function") {
+            player.takeDamage(-1); // Heal the player by 10 health points
+
+            // remove the floating heart from the scene
+            player.scene.levelContent = player.scene.levelContent.filter(element => element !== this);
+        }
+    }
+}
+
+class FloatingMoney extends BackgroundElement{
+    constructor(x, y){
+        super(x, y, TILEWIDTH/2, TILEHEIGHT, "floating_heart", true, textures.floating_money, "green");
+        this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.2*TILEHEIGHT, TILEWIDTH*0.2, TILEHEIGHT*0.2);
+    }
+
+    steptOn(player) {
+        console.log("Floating heart collected, player healed!");
+        if (player && typeof player.takeDamage === "function") {
+            player.addMoney(1); // Heal the player by 10 health points
+
+            // remove the floating heart from the scene
+            player.scene.levelContent = player.scene.levelContent.filter(element => element !== this);
+        }
+    }
+}
+
 function createVase(x, y){
     let element =  new BackgroundElement(x, y, TILEWIDTH, TILEHEIGHT, "vase", false, texture = textures.vase, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
     element.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT); // Bounding box for collision detection
@@ -994,6 +1028,24 @@ class Level{
                 copy.onSolved = element.onSolved; // Copy the onSolved callback
                 copy.globalReference = element;
                 copy.boundingBox = element.boundingBox; 
+                copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof FloatingHeart) {
+                // Create a new FloatingObject instance
+                let copy = new FloatingHeart(
+                    element.x, element.y
+                );
+                copy.globalReference = element;
+                copy.boundingBoxPressure = element.boundingBoxPressure; 
+                copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof FloatingMoney) {
+                // Create a new FloatingObject instance
+                let copy = new FloatingMoney(
+                    element.x, element.y
+                );
+                copy.globalReference = element;
+                copy.boundingBoxPressure = element.boundingBoxPressure; 
                 copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof FloatingFloor) {

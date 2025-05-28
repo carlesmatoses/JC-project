@@ -447,7 +447,48 @@ const dungeon_tile26 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     statue2,
 ];
 const dungeon_tile27 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
-    drawing_settings={sx: 320+3, sy: 512+5, sWidth: 160, sHeight: 128})];
+    drawing_settings={sx: 320+3, sy: 512+5, sWidth: 160, sHeight: 128}),
+    
+    new InvisibleWall(0 * TILEWIDTH, TILEHEIGHT*3.5, TILEWIDTH, TILEHEIGHT * 6), // left margin
+    new InvisibleWall(9 * TILEWIDTH, 3.5 * TILEHEIGHT, TILEWIDTH, TILEHEIGHT * 6), // right margin
+    new InvisibleWall(0 * TILEWIDTH, 0 * TILEHEIGHT, TILEWIDTH * 7, TILEHEIGHT), // top margin left (blocks 0,0 to 3,0)
+    new InvisibleWall(7 * TILEWIDTH, 0 * TILEHEIGHT, TILEWIDTH * 5, TILEHEIGHT), // top margin right (blocks 5,0 to 9,0)
+    new InvisibleWall(4.5 * TILEWIDTH, 7 * TILEHEIGHT, TILEWIDTH * 10, TILEHEIGHT), // bottom margin
+
+    new FloatingMoney(TILEWIDTH*7, TILEHEIGHT*2),
+    new FloatingMoney(TILEWIDTH*6, TILEHEIGHT*2),
+    new FloatingMoney(TILEWIDTH*5, TILEHEIGHT*2),
+    new FloatingMoney(TILEWIDTH*4, TILEHEIGHT*2),
+    new FloatingMoney(TILEWIDTH*3, TILEHEIGHT*2),
+
+    new FloatingMoney(TILEWIDTH*7.5, TILEHEIGHT*3),
+    new FloatingMoney(TILEWIDTH*6.5, TILEHEIGHT*3),
+    new FloatingMoney(TILEWIDTH*5.5, TILEHEIGHT*3),
+    new FloatingMoney(TILEWIDTH*4.5, TILEHEIGHT*3),
+    new FloatingMoney(TILEWIDTH*3.5, TILEHEIGHT*3),
+    new FloatingMoney(TILEWIDTH*2.5, TILEHEIGHT*3),
+    
+    new FloatingMoney(TILEWIDTH*7, TILEHEIGHT*4),
+    new FloatingMoney(TILEWIDTH*6, TILEHEIGHT*4),
+    new FloatingMoney(TILEWIDTH*5, TILEHEIGHT*4),
+    new FloatingMoney(TILEWIDTH*4, TILEHEIGHT*4),
+    new FloatingMoney(TILEWIDTH*3, TILEHEIGHT*4),
+    new FloatingMoney(TILEWIDTH*2, TILEHEIGHT*4),
+    new FloatingMoney(TILEWIDTH*2.5, TILEHEIGHT*5),
+    new FloatingMoney(TILEWIDTH*3.5, TILEHEIGHT*5),
+    new FloatingMoney(TILEWIDTH*4.5, TILEHEIGHT*5),
+    new FloatingMoney(TILEWIDTH*5.5, TILEHEIGHT*5),
+    new FloatingMoney(TILEWIDTH*6.5, TILEHEIGHT*5),
+    new FloatingMoney(TILEWIDTH*7.5, TILEHEIGHT*5),
+
+    new FloatingMoney(TILEWIDTH*7, TILEHEIGHT*6),
+    new FloatingMoney(TILEWIDTH*6, TILEHEIGHT*6),
+    new FloatingMoney(TILEWIDTH*5, TILEHEIGHT*6),
+    new FloatingMoney(TILEWIDTH*4, TILEHEIGHT*6),
+    new FloatingMoney(TILEWIDTH*3, TILEHEIGHT*6),
+    
+
+];
 const dungeon_tile28 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 512+5, sWidth: 160, sHeight: 128})];
 const dungeon_tile29 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",

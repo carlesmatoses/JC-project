@@ -29,7 +29,7 @@ class Scene{
 		this.player = new Player(TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT);
 		this.player.scene = this; // Set the scene reference in the player object
 		
-		this.levelID = 20; // Current level ID
+		this.levelID = 26; // Current level ID
 
 		// level variables
 		this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
@@ -197,7 +197,7 @@ class Scene{
 			if (element.type==="door" && !element.isActive() && !element.isColliding(this.player.x, this.player.y, this.player.width, this.player.height)) {
 					element.activate(); // Activate the door if the player is not colliding with it
 			}
-			if (element instanceof FloatingFloor) {
+			if (element.steptOn && element.boundingBoxPressure) {
 				if (element.boundingBoxPressure.isColliding(this.player.boundingBox)) {
 					element.steptOn(this.player); 
 				}

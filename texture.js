@@ -51,4 +51,6 @@ const textures = {
 	rotor_yellow: new Texture("imgs/rotor_yellow.png"),
 	floating_floor: new Texture("imgs/floating_floor.png"),
 	lights: new Texture("imgs/lights.png"),
+	floating_heart: new Texture("imgs/floating_heart.png"),
+	floating_money: new Texture("imgs/floating_money.png"),
 }

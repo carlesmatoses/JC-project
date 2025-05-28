@@ -891,5 +891,9 @@ class Player {
         this.isImmune = true;
         this.immunityTimer = 0; // Reset immunity timer
     }
+
+    addMoney(amount) {
+        this.inventory.money += amount;
+    }
 }
 
