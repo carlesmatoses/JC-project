@@ -409,7 +409,6 @@ class Chest extends BackgroundElement {
         this.isOpen = false; // Whether the chest is open or not
         this.content = null; // Content of the chest (e.g., items, coins)
         this.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, 0.9*TILEWIDTH, 0.9*TILEHEIGHT); // Bounding box for collision detection
-        console.log("is chest oppened?", this.isOpen);
     }
 
     open() {
@@ -967,7 +966,6 @@ class Level{
                 copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof Tombstone) {
-                console.log("Tombstone created at:", element.x, element.y);
                 // Create a new Tombstone instance
                 let copy = new Tombstone(
                     element.x, element.y,

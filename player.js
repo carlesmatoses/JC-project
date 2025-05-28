@@ -744,12 +744,14 @@ class Player {
 
         for (let element of this.scene.levelContent) {
             if (element.boundingBox && attackBox.isColliding(element.boundingBox)) {
-                console.log("Colisión de ataque con:", element);
                 if (element.takeDamage) {
                     element.takeDamage(this.stats.getTotalStats().attack);
                 }
                 if (element.onAttackCollision) {
                     element.onAttackCollision(this); // Call the onAttackCollision method of the element
+                }
+                if(DEBUG){
+                    console.log("Colisión de ataque con:", element);
                 }
             }
 
@@ -822,6 +824,19 @@ class Player {
                 this.isDefending = false;
             }
         }
+
+        if (keyboard.isPressed('KeyL')) {
+            // we will remove the bounding box or add it back
+            if (this.boundingBox.width > 0 && this.boundingBox.height > 0) {
+                this.removeBundingBox();
+                console.log("Bounding box removed");
+            } else {
+                this.boundingBox.width = this.width * 0.9; // 90% of the size
+                this.boundingBox.height = this.height * 0.9;
+                this.boundingBox.setPosition(this.center.x, this.center.y);
+                console.log("Bounding box added");
+            }
+        }       
     }
 
     sameDirection(dir1, dir2) {
@@ -908,6 +923,11 @@ class Player {
         // Reset player position or handle death logic
         this.setPosition(TILEWIDTH, TILEHEIGHT*4); 
         this.stats.health = this.stats.getHealth().maxHealth; 
+    }
+
+    removeBundingBox(){
+        this.boundingBox.width = 0;
+        this.boundingBox.height = 0;
     }
 }
 
