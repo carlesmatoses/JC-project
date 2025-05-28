@@ -29,12 +29,12 @@ class Scene{
 		this.player = new Player(TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT);
 		this.player.scene = this; // Set the scene reference in the player object
 		
-		this.levelID = 103; // Current level ID
+		this.levelID = 20; // Current level ID
 
 		// level variables
 		this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
 		this.screen_switch_time = 0.7; // seconds
-		this.mapID = "overworld"; // Current map ID
+		this.mapID = "dungeon1"; // Current map ID
 		this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(this.levelID)); // Current level content
 		this.tmpLevelContent = new Array(); // Temporary level content for transitions
 

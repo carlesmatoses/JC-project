@@ -12,7 +12,8 @@ var context = this.canvas.getContext("2d");
 var gamestatemanager = new GameStateManager();
 
 const menuState = new MenuState(gamestatemanager);
-gamestatemanager.pushState(menuState);
+// gamestatemanager.pushState(menuState);
+gamestatemanager.pushState(new Scene(gamestatemanager));
 
 
 function addDialog(text, options = null, onSelect = null) {

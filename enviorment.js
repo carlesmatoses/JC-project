@@ -433,7 +433,9 @@ class Chest extends BackgroundElement {
             // Add logic to give content to the player
             // e.g., player.addItem(this.content);
             player.inventory.addItem(this.content); // Add the content to the player's inventory
-            player.inventory.assignToEmptySlot(this.content); // Assign the item to an empty slot in the inventory
+            if (!(this.content instanceof Key)) {
+                player.inventory.assignToEmptySlot(this.content); // Assign the item to an empty slot in the inventory
+            }
             if(this.callback) this.callback(); // Call the callback function if provided
 
             // we set a DialogState to show the content of the chest

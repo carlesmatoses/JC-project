@@ -78,7 +78,7 @@ class Slot{
         context.strokeStyle = this.selected ? "red" : "blue";
         context.stroke(); 
 
-        if (this.item) {
+        if (this.item && this.item.icon) {
             context.drawImage(this.item.icon.img, this.x, this.y, this.width, this.height);
         }
         context.closePath();
@@ -177,6 +177,7 @@ class Inventory {
     addItem(item, quantity = 1) {
         if (item instanceof Key) {
             this.addKey(item);
+            console.log("Key added to inventory:", item.id);
             return;
         }
         if (this.items.has(item.name)) {
