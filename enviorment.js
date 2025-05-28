@@ -928,7 +928,8 @@ class Effect {
 }
 
 const BraceletStrength = new Equipment("Power Bracelet", textures.braceletStrength, [new Effect("strength", 15, 0)]);
-
+const Shield = new Equipment("Shield", textures.shield, [new Effect("defense", 10, 0)]);
+const Sword = new Equipment("Sword", textures.sword, [new Effect("attack", 10, 0)]);
 
 /**
  * Class representing a level in the game. Contains static elements, enemies, items...

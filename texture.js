@@ -53,4 +53,6 @@ const textures = {
 	lights: new Texture("imgs/lights.png"),
 	floating_heart: new Texture("imgs/floating_heart.png"),
 	floating_money: new Texture("imgs/floating_money.png"),
+	shield: new Texture("imgs/shield.png"),
+	sword: new Texture("imgs/sword.png"),
 }

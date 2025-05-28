@@ -323,6 +323,10 @@ class Player {
         // inventory
         this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
         this.inventory = new Inventory(this);
+        this.inventory.addItem(Shield);
+        this.inventory.assignToEmptySlot(Shield); 
+        this.inventory.addItem(Sword);
+        this.inventory.assignToEmptySlot(Sword);
 
         //Audio
         this.swordSwingAudio = AudioFX('audio/00005-LINK_PV002_SWORD_360_R2.wav')

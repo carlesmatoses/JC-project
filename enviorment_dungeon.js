@@ -76,6 +76,12 @@ const gate2 = new Portcullis(
     3,
 )
 
+const gate3 = new Portcullis(
+    9 * TILEWIDTH, 
+    3 * TILEHEIGHT, 
+    2,
+)
+
 const keyA = new Key("A", "Door Key");
 const locked_gate1 = new PortcullisKeyLock(
     4 * TILEWIDTH, 
@@ -139,6 +145,17 @@ const rotor4 = new Rotor(TILEWIDTH*3, TILEHEIGHT*2, identifier=0, neighbors=[1],
 const rotor5 = new Rotor(TILEWIDTH*6, TILEHEIGHT*2, identifier=1, neighbors=[3], current_color=0);
 const rotor6 = new Rotor(TILEWIDTH*3, TILEHEIGHT*5, identifier=2, neighbors=[3], current_color=1);
 const rotor7 = new Rotor(TILEWIDTH*6, TILEHEIGHT*5, identifier=3, neighbors=[1], current_color=3);
+function customOnSolved2(player) {
+// Open this levels gate
+   const gate = player.scene.levelContent.find(obj => obj instanceof Portcullis);
+   if(gate) {
+       gate.open();
+   }
+}
+rotor4.onSolved = customOnSolved2;
+rotor5.onSolved = customOnSolved2;
+rotor6.onSolved = customOnSolved2;
+rotor7.onSolved = customOnSolved2;
 
 //Enemies
 const enemyOcto1 = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
@@ -222,6 +239,8 @@ const dungeon_tile11 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     rotor5,
     rotor6,
     rotor7,
+    
+    gate3,
 ];   
 const dungeon_tile12 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 128+2, sWidth: 160, sHeight: 128}),
@@ -234,6 +253,41 @@ const dungeon_tile12 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new InvisibleWall(2*TILEWIDTH, 7*TILEHEIGHT, 5*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 0*TILEHEIGHT, 4*TILEWIDTH, TILEHEIGHT ),
     new InvisibleWall(7*TILEWIDTH, 7*TILEHEIGHT, 5*TILEWIDTH, TILEHEIGHT ),
+
+    createAnimatedFloorGreen(1*TILEWIDTH, 6*TILEHEIGHT),
+    createAnimatedFloorGreen(1*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorGreen(1*TILEWIDTH, 4*TILEHEIGHT),
+    createAnimatedFloorGreen(1*TILEWIDTH, 3*TILEHEIGHT),
+    createAnimatedFloorGreen(1*TILEWIDTH, 2*TILEHEIGHT),
+    createAnimatedFloorGreen(2*TILEWIDTH, 3*TILEHEIGHT),
+    createAnimatedFloorGreen(2*TILEWIDTH, 4*TILEHEIGHT),
+    createAnimatedFloorGreen(2*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorGreen(3*TILEWIDTH, 4*TILEHEIGHT),
+
+    createAnimatedFloorBlue(3*TILEWIDTH, 1*TILEHEIGHT),
+    createAnimatedFloorBlue(4*TILEWIDTH, 1*TILEHEIGHT),
+    createAnimatedFloorBlue(5*TILEWIDTH, 1*TILEHEIGHT),
+    createAnimatedFloorBlue(6*TILEWIDTH, 1*TILEHEIGHT),
+    createAnimatedFloorBlue(7*TILEWIDTH, 1*TILEHEIGHT),
+    createAnimatedFloorBlue(6*TILEWIDTH, 2*TILEHEIGHT),
+    createAnimatedFloorBlue(5*TILEWIDTH, 2*TILEHEIGHT),
+    createAnimatedFloorBlue(4*TILEWIDTH, 2*TILEHEIGHT),
+    createAnimatedFloorBlue(5*TILEWIDTH, 3*TILEHEIGHT),
+
+    createAnimatedFloorRed(8*TILEWIDTH, 3*TILEHEIGHT),
+    createAnimatedFloorRed(8*TILEWIDTH, 4*TILEHEIGHT),
+    createAnimatedFloorRed(8*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorRed(8*TILEWIDTH, 6*TILEHEIGHT),
+    createAnimatedFloorRed(7*TILEWIDTH, 6*TILEHEIGHT),
+    createAnimatedFloorRed(7*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorRed(7*TILEWIDTH, 4*TILEHEIGHT),
+    createAnimatedFloorRed(6*TILEWIDTH, 5*TILEHEIGHT),
+    createAnimatedFloorRed(6*TILEWIDTH, 6*TILEHEIGHT),
+    createAnimatedFloorRed(5*TILEWIDTH, 6*TILEHEIGHT),
+
+    new Lights(TILEWIDTH*3, TILEHEIGHT*0),
+    new Lights(TILEWIDTH*6, TILEHEIGHT*0),
+
 ];
 // ROW3
 const dungeon_tile13 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",    
