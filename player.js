@@ -623,7 +623,33 @@ class Player {
             return;
         }
         
-        
+        // Scripted movement handling
+        if (this._scriptedMove) {
+            console.log("Handling scripted movement");
+            let move = this._scriptedMove;
+            move.elapsed += deltaTime;
+            let totalTime = Math.min(move.elapsed, move.duration);
+            let progress = totalTime / move.duration;
+            let targetMove = move.distance * progress;
+            let deltaMove = targetMove - move.moved;
+
+            // Move the player
+            this.translatePosition(
+                move.direction.x * deltaMove,
+                move.direction.y * deltaMove
+            );
+            move.moved += deltaMove;
+
+            // End scripted movement
+            if (move.elapsed >= move.duration) {
+                this._scriptedMove = null;
+                this.setDirection(0, 0);
+                this.moving = false;
+                if (move.onComplete) move.onComplete();
+            }
+            // Return early to prevent normal movement during scripted move
+            return;
+        }
     
         if (this.moving) {
             // Normalizar dirección
@@ -736,33 +762,7 @@ class Player {
             this.sprite.update(deltaTime);
         }
 
-        // Scripted movement handling
-        if (this._scriptedMove) {
-            console.log("Handling scripted movement");
-            let move = this._scriptedMove;
-            move.elapsed += deltaTime;
-            let totalTime = Math.min(move.elapsed, move.duration);
-            let progress = totalTime / move.duration;
-            let targetMove = move.distance * progress;
-            let deltaMove = targetMove - move.moved;
 
-            // Move the player
-            this.translatePosition(
-                move.direction.x * deltaMove,
-                move.direction.y * deltaMove
-            );
-            move.moved += deltaMove;
-
-            // End scripted movement
-            if (move.elapsed >= move.duration) {
-                this._scriptedMove = null;
-                this.setDirection(0, 0);
-                this.moving = false;
-                if (move.onComplete) move.onComplete();
-            }
-            // Return early to prevent normal movement during scripted move
-            return;
-        }
     }    
 
     checkAttackCollision() {

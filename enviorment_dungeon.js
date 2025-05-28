@@ -200,6 +200,7 @@ const dungeon_tile6 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHE
     new InvisibleWall(0*TILEWIDTH, 7*TILEHEIGHT, TILEWIDTH, 6*TILEHEIGHT ),
     gate4,
     gate5,
+    new Enemy(TILEWIDTH*2, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
 
 ];
 // ROW2
@@ -632,17 +633,27 @@ level20.onAllEnemiesDefeated = function() {
 };
 level29.onAllEnemiesDefeated = function() {}
 
+level6.onAllEnemiesDefeated = function(scene) {
+    scene.levelContent.forEach(obj => {
+        if (obj instanceof Portcullis) {
+            obj.open();
+        }
+    });
+}
 level6.onEnter = function(scene) {
     console.log("Entering level 5, setting up the environment.");
     // Additional setup for level 5 can be done here
 
-    scene.player.scriptedMovement({x: 1, y: 0}, TILEWIDTH, 500, () => {
-        scene.levelContent.forEach(obj => {
-            if (obj instanceof Portcullis) {
-                    obj.close();
-            }
+    if (scene.firstTimeEntering === undefined) {
+        scene.player.scriptedMovement({x: 1, y: 0}, TILEWIDTH, 500, () => {
+            scene.levelContent.forEach(obj => {
+                if (obj instanceof Portcullis) {
+                        obj.close();
+                }
+            });
         });
-    });
+        scene.firstTimeEntering = false;
+    }
 }
 
 world.maps["dungeon1"].setLevels([

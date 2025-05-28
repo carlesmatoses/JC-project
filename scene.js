@@ -212,7 +212,7 @@ class Scene{
 		// Check for remaining enemies
 		const enemiesLeft = this.levelContent.some(e => e.type === "enemy");
 		if (!enemiesLeft && typeof world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated === "function") {
-			world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated();
+			world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated(this);
 			this.levelContent.forEach(element => {
 				if (element.type === "portcullis" && typeof element.open === "function") {
 					element.open();
