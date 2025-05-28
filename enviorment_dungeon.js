@@ -70,6 +70,12 @@ const gate1 = new Portcullis(
     2,
 )
 
+const gate2 = new Portcullis(
+    0 * TILEWIDTH, 
+    3 * TILEHEIGHT, 
+    3,
+)
+
 const keyA = new Key("A", "Door Key");
 const locked_gate1 = new PortcullisKeyLock(
     4 * TILEWIDTH, 
@@ -492,7 +498,53 @@ const dungeon_tile27 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
 const dungeon_tile28 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 512+5, sWidth: 160, sHeight: 128})];
 const dungeon_tile29 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
-    drawing_settings={sx: 640+5, sy: 512+5, sWidth: 160, sHeight: 128})];
+    drawing_settings={sx: 640+5, sy: 512+5, sWidth: 160, sHeight: 128}),
+    
+    new InvisibleWall(0*TILEWIDTH, TILEHEIGHT, TILEWIDTH, TILEHEIGHT*4 ),
+    new InvisibleWall(0*TILEWIDTH, TILEHEIGHT*6, TILEWIDTH, TILEHEIGHT*4 ),
+    new InvisibleWall(4.5*TILEWIDTH, TILEHEIGHT*7, TILEWIDTH*10, TILEHEIGHT*1 ),
+    new InvisibleWall(9*TILEWIDTH, TILEHEIGHT*4, TILEWIDTH*1, TILEHEIGHT*8 ),
+    new InvisibleWall(2*TILEWIDTH, TILEHEIGHT*0, TILEWIDTH*4, TILEHEIGHT*1 ),
+    new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*0, TILEWIDTH*4, TILEHEIGHT*1 ),
+
+    new InvisibleWall(1*TILEWIDTH, TILEHEIGHT*1, TILEWIDTH*1, TILEHEIGHT*1 ),
+    new InvisibleWall(2*TILEWIDTH, TILEHEIGHT*1, TILEWIDTH*1, TILEHEIGHT*1 ),
+    new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*1, TILEWIDTH*1, TILEHEIGHT*1 ),
+    new InvisibleWall(8*TILEWIDTH, TILEHEIGHT*1, TILEWIDTH*1, TILEHEIGHT*1 ),
+    new InvisibleWall(8*TILEWIDTH, TILEHEIGHT*6, TILEWIDTH*1, TILEHEIGHT*1 ),
+    new InvisibleWall(7*TILEWIDTH, TILEHEIGHT*6, TILEWIDTH*1, TILEHEIGHT*1 ),
+    new InvisibleWall(2*TILEWIDTH, TILEHEIGHT*6, TILEWIDTH*1, TILEHEIGHT*1 ),
+    new InvisibleWall(1*TILEWIDTH, TILEHEIGHT*6, TILEWIDTH*1, TILEHEIGHT*1 ),
+
+    new FloatingFloor(4*TILEWIDTH, 4*TILEHEIGHT,0),
+    new FloatingFloor(4*TILEWIDTH, 3*TILEHEIGHT,0),
+    new FloatingFloor(5*TILEWIDTH, 3*TILEHEIGHT,0),
+    new FloatingFloor(5*TILEWIDTH, 4*TILEHEIGHT,0),
+
+    createAnimatedFloorRed(6*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(7*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(8*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(6*TILEWIDTH, TILEHEIGHT*1),
+    createAnimatedFloorRed(1*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(2*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(3*TILEWIDTH, TILEHEIGHT*2),
+    createAnimatedFloorRed(3*TILEWIDTH, TILEHEIGHT*1),
+    createAnimatedFloorGreen(3*TILEWIDTH, TILEHEIGHT*5),
+    createAnimatedFloorGreen(2*TILEWIDTH, TILEHEIGHT*5),
+    createAnimatedFloorGreen(1*TILEWIDTH, TILEHEIGHT*5),
+    createAnimatedFloorGreen(3*TILEWIDTH, TILEHEIGHT*6),
+    createAnimatedFloorGreen(6*TILEWIDTH, TILEHEIGHT*6),
+    createAnimatedFloorGreen(6*TILEWIDTH, TILEHEIGHT*5),
+    createAnimatedFloorGreen(7*TILEWIDTH, TILEHEIGHT*5),
+    createAnimatedFloorGreen(8*TILEWIDTH, TILEHEIGHT*5),
+
+    new Lights(TILEWIDTH*2, TILEHEIGHT*0, 0),
+    new Lights(TILEWIDTH*7, TILEHEIGHT*0, 0),
+
+    gate2,
+    new Enemy(0.4, 0.4, TILEWIDTH, 1/9),
+
+];
 const dungeon_tile30 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 512+5, sWidth: 160, sHeight: 128})];
 
@@ -529,11 +581,9 @@ const level29 = new Level(28, dungeon_tile29);
 const level30 = new Level(29, dungeon_tile30);
 
 level20.onAllEnemiesDefeated = function() {
-    // Open the door here
-    // For example, set door.active = true or remove an InvisibleWall
     console.log("All enemies defeated! Door opens.");
-    // door.open(); or scene.levelContent.push(new Door(...));
 };
+level29.onAllEnemiesDefeated = function() {}
 
 world.maps["dungeon1"].setLevels([
     level1, level2, level3, level4, level5, level6,
