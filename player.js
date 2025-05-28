@@ -735,6 +735,34 @@ class Player {
         if (this.moving) {
             this.sprite.update(deltaTime);
         }
+
+        // Scripted movement handling
+        if (this._scriptedMove) {
+            console.log("Handling scripted movement");
+            let move = this._scriptedMove;
+            move.elapsed += deltaTime;
+            let totalTime = Math.min(move.elapsed, move.duration);
+            let progress = totalTime / move.duration;
+            let targetMove = move.distance * progress;
+            let deltaMove = targetMove - move.moved;
+
+            // Move the player
+            this.translatePosition(
+                move.direction.x * deltaMove,
+                move.direction.y * deltaMove
+            );
+            move.moved += deltaMove;
+
+            // End scripted movement
+            if (move.elapsed >= move.duration) {
+                this._scriptedMove = null;
+                this.setDirection(0, 0);
+                this.moving = false;
+                if (move.onComplete) move.onComplete();
+            }
+            // Return early to prevent normal movement during scripted move
+            return;
+        }
     }    
 
     checkAttackCollision() {
@@ -932,6 +960,32 @@ class Player {
     removeBundingBox(){
         this.boundingBox.width = 0;
         this.boundingBox.height = 0;
+    }
+
+    scriptedMovement(direction, distance, duration, onComplete) {
+        // direction: {x, y}, distance: in pixels, duration: in ms
+        this.setDirection(direction.x, direction.y);
+        this.moving = true;
+
+        // Set the sprite animation based on the direction
+        if (direction.x === -1) this.sprite.setAnimation(this.ANIM_LEFT);
+        else if (direction.x === 1) this.sprite.setAnimation(this.ANIM_RIGHT);
+        else if (direction.y === -1) this.sprite.setAnimation(this.ANIM_UP);
+        else if (direction.y === 1) this.sprite.setAnimation(this.ANIM_DOWN);
+
+        this.sprite.currentKeyframe = 0;
+        this.sprite.elapsedTime = 0;
+        this.lastDirection = { ...direction };
+
+        // Store scripted movement state
+        this._scriptedMove = {
+            direction: { ...direction },
+            distance,
+            duration,
+            elapsed: 0,
+            moved: 0,
+            onComplete: typeof onComplete === "function" ? onComplete : null
+        };
     }
 }
 

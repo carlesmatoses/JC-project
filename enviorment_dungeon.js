@@ -64,23 +64,13 @@ statue2.callback = function(statue) {
 }
 
 // GATES
-const gate1 = new Portcullis(
-    9 * TILEWIDTH, 
-    3 * TILEHEIGHT, 
-    2,
-)
-
-const gate2 = new Portcullis(
-    0 * TILEWIDTH, 
-    3 * TILEHEIGHT, 
-    3,
-)
-
-const gate3 = new Portcullis(
-    9 * TILEWIDTH, 
-    3 * TILEHEIGHT, 
-    2,
-)
+const gate1 = new Portcullis(9 * TILEWIDTH, 3 * TILEHEIGHT, 2,);
+const gate2 = new Portcullis(0 * TILEWIDTH, 3 * TILEHEIGHT, 3,);
+const gate3 = new Portcullis(9 * TILEWIDTH, 3 * TILEHEIGHT, 2,);
+const gate4 = new Portcullis(0 * TILEWIDTH, 3 * TILEHEIGHT, 3);
+const gate5 = new Portcullis(4 * TILEWIDTH, 7 * TILEHEIGHT, 1);
+gate4.open();
+gate5.open();
 
 const keyA = new Key("A", "Door Key");
 const locked_gate1 = new PortcullisKeyLock(
@@ -208,6 +198,9 @@ const dungeon_tile6 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHE
 
     new InvisibleWall(0*TILEWIDTH, 0*TILEHEIGHT, TILEWIDTH, 6*TILEHEIGHT ),
     new InvisibleWall(0*TILEWIDTH, 7*TILEHEIGHT, TILEWIDTH, 6*TILEHEIGHT ),
+    gate4,
+    gate5,
+
 ];
 // ROW2
 const dungeon_tile7 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
@@ -638,6 +631,19 @@ level20.onAllEnemiesDefeated = function() {
     console.log("All enemies defeated! Door opens.");
 };
 level29.onAllEnemiesDefeated = function() {}
+
+level6.onEnter = function(scene) {
+    console.log("Entering level 5, setting up the environment.");
+    // Additional setup for level 5 can be done here
+
+    scene.player.scriptedMovement({x: 1, y: 0}, TILEWIDTH, 500, () => {
+        scene.levelContent.forEach(obj => {
+            if (obj instanceof Portcullis) {
+                    obj.close();
+            }
+        });
+    });
+}
 
 world.maps["dungeon1"].setLevels([
     level1, level2, level3, level4, level5, level6,

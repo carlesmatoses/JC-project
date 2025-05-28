@@ -271,6 +271,12 @@ class Scene{
 
 		this.setSceneReferenceToNPCs(); 
 
+		// --- Trigger onEnter event if defined ---
+		const levelObj = world.maps[this.mapID].getLevel(this.levelID);
+		if (levelObj && typeof levelObj.onEnter === "function") {
+			levelObj.onEnter(this); // Pass the scene as argument
+		}
+
 	}
 
 	// Transition animation function
