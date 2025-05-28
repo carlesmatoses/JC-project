@@ -367,7 +367,6 @@ class Portcullis extends BackgroundElement {
             sx = col * (16 + 1);
             sy = 34;
         }
-        console.log("Portcullis direction:", this.direction);
 
         let pos = transform(this.x, this.y, context);
         let size = transform(this.width, this.height, context);
