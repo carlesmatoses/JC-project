@@ -13,10 +13,6 @@ class Scene{
 		this.canvas = document.getElementById("game-layer");
 		this.context = this.canvas.getContext("2d");
 		
-		// this.size_multiply = 4;
-		// this.canvas.width = 160*this.size_multiply;
-		// this.canvas.height = 144*this.size_multiply;
-
 		// internal variables
 		this.frameCount=0;
 		this.lag=0;
@@ -26,15 +22,15 @@ class Scene{
 		this.music = AudioFX('audio/TheLegendofZelda_LinksAwakeningDX-MainTheme.mp3', { loop: true });
 		
 		// player variables
-		this.player = new Player(TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT);
+		this.player = player;
 		this.player.scene = this; // Set the scene reference in the player object
 		
-		this.levelID = 26; // Current level ID
+		this.levelID = 103; // Current level ID
 
 		// level variables
 		this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
 		this.screen_switch_time = 0.7; // seconds
-		this.mapID = "dungeon1"; // Current map ID
+		this.mapID = "overworld"; // Current map ID
 		this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(this.levelID)); // Current level content
 		this.tmpLevelContent = new Array(); // Temporary level content for transitions
 
@@ -644,11 +640,6 @@ class MenuState {
         this.gameStateManager = gameStateManager;
         this.options = ["Start New Game", "Credits", "Settings", "Exit"];
         this.selectedOption = 0; // Index of the currently selected option
-
-		// Set the parametters for the canvas for the rest of the game
-		this.canvas = document.getElementById("game-layer");
-		this.canvas.width = 160*UPSCALE;
-		this.canvas.height = 144*UPSCALE;
     }
 
     update(deltaTime) {

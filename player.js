@@ -321,7 +321,7 @@ class Player {
         this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, (width)/4, (height)/4);
 
         // inventory
-        this.stats = new Stats(9, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
+        this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
         this.inventory = new Inventory(this);
 
         //Audio
@@ -881,10 +881,15 @@ class Player {
         }
 
         this.stats.health -= damage;
+        // Prevent health from going below 0
+        if (this.stats.health < 0) this.stats.health = 0;
+        // Prevent health from going above maxHealth
+        const maxHealth = this.stats.getHealth().maxHealth;
+        if (this.stats.health > maxHealth) this.stats.health = maxHealth;
+
         if (this.stats.health <= 0) {
             console.log("Player has died");
-            this.scene.gameStateManager.pushState(new DeathMenuState(this.scene.gameStateManager));
-
+            this.playerDied();
         }
 
         // Activate immunity after taking damage
@@ -894,6 +899,15 @@ class Player {
 
     addMoney(amount) {
         this.inventory.money += amount;
+    }
+
+    playerDied() {
+        // set menu view 
+        this.scene.gameStateManager.pushState(new DeathMenuState(this.scene.gameStateManager));
+
+        // Reset player position or handle death logic
+        this.setPosition(TILEWIDTH, TILEHEIGHT*4); 
+        this.stats.health = this.stats.getHealth().maxHealth; 
     }
 }
 

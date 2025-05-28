@@ -9,11 +9,17 @@ let CREATIVE_MODE = false; // Set to true to enable creative mode
 
 var canvas = document.getElementById("game-layer");
 var context = this.canvas.getContext("2d");
+
+// Set the parametters for the canvas for the rest of the game
+canvas = document.getElementById("game-layer");
+canvas.width = 160*UPSCALE;
+canvas.height = 144*UPSCALE;
+
 var gamestatemanager = new GameStateManager();
+var player = new Player(TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT);
 
 const menuState = new MenuState(gamestatemanager);
-// gamestatemanager.pushState(menuState);
-gamestatemanager.pushState(new Scene(gamestatemanager));
+gamestatemanager.pushState(menuState);
 
 
 function addDialog(text, options = null, onSelect = null) {
