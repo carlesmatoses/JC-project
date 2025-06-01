@@ -55,4 +55,5 @@ const textures = {
 	floating_money: new Texture("imgs/floating_money.png"),
 	shield: new Texture("imgs/shield.png"),
 	sword: new Texture("imgs/sword.png"),
+	background_menu: new Texture("imgs/miniatura.png"),
 }

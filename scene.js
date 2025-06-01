@@ -652,7 +652,7 @@ class InGameMenuState {
 class MenuState {
     constructor(gameStateManager) {
         this.gameStateManager = gameStateManager;
-        this.options = ["Start New Game", "Credits", "Settings", "Exit"];
+        this.options = ["Start", "Exit"];
         this.selectedOption = 0; // Index of the currently selected option
     }
 
@@ -660,23 +660,51 @@ class MenuState {
         // No updates needed for a static menu
     }
 
-    draw(context) {
-        // Clear the screen
-        context.fillStyle = "rgb(0, 25, 30, 0.7)"; // steel blue
-        context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+	draw(context) {
+		// Draw the background image if loaded
+		const bg = textures.background_menu.img;
+		if (bg) {
+			context.drawImage(bg, 0, 0, context.canvas.width, context.canvas.height);
+		} else {
+			// If the background image is not loaded, fill with a solid color
+			context.fillStyle = "rgb(0, 25, 30, 0.7)"; // steel blue
+			context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+		}
 
-        // Draw the menu title
-        context.fillStyle = "white";
-        context.font = "32px 'Press Start 2P', sans-serif";
-        context.fillText("Principal Menu", context.canvas.width / UPSCALE, 100);
+		// Draw the menu title centered
+		// context.fillStyle = "white";
+		// context.font = "64px 'tiny5', sans-serif";
+		// const title = "Principal Menu";
+		// const titleMetrics = context.measureText(title);
+		// const titleX = (context.canvas.width - titleMetrics.width) / 2;
+		// context.fillText(title, titleX, 180);
 
-        // Draw the menu options
-        context.font = "24px 'Press Start 2P', sans-serif";
-        this.options.forEach((option, index) => {
-            context.fillStyle = this.selectedOption === index ? "yellow" : "white";
-            context.fillText(option, context.canvas.width / UPSCALE, 200 + index * 50);
-        });
-    }
+		// Draw the menu options centered with background rectangles
+		this.options.forEach((option, index) => {
+			context.font = "48px 'tiny5', sans-serif";
+			const optionMetrics = context.measureText(option);
+			const optionX = (context.canvas.width - optionMetrics.width) / 2;
+			const optionY = 320 + index * 80;
+
+			// Draw background rectangle
+			const paddingX = 32;
+			const paddingY = 0;
+			const rectX = optionX - paddingX;
+			const rectY = optionY - 38 + paddingY / 2;
+			const rectWidth = optionMetrics.width + paddingX * 2;
+			const rectHeight = 48 - paddingY;
+
+			context.save();
+			context.globalAlpha = this.selectedOption === index ? 0.5 : 0.2;
+			context.fillStyle = "#000";
+			context.fillRect(rectX, rectY, rectWidth, rectHeight);
+			context.restore();
+
+			// Draw option text
+			context.fillStyle = this.selectedOption === index ? "yellow" : "white";
+			context.fillText(option, optionX, optionY);
+		});
+	}
 
     handleInput(input) {
         if (input.isPressed("ArrowUp")) {
@@ -692,7 +720,7 @@ class MenuState {
 
     selectOption() {
         switch (this.options[this.selectedOption]) {
-            case "Start New Game":
+            case "Start":
                 this.gameStateManager.popState(); // Remove the menu
                 this.gameStateManager.pushState(new Scene(this.gameStateManager)); // Start the game
 				// Add an initial dialog state to the game state manager
