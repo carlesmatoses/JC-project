@@ -18,10 +18,12 @@ const KEY_UP               = "ArrowUp";
 const KEY_DOWN             = "ArrowDown"; 
 const KEY_LEFT             = "ArrowLeft";
 const KEY_RIGHT            = "ArrowRight"; 
-const KEY_DEBUBG           = "KeyB";  //FIXME: MODIFICAR TECLA a OTRA
+const KEY_DEBUBG           = "KeyK";  
 const KEY_INVENTORY        = "KeyI";  //FIXME: Modificar tecla a otra
 const KEY_INVULNERABLE     = "KeyG"; 
-
+const BOSS1                = "KeyM"; 
+const BOSS2                = "KeyP"; 
+const BOSS3                = "KeyB"; 
 //NEW
 const KEY_SHIELD           = "KeyX";
 const KEY_ESCAPE            = "Escape";

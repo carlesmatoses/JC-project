@@ -140,7 +140,7 @@ class Scene{
 
 	handleInput(input) {
         
-		if (input.isPressed('KeyB')) { // key for debug
+		if (input.isPressed(KEY_DEBUBG)) { // key for debug
 			console.log("Pressed B!");
 			DEBUG = !DEBUG;
 		}
@@ -165,7 +165,7 @@ class Scene{
 				}
 			});
 		}
-		if (input.isPressed('KeyM')) { // key for teleporting to first boss
+		if (input.isPressed(BOSS1)) { // key for teleporting to first boss
 			console.log("Teleporting to first boss level");
 			this.levelTransitionDoorAnimation(
 				15,
@@ -174,7 +174,15 @@ class Scene{
 				this.screen_switch_time
 			); 
 		}
-
+		if (input.isPressed(BOSS3)) { // key for teleporting to first boss
+			console.log("Teleporting to final boss level");
+			this.levelTransitionDoorAnimation(
+				0,
+				"dungeon1",
+				{ x: 0.5, y: 0.5 }, 
+				this.screen_switch_time
+			); 
+		}
 		// additionally handle player input
 		this.player.handleInput(input);
 	}
