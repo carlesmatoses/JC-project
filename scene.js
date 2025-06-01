@@ -25,12 +25,12 @@ class Scene{
 		this.player = player;
 		this.player.scene = this; // Set the scene reference in the player object
 		
-		this.levelID = 103; // Current level ID
+		this.levelID = this.player.level_reference; // Current level ID
+		this.mapID = this.player.mapID; // Current map ID
 
 		// level variables
 		this.switching = 0; // 0, 1=left, 2=right, 3=up, 4=down
 		this.screen_switch_time = 0.7; // seconds
-		this.mapID = "overworld"; // Current map ID
 		this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(this.levelID)); // Current level content
 		this.tmpLevelContent = new Array(); // Temporary level content for transitions
 
@@ -260,6 +260,7 @@ class Scene{
 		// It can be a fade out, slide, etc.
 		// It should return when the transition is done and the new level is loaded
 		this.levelID = to;
+		this.player.level_reference = to; 
 		this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(to)); // Load new level content
 
 		// Initialize level contents
@@ -358,6 +359,7 @@ class Scene{
 				clearInterval(loop);
 				this.stop = false; // Resume the main loop
 				this.mapID = mapID; // Update the map ID
+				this.player.mapID = mapID; 
 				console.log("Transition complete to level: " + newLevelID + " in map: " + mapID);
 				this.levelTransition(newLevelID);
 				return;

@@ -320,6 +320,9 @@ class Player {
         this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.9, height*0.9); // 90% of the size
         this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, (width)/4, (height)/4);
 
+        this.level_reference = 103;
+        this.mapID = 'overworld'; 
+
         // inventory
         this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
         this.inventory = new Inventory(this);
