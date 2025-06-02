@@ -18,8 +18,8 @@ canvas.height = 144*UPSCALE;
 var gamestatemanager = new GameStateManager();
 var player = new Player(TILEWIDTH, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT);
 
-const menuState = new MenuState(gamestatemanager);
-gamestatemanager.pushState(menuState);
+gamestatemanager.pushState(new MenuState(gamestatemanager));
+// gamestatemanager.pushState(new Scene(gamestatemanager));
 
 
 function addDialog(text, options = null, onSelect = null) {
