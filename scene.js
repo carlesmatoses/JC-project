@@ -429,8 +429,8 @@ class Scene{
 			this.debug_text.update("Debug:\n" + 
 							"  X: " + this.player.x.toFixed(1) + "\n" + 
 							"  Y: " + this.player.y.toFixed(1) + "\n" + 
-							"  FrameCount: " + this.frameCount + "\n" +
-							"  lag: " + this.lag.toFixed(1) + " ms" + "\n" +
+							"  FrameCount: " + this.gameStateManager.frameCount + "\n" +
+							"  lag: " + this.gameStateManager.lag.toFixed(1) + " ms" + "\n" +
 							"  levelID: " + this.levelID + "\n" 
 		
 							);

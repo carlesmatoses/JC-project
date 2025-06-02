@@ -75,12 +75,18 @@ const gate13 = new Portcullis(4 * TILEWIDTH, 0 * TILEHEIGHT, 0);
 const gate15_1 = new Portcullis(0 * TILEWIDTH, 3 * TILEHEIGHT, 3);
 const gate15_2 = new Portcullis(4 * TILEWIDTH, 7 * TILEHEIGHT, 1);
 
+const gate0_1 = new Portcullis(9 * TILEWIDTH, 3 * TILEHEIGHT, 2);
+const gate0_2 = new Portcullis(4 * TILEWIDTH, 7 * TILEHEIGHT, 1);
+
 gate4.open();
 gate5.open();
 gate11_1.open();
 gate11_2.open();
 gate15_1.open();
 gate15_2.open();
+gate0_1.open();
+gate0_2.open();
+
 
 const keyA = new Key("A", "Door Key");
 const locked_gate1 = new PortcullisKeyLock(
@@ -239,10 +245,20 @@ const enemyOcto1 = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //En caso de querer aña
 // ROW1
 const dungeon_tile1 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
         drawing_settings={sx: 0+1, sy: 1, sWidth: 160, sHeight: 128}), 
-        // entrance_dungeon
+        gate0_1, gate0_2,
+
+        new InvisibleWall(4.5*TILEWIDTH, 0*TILEHEIGHT, 10*TILEWIDTH, TILEHEIGHT ), // top
+        new InvisibleWall(0*TILEWIDTH, 7*TILEHEIGHT, 8*TILEWIDTH, TILEHEIGHT ), // top
+        new InvisibleWall(9*TILEWIDTH, 7*TILEHEIGHT, 8*TILEWIDTH, TILEHEIGHT ), // top
+        new InvisibleWall(0*TILEWIDTH, 3.5*TILEHEIGHT, 1*TILEWIDTH, 8*TILEHEIGHT ), // top
+        new InvisibleWall(9*TILEWIDTH, 8*TILEHEIGHT, 1*TILEWIDTH, 8*TILEHEIGHT ), // top
+        new InvisibleWall(9*TILEWIDTH, 1*TILEHEIGHT, 1*TILEWIDTH, 4*TILEHEIGHT ), // top
 ];
 const dungeon_tile2 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
-    drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128})];
+    drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128}),
+
+
+];
 const dungeon_tile3 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 320+3, sy: 1, sWidth: 160, sHeight: 128}),
 ];
@@ -1018,6 +1034,14 @@ level16.onAllEnemiesDefeated = function(scene) {
     });
 }
 
+level1.onAllEnemiesDefeated = function(scene) {
+    scene.levelContent.forEach(obj => {
+        if (obj instanceof Portcullis) {
+            obj.open();
+        }
+    });
+}
+
 level6.onEnter = function(scene) {
     console.log("Entering level 5, setting up the environment.", this.firstTimeEntering);
     // Additional setup for level 5 can be done here
@@ -1069,6 +1093,30 @@ level12.onEnter = function(scene) {
 }
 
 level16.onEnter = function(scene) {
+    console.log("Entering level 11, setting up the environment.");
+    // Additional setup for level 11 can be done here
+
+    if (this.firstTimeEntering === undefined) {
+        scene.player.scriptedMovement({x: 0, y: -1}, TILEWIDTH, 500, () => {
+            scene.levelContent.forEach(obj => {
+                if (obj instanceof Portcullis) {
+                        obj.close();
+                }
+            });
+        });
+
+        // Add two enemies to the scene content
+        const enemy1 = new Enemy(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
+        const enemy2 = new Enemy(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
+        enemy1.scene = scene;
+        enemy2.scene = scene;
+        scene.levelContent.push(enemy1, enemy2);
+        
+        this.firstTimeEntering = false;
+    }
+}
+
+level1.onEnter = function(scene) {
     console.log("Entering level 11, setting up the environment.");
     // Additional setup for level 11 can be done here
 

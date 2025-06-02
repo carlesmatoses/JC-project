@@ -91,7 +91,7 @@ function calculateFPS(deltaTime) {
 	frameTimeCumulative += deltaTime;
     if (frameTimeCumulative >= 1000) {  // Update FPS every 1 second
         fps = frameCount;
-		// scene.frameCount = fps;
+		gamestatemanager.frameCount = fps;
         frameCount = 0;
 		frameTimeCumulative = 0;
 
@@ -105,7 +105,7 @@ function calculateLag(deltaTime) {
     while (lag >= TIME_PER_FRAME) {
 		lag -= TIME_PER_FRAME;
     }
-	// scene.lag = lag;
+	gamestatemanager.lag = lag;
 }
 
 // Initialization
