@@ -97,6 +97,20 @@ L'objectiu principal és guiar el jugador a través de diferents pantalles (nive
 \subsection{Arquitectura General}
 No s'ha seguit un patró concret, però s'ha utilitzat una classe auxiliar anomenada \textbf{GameStateManager} per gestionar els estats del joc. Aquesta estructura permet afegir o eliminar estats dinàmicament. Els estats són independents i poden rebre inputs, fer actualitzacions i pintar en pantalla.
 
+\begin{itemize}
+    \item \textbf{GameStateManager}: Classe que gestiona els estats del joc.
+    \item \textbf{Scene}: Estat principal on es juga la partida.
+    \item \textbf{DialogState}: Estat per mostrar diàlegs amb NPCs.
+    \item \textbf{InGameMenuState}: Estat del menú accessible durant la partida (ESC).
+    \item \textbf{MenuState}: Estat del menú principal d'inici.
+    \item \textbf{MenuInstructionsState}: Estat per mostrar les instruccions del joc.
+    \item \textbf{MenuCredits}: Estat per mostrar els crèdits del projecte.
+    \item \textbf{DeathMenuState}: Estat que apareix quan el jugador mor.
+    \item \textbf{EndGameMenuState}: Estat especial al completar el joc.
+\end{itemize}
+
+Cada estat es responsable de gestionar la seva pròpia lògica i renderització, permetent una separació clara de responsabilitats. Estan composts de tres components principals: draw(), update() i handleInput(). Això facilita la implementació de nous estats i la seva integració al joc.
+
 \subsection{Gestió de Col·lisions}
 Els objectes del joc tenen una "bounding box" i es comprova el solapament entre elles per detectar col·lisions. Aquestes poden ser:
 \begin{itemize}
@@ -105,6 +119,8 @@ Els objectes del joc tenen una "bounding box" i es comprova el solapament entre 
 \end{itemize}
 Els atacs també generen una bounding box temporal per detectar col·lisions amb enemics o objectes.
 
+La col.lisio es comproba cada fotograma en el update de Scene. L'unica excepció es l'atac del jugador que comprova les col·lisions dins del propi usuari.
+
 \subsection{Nivells i Escenes}
 La jerarquia del joc consisteix en:
 \begin{itemize}
@@ -112,7 +128,7 @@ La jerarquia del joc consisteix en:
     \item \texttt{Mapa}: llista de nivells.
     \item \texttt{Level}: llista d'elements i entitats.
 \end{itemize}
-\texttt{Scene} actualitza els nivells i interactua amb una còpia local dels elements. En sortir d'un nivell, aquest es reinicia a l'estat original per defecte.
+\texttt{Scene} actualitza els nivells i interactua amb una còpia local dels elements. En sortir d'un nivell, la copia local es destruida. Al carregar un nivell, es copia l'estat global de nou.
 
 \begin{figure}[ht!]
     \centering
@@ -130,13 +146,24 @@ La jerarquia del joc consisteix en:
     \item \textbf{Entitats}: Jugador, Enemics, Bosses, NPCs
 \end{itemize}
 
+Els elements equipables proporcionen ``Effects''. Aquests es gasten per saber com de fort es el jugador (que pot moure), l'atac, la defensa i si pot volar.
+
 \section{Mecàniques de Joc}
 
 \subsection{Equipar Items}
-Els items es poden equipar a través de l'inventari. Proporcionen habilitats (força, volar, etc.).
+Els items es poden equipar a través de l'inventari. Proporcionen habilitats (força, volar, etc.). Les classes utilitzades per a gestionar l'inventari són moltes, però les més rellevants són:
+\begin{itemize}
+    \item \texttt{Item}: Classe base per a tots els objectes.
+    \item \texttt{EquippableItem}: Classe base per a objectes que es poden equipar.
+    \item \texttt{Player}: Classe pare que conte un inventari.
+    \item \texttt{Inventory}: Classe que gestiona els items que hem recollit.
+    \item \texttt{Stats}: Classe que gestiona els efectes dels items equipats.
+    \item \texttt{Slots}: Classe que gestiona els slots d'equipament del jugador.
+\end{itemize}    
+
 
 \subsection{Combat}
-El jugador pot atacar amb la seva arma i interactuar amb certs objectes destructibles.
+El jugador pot atacar amb la seva arma i interactuar amb certs objectes com els rotors o enemics.
 
 \subsection{Interacció}
 Amb la tecla principal, el jugador pot obrir cofres, parlar amb NPCs, activar portes, etc.
@@ -144,14 +171,20 @@ Amb la tecla principal, el jugador pot obrir cofres, parlar amb NPCs, activar po
 \subsection{Triggers}
 \textbf{Triggers} disponibles:
 \begin{itemize}
-    \item \texttt{onEnter}, \texttt{onExit}, \texttt{onAllEnemiesDead}
+    \item \texttt{onEnter}: adicionalment podem saber si es la primera vegada que entrem.
+    \item \texttt{onExit}
+    \item \texttt{onAllEnemiesDead}
     \item Triggers personalitzats per modificar elements específics (ex: làpida de la cova de la mort)
 \end{itemize}
+
+Normalment aquests triggers es vinculen amb portes. En alguns casos es pot executar un scriptedAnimation per a moure el personatge d'una forma especial.
 
 \section{Trencaclosques Implementats}
 
 \subsection{Lights Out}
-Un trencaclosques basat en el clàssic joc de taula. Es resol apagant totes les llums d'una graella interactiva.
+Un trencaclosques basat en el clàssic joc de taula. Es resol apagant totes les llums d'una graella interactiva. En la nostra implementació, els ``rotors'' presenten quatre estats: roig, verd, blau,groc. El jugador ha de fer que tots estiguen del mateix color. Per a poder utilitzar aquest trencaclosques multiples vegades, al definir un rotor hem de dirli el color inicial i l'identificador dels rotors que s'han de canviar junt a ell.
+
+Considerem una llista de regions $[R_1, R_2, R_3, \ldots, R_N]$, on cada $R_i$ pot estar en un dels quatre estats: $R_r$ (roig), $R_b$ (blau), $R_y$ (groc) o $R_g$ (verd). L'objectiu és aconseguir que totes les regions estiguen en el mateix estat. Canviar l'estat d'una regió $R_i$ pot també canviar l'estat d'altres regions, segons les regles del trencaclosques (per exemple, canviar $R_1$ podria també canviar $R_2$ i $R_3$). Açò crea un sistema on la solució requereix trobar una seqüència de moviments que sincronitze totes les regions a un únic estat.
 
 \begin{figure}[ht!]
     \centering
@@ -169,9 +202,10 @@ Alguns objectes (com làpides o pedres) es poden empènyer amb un item específi
 
 \subsection{Preguntes i Respostes}
 Algunes estàtues requereixen una resposta correcta per activar triggers especials.
+Normalment son callbakcs definits per a cada estàtua ja que són casos molt concrets.
 
 \section{Enemics}
-S'han implementat enemics comuns com slimes, ratpenats, etc. També s'inclouen caps amb comportaments personalitzats. Els enemics poden morir, i això pot desbloquejar portes o activar triggers.
+S'han implementat enemics comuns com ... Els enemics poden morir, i això pot desbloquejar portes o activar triggers.
 
 \section{Menús i Interfície}
 
@@ -183,6 +217,8 @@ S'han implementat enemics comuns com slimes, ratpenats, etc. També s'inclouen c
     \item \textbf{Final Menu}: Menú especial al completar el joc
     \item \textbf{Diàlegs}: Sistema de diàlegs amb NPCs, amb múltiples opcions
 \end{itemize}
+
+Molts daquests Menús afegiran o eliminaran estats al \texttt{GameStateManager} per a gestionar la navegació entre ells. Per exemple, el menú d'inici afegeix l'estat \texttt{Scene}. 
 
 \section{Limitacions i Consideracions}
 
