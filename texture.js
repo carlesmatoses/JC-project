@@ -44,6 +44,7 @@ const textures = {
 	hearts: new Texture("imgs/hearts.png"),
 	portcullis: new Texture("imgs/gate_right.png"),
 	portcullis_lock: new Texture("imgs/gate_lock.png"),
+	portcullis_boss: new Texture("imgs/gate_lock_boss.png"),
 	rotor: new Texture("imgs/rotor.png"),
 	rotor_red: new Texture("imgs/rotor_red.png"),
 	rotor_blue: new Texture("imgs/rotor_blue.png"),
@@ -56,4 +57,6 @@ const textures = {
 	shield: new Texture("imgs/shield.png"),
 	sword: new Texture("imgs/sword.png"),
 	background_menu: new Texture("imgs/miniatura.png"),
+	feather: new Texture("imgs/feather.png"),
+	rock: new Texture("imgs/rock.png"),
 }
