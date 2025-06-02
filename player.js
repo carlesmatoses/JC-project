@@ -870,7 +870,7 @@ class Player {
             }
         }
 
-        if (keyboard.isPressed('KeyL')) {
+        if (keyboard.isPressed(REMOVE_HITBOX)) {
             // we will remove the bounding box or add it back
             if (this.boundingBox.width > 0 && this.boundingBox.height > 0) {
                 this.removeBundingBox();

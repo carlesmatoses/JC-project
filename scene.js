@@ -794,14 +794,21 @@ class MenuInstructionsState {
 		this.gameStateManager = gameStateManager;
 		this.instructions = [
 			"Controls:",
-			"Arrow Keys: Move",
-			"F: Interact",
-			"G: Secondary Action",
-			"I: Inventory",
-			"B: Debug Mode",
-			"H: Heal",
-			"X: Shield",
-			"Escape: In-Game Menu"
+			"Up: " + KEY_UP,
+			"Down: " + KEY_DOWN,
+			"Left: " + KEY_LEFT,
+			"Right: " + KEY_RIGHT,
+			"Primary: " + KEY_PRIMARY,
+			"Secondary: " + KEY_SECONDARY,
+			"Debug: " + KEY_DEBUBG,
+			"Inventory: " + KEY_INVENTORY,
+			"Invulnerable: " + KEY_INVULNERABLE,
+			"Boss 1: " + BOSS1,
+			"Boss 2: " + BOSS2,
+			"Boss 3: " + BOSS3,
+			"Shield: " + KEY_SHIELD,
+			"Escape/Menu: " + KEY_ESCAPE,
+			"Remove Hitbox: " + REMOVE_HITBOX,
 		];
 	}
 

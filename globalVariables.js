@@ -24,6 +24,7 @@ const KEY_INVULNERABLE     = "KeyG";
 const BOSS1                = "KeyM"; 
 const BOSS2                = "KeyP"; 
 const BOSS3                = "KeyB"; 
+const REMOVE_HITBOX        = "KeyL"; 
 //NEW
 const KEY_SHIELD           = "KeyX";
 const KEY_ESCAPE            = "Escape";
