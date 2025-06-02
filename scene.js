@@ -147,7 +147,7 @@ class Scene{
 		if (input.isPressed('KeyI')) { //
 			this.gameStateManager.pushState(this.menu); 
         }
-		if (input.isPressed('KeyH')) { // add a 
+		if (input.isPressed('KeyT')) { // add a 
 		
 			this.gameStateManager.pushState(new DialogState(this.gameStateManager, ["Hello! Press F to continue", "Press B to activate Debug"])); // Show dialog
 		}

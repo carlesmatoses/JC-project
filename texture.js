@@ -41,6 +41,8 @@ const textures = {
 	braceletStrength: new Texture("imgs/brazalete-l1.png"),
 	statue: new Texture("imgs/statue.png"),
 	enemy: new Texture("imgs/enemies/Octorok.png"),
+	octorok: new Texture("imgs/enemies/Octorok.png"),
+	orbmonster: new Texture("imgs/enemies/OrbMonster1.png"),
 	hearts: new Texture("imgs/hearts.png"),
 	portcullis: new Texture("imgs/gate_right.png"),
 	portcullis_lock: new Texture("imgs/gate_lock.png"),
@@ -59,4 +61,5 @@ const textures = {
 	background_menu: new Texture("imgs/miniatura.png"),
 	feather: new Texture("imgs/feather.png"),
 	rock: new Texture("imgs/rock.png"),
+	projectile: new Texture("imgs/enemies/projectile.png"),
 }

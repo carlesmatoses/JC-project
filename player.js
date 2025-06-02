@@ -316,7 +316,6 @@ class Player {
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		// this.speed = 0.0004;
 		this.direction = { x: 0, y: 0 };
 		this.lastDirection = { x: 0, y: 1 }; // mirando hacia abajo por defecto
 		this.moving = false;
@@ -342,7 +341,10 @@ class Player {
 
 
         //Audio
-        this.swordSwingAudio = AudioFX('audio/00005-LINK_PV002_SWORD_360_R2.wav')
+        this.swordSwingAudio = AudioFX('audio/00005-LINK_PV002_SWORD_360_R2.wav');
+        this.fullHealSound = AudioFX('audio/Pokemon Healing - Sound Effect (HD).wav' , {
+            volume: 0.6
+        }); //FIXME: Encontrar sonido correcto.
 
         // Pushing mechanics
         this.lastBlockedDirection = null;
@@ -357,6 +359,16 @@ class Player {
         //defend
         this.isDefending = false;
         this.defendingTimer = 0;
+
+        //Timers de daño y muerte
+        this.isFlashing = false;
+        this.flashTimer = 0;
+        this.flashDuration = 300; // ms
+        this.flashInterval = 100; // ms
+
+        //this.isFading = false;
+        //this.fadeAlpha = 1;
+        //this.fadeSpeed = 0.005; // por ms
 
         // Inmunity
         this.isImmune = false; // Immunity flag
@@ -411,7 +423,6 @@ class Player {
         this.sprite.addKeyframe(this.ANIM_ATTACK_RIGHT, [160, 32, 15, 16]);
 
         //Animaciones Defensa Player
-        //FIXME: Por el momento solo 1,revisar juego original
         this.ANIM_DEFEND_DOWN = this.sprite.addAnimation();
         this.sprite.addKeyframe(this.ANIM_DEFEND_DOWN,[32, 64, 15, 16]);
 
@@ -451,6 +462,18 @@ class Player {
     }
 
     draw(context) {
+        //FIXME: Si se activa se ve mal el escenario...
+        //context.save(); 
+
+        // Controlar transparencia según efectos
+        if (this.isFlashing) {
+            //console.log("Daño recibido draw");
+            const mod = Math.floor(this.flashTimer / this.flashInterval) % 2;
+            context.globalAlpha = (mod === 0) ? 0 : 1;
+        } else {
+            context.globalAlpha = 1;
+        }
+
         this.sprite.x = this.x;
         this.sprite.y = this.y;
         this.sprite.draw();
@@ -459,6 +482,8 @@ class Player {
             //console.log("dibujando espada");
             this.swordSprite.draw(); // dibujar espada encima si estamos atacando        
         }
+
+        //context.restore();
         
         if (DEBUG){
             this.boundingBox.draw(context);
@@ -493,6 +518,17 @@ class Player {
 
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
+
+        if (this.isFlashing) {
+            //console.log("Daño recibido");
+            this.flashTimer += deltaTime;
+            if (this.flashTimer >= this.flashDuration) {
+                this.isFlashing = false;
+                this.flashTimer = 0;
+            }
+        }
+
+
 
         //console.log(this.isAttacking);
         if (this.isAttacking) {
@@ -803,6 +839,12 @@ class Player {
         }
     }
 
+    fullHeal(){
+        console.log("Restaurando toda a vida!")
+        this.fullHealSound.play();
+        this.stats.health = this.stats.maxHealth;
+    }
+
     handleInput(keyboard) {
         // Leer teclas
         let direction = { x: 0, y: 0 };
@@ -882,6 +924,12 @@ class Player {
                 console.log("Bounding box added");
             }
         }       
+        //Health
+        if (keyboard.isPressed(KEY_HEAL)){
+            console.log("Intentando curar al player")
+            this.fullHeal();
+        }
+
     }
 
     sameDirection(dir1, dir2) {
@@ -940,6 +988,9 @@ class Player {
             return; // Ignore damage if immune
         }
 
+        this.isFlashing = true;
+        this.flashTimer = 0;
+
         this.stats.health -= damage;
         // Prevent health from going below 0
         if (this.stats.health < 0) this.stats.health = 0;
@@ -951,6 +1002,7 @@ class Player {
             console.log("Player has died");
             this.playerDied();
         }
+
 
         // Activate immunity after taking damage
         this.isImmune = true;

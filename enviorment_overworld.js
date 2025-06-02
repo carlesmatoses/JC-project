@@ -36,8 +36,10 @@ principal_chest.callback = function() {
     principal_chest.open();
 }
 
-const enemyOctoOver = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //Para testear
-const enemyOctoOver1 = new Enemy(0.4, 0.2, TILEWIDTH, 1/9); //Para testear
+const enemyOctoOver = new Octorok(0.4, 0.4, TILEWIDTH, 1/9);
+const enemyOctoOver0 = new Octorok(0.3, 0.4, TILEWIDTH, 1/9);
+const enemyOctoOver1 = new Octorok(0.2, 0.4, TILEWIDTH, 1/9);
+const enemyOrbMons0 = new OrbMonster(0.3, 0.4, TILEWIDTH, 1/9, textures.orbmonster, "red");
 
 
 //Remember the tile we work is on debug +1. Example debug says 103 we are working on the code on 104
@@ -478,6 +480,7 @@ const tile104 = [
     new Tombstone(TILEWIDTH*3, TILEHEIGHT*5),
     new Tombstone(TILEWIDTH*5, TILEHEIGHT*5),
     enemyOctoOver,
+    enemyOctoOver1,
     new Statue(TILEWIDTH*3, TILEHEIGHT*0, ["Some tools will provide super habilityes.", "Find them on chests."]),
     new Statue(TILEWIDTH*1, TILEHEIGHT*2, ["A tombstone is missing :(", "If you try to bring it up, it may lead you to an adventure."]),
 
@@ -553,6 +556,7 @@ const tile120 = [
 	    new InvisibleWall(TILEWIDTH*2,5*TILEHEIGHT,TILEWIDTH*7,TILEHEIGHT),
 	    new InvisibleWall(TILEWIDTH*0,3*TILEHEIGHT,TILEWIDTH,TILEHEIGHT*8),
 	    enemyOctoOver,
+        enemyOrbMons0,
 	    //enemyOctoOver1
 
 ];

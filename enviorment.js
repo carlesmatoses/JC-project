@@ -1092,7 +1092,15 @@ class Level{
                 copy.update = element.update; // Copy the update method
                 return copy;
             } else if (element instanceof Enemy){
-                return new Enemy(element.x, element.y, element.width, element.height, element.texture); 
+                return new element.constructor(
+                    element.x,
+                    element.y,
+                    element.width,
+                    element.height,
+                    element.texture,
+                    element.color
+                );
+                //return new Enemy(element.x, element.y, element.width, element.height, element.texture); 
             } else if (element instanceof Projectile){
                 console.log("El elemento es un projectile");
                 return new Projectile(element.center, element.width, element.height);
