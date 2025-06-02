@@ -221,13 +221,13 @@ class Scene{
 		const enemiesLeft = this.levelContent.some(e => e.type === "enemy");
 		if (!enemiesLeft && typeof world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated === "function") {
 			world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated(this);
-			this.levelContent.forEach(element => {
-				if (element.type === "portcullis" && typeof element.open === "function") {
-					element.open();
-				}
-			});
+			// this.levelContent.forEach(element => {
+			// 	if (element.type === "portcullis" && typeof element.open === "function") {
+			// 		element.open();
+			// 	}
+			// });
 			// Prevent multiple triggers
-			world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated = null;
+			// world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated = null;
 		}
 	}
 
@@ -263,6 +263,13 @@ class Scene{
 
 	levelTransition(to)
 	{
+
+		// --- Trigger onLeave event if defined ---
+		const currentLevelObj = world.maps[this.mapID].getLevel(this.levelID);
+		if (currentLevelObj && typeof currentLevelObj.onLeave === "function") {
+			currentLevelObj.onLeave(this); // Pass the scene as argument
+		}
+		
 		// Transition from one level to another
 		// This function is responsible for the transition animation between levels
 		// It can be a fade out, slide, etc.
@@ -281,7 +288,7 @@ class Scene{
 		this.setSceneReferenceToNPCs(); 
 
 		// --- Trigger onEnter event if defined ---
-		const levelObj = world.maps[this.mapID].getLevel(this.levelID);
+		const levelObj = world.maps[this.mapID].getLevel(to);
 		if (levelObj && typeof levelObj.onEnter === "function") {
 			levelObj.onEnter(this); // Pass the scene as argument
 		}

@@ -507,7 +507,7 @@ class Statue extends BackgroundElement {
         super.draw(context); // Draw the statue texture
         if (DEBUG) {
             // Draw the bounding box for debugging
-            console.log(this.x)
+            // console.log(this.x)
         }
     }
 }
@@ -704,6 +704,8 @@ class FloatingFloor extends BackgroundElement{
     }
 
     steptOn(player) {
+        if (player.stats.getIsFlying()) return;
+
         if (!this.onCooldown && this.uses > 0) {
             this.uses -= 1;
             this.onCooldown = true;
@@ -783,11 +785,17 @@ class FloatingHeart extends BackgroundElement{
 class FloatingMoney extends BackgroundElement{
     constructor(x, y){
         super(x, y, TILEWIDTH/2, TILEHEIGHT, "floating_heart", true, textures.floating_money, "green");
-        this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.2*TILEHEIGHT, TILEWIDTH*0.2, TILEHEIGHT*0.2);
+        this.boundingBoxPressure = new BoundingBox(x+0.25*TILEWIDTH, y+0.5*TILEHEIGHT, 0.5*TILEWIDTH, TILEHEIGHT);
+    }
+
+    draw(context) {
+        super.draw(context); // Draw the floating money texture
+        if (DEBUG) {
+            this.boundingBoxPressure.draw(context); // Draw the bounding box for debugging
+        }
     }
 
     steptOn(player) {
-        console.log("Floating heart collected, player healed!");
         if (player && typeof player.takeDamage === "function") {
             player.addMoney(1); // Heal the player by 10 health points
 
@@ -930,6 +938,7 @@ class Effect {
 const BraceletStrength = new Equipment("Power Bracelet", textures.braceletStrength, [new Effect("strength", 15, 0)]);
 const Shield = new Equipment("Shield", textures.shield, [new Effect("defense", 10, 0)]);
 const Sword = new Equipment("Sword", textures.sword, [new Effect("attack", 10, 0)]);
+const Feather = new Equipment("Feather", textures.feather, [new Effect("fly", 1, 0)]);
 
 /**
  * Class representing a level in the game. Contains static elements, enemies, items...
@@ -972,6 +981,7 @@ class Level{
                     element.x, element.y,
                     element.isWalkable
                 );
+                copy.texture = element.texture; 
                 copy.globalReference = element;
                 copy.callback = element.callback; 
                 return copy;

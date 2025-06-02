@@ -6,6 +6,7 @@ class Stats{
         this.defense = defense;
         this.strength = strength;
         this.speed = speed;
+        this.fly = 0; 
         
         this.bonuses = {
             health: 0,
@@ -20,7 +21,8 @@ class Stats{
             attack: 0,
             defense: 0,
             strength: 0,
-            speed: 0
+            speed: 0,
+            fly: 0,
         }
     }
 
@@ -56,6 +58,9 @@ class Stats{
                 console.error("Invalid stat for effect:", effect.stat);
             }
         }
+    }
+    getIsFlying() {
+        return this.effects.fly > 0;
     }
 }
 
@@ -326,10 +331,15 @@ class Player {
         // inventory
         this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
         this.inventory = new Inventory(this);
-        this.inventory.addItem(Shield);
-        this.inventory.assignToEmptySlot(Shield); 
+        // this.inventory.addItem(Shield);
+        // this.inventory.assignToEmptySlot(Shield); 
         this.inventory.addItem(Sword);
         this.inventory.assignToEmptySlot(Sword);
+        // this.inventory.addItem(BraceletStrength);
+        // this.inventory.assignToEmptySlot(BraceletStrength);
+        // this.inventory.addItem(Feather);
+        // this.inventory.assignToEmptySlot(Feather);
+
 
         //Audio
         this.swordSwingAudio = AudioFX('audio/00005-LINK_PV002_SWORD_360_R2.wav')
