@@ -1116,6 +1116,18 @@ level16.onEnter = function(scene) {
     }
 }
 
+level2.onEnter = function(scene) {
+    console.log("End of the game.");
+    scene.player.scriptedMovement({x: 1.5, y: 0}, TILEWIDTH, 700*1.5, () => {
+        scene.player.scriptedMovement({x: 0, y: 1.1}, TILEWIDTH, 700*1.1, () => {
+            scene.player.scriptedMovement({x: 2, y: 0}, TILEWIDTH, 700*2, () => {
+                gamestatemanager.pushState(new EndGameMenuState(gamestatemanager, 5000));
+            });
+        });
+    });
+}
+
+
 level1.onEnter = function(scene) {
     console.log("Entering level 11, setting up the environment.");
     // Additional setup for level 11 can be done here

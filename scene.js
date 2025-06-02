@@ -477,6 +477,30 @@ class GameStateManager {
             state.draw(context);
         }
     }
+
+	startNewGame(){
+		// pop all states
+		while (this.stateStack.length > 0) {
+			this.popState();
+		}
+		// Start a new game by pushing the initial scene
+		const initialScene = new Scene(this);
+		this.pushState(initialScene);
+		this.pushState(new DialogState(this, [
+					`${KEY_PRIMARY} is the primary button.   Press ${KEY_PRIMARY} to continue`, 
+					`Press ${KEY_DEBUBG} to activiate`, 
+					`Press ${KEY_INVENTORY} to open the inventory`,
+		]));
+	}
+
+	exitGame() {
+		// Exit the game by popping all states and closing the window
+		while (this.stateStack.length > 0) {
+			this.popState();
+		}
+		window.close(); // Close the window
+	}
+
 }
 
 class DialogState {
@@ -883,4 +907,117 @@ class DeathMenuState {
             }
         }
     }
+}
+
+
+class EndGameMenuState {
+	constructor(gameStateManager, fadeDuration = 1) {
+		this.gameStateManager = gameStateManager;
+		this.options = ["Start", "Exit"];
+		this.selectedOption = 0;
+		this.fadeDuration = fadeDuration; // seconds
+		this.fadingIn = true;
+		this.fadingOut = false;
+		this.fadeElapsed = 0;
+		this.whiteOverlayAlpha = 0;
+		this.menuVisible = false;
+	}
+
+	update(deltaTime) {
+		const dt = deltaTime; // convert ms to seconds if needed
+		
+		if (this.fadingIn) {
+			this.fadeElapsed += dt;
+			this.whiteOverlayAlpha = Math.min(this.fadeElapsed / this.fadeDuration, 1);
+			if (this.whiteOverlayAlpha >= 1) {
+				this.fadingIn = false;
+				this.fadeElapsed = 0;
+				this.fadingOut = true;
+				this.menuVisible = true;
+			}
+		} else if (this.fadingOut) {
+			this.fadeElapsed += dt;
+			this.whiteOverlayAlpha = 1 - Math.min(this.fadeElapsed / this.fadeDuration, 1);
+			if (this.whiteOverlayAlpha <= 0) {
+				this.fadingOut = false;
+				this.menuVisible = true;
+			}
+		}
+	}
+
+
+	draw(context) {
+		// Optionally: draw previous game screen in background here
+
+
+		// Draw the menu after transition
+		if (this.menuVisible) {
+
+			const bg = textures.background_menu.img;
+			if (bg) {
+				context.drawImage(bg, 0, 0, context.canvas.width, context.canvas.height);
+			} else {
+				// If the background image is not loaded, fill with a solid color
+				context.fillStyle = "rgb(0, 25, 30, 0.7)"; // steel blue
+				context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+			}
+
+			this.options.forEach((option, index) => {
+				context.font = "48px 'tiny5', sans-serif";
+				const optionMetrics = context.measureText(option);
+				const optionX = (context.canvas.width - optionMetrics.width) / 2;
+				const optionY = 320 + index * 80;
+
+				// Draw background rectangle
+				const paddingX = 32;
+				const paddingY = 0;
+				const rectX = optionX - paddingX;
+				const rectY = optionY - 38 + paddingY / 2;
+				const rectWidth = optionMetrics.width + paddingX * 2;
+				const rectHeight = 48 - paddingY;
+
+				context.save();
+				context.globalAlpha = this.selectedOption === index ? 0.5 : 0.2;
+				context.fillStyle = "#000";
+				context.fillRect(rectX, rectY, rectWidth, rectHeight);
+				context.restore();
+
+				// Draw option text
+				context.fillStyle = this.selectedOption === index ? "yellow" : "white";
+				context.fillText(option, optionX, optionY);
+			});
+		}
+
+		// White overlay
+		if (this.fadingIn || this.fadingOut) {
+			context.fillStyle = `rgba(255, 255, 255, ${this.whiteOverlayAlpha})`;
+			context.fillRect(0, 0, context.canvas.width, context.canvas.height);
+		}
+
+
+	}
+
+	handleInput(input) {
+		if (!this.menuVisible) return;
+
+		if (input.isPressed("ArrowUp")) {
+			this.selectedOption = (this.selectedOption - 1 + this.options.length) % this.options.length;
+		}
+		if (input.isPressed("ArrowDown")) {
+			this.selectedOption = (this.selectedOption + 1) % this.options.length;
+		}
+		if (input.isPressed("Enter")) {
+			switch (this.options[this.selectedOption]) {
+				case "Start":
+					this.gameStateManager.startNewGame();
+					break;
+				case "Credits":
+					this.gameStateManager.showCredits();
+					break;
+				case "Exit":
+					this.gameStateManager.exitGame();
+					break;
+			}
+		}
+	}
 }
