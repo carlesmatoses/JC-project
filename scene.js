@@ -25,7 +25,7 @@ class Scene{
 		this.player = player;
 		this.player.scene = this; // Set the scene reference in the player object
 		
-		this.levelID = this.player.level_reference; // Current level ID
+		this.levelID = this.player.levelID; // Current level ID
 		this.mapID = this.player.mapID; // Current map ID
 
 		// level variables
@@ -275,7 +275,7 @@ class Scene{
 		// It can be a fade out, slide, etc.
 		// It should return when the transition is done and the new level is loaded
 		this.levelID = to;
-		this.player.level_reference = to; 
+		this.player.levelID = to; 
 		this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(to)); // Load new level content
 
 		// Initialize level contents

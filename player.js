@@ -325,7 +325,7 @@ class Player {
         this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.9, height*0.9); // 90% of the size
         this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, (width)/4, (height)/4);
 
-        this.level_reference = 103;
+        this.levelID = 103;
         this.mapID = 'overworld'; 
 
         // inventory
@@ -334,7 +334,7 @@ class Player {
         // this.inventory.addItem(Shield);
         // this.inventory.assignToEmptySlot(Shield); 
         this.inventory.addItem(Sword);
-        this.inventory.assignToEmptySlot(Sword);
+        this.inventory.equipItem(Sword, "right");
         // this.inventory.addItem(BraceletStrength);
         // this.inventory.assignToEmptySlot(BraceletStrength);
         // this.inventory.addItem(Feather);
@@ -963,8 +963,10 @@ class Player {
 
     playerDied() {
         // set menu view 
+        this.levelID = 103;
+        this.mapID = 'overworld'; 
         this.scene.gameStateManager.pushState(new DeathMenuState(this.scene.gameStateManager));
-
+        
         // Reset player position or handle death logic
         this.setPosition(TILEWIDTH, TILEHEIGHT*4); 
         this.stats.health = this.stats.getHealth().maxHealth; 
