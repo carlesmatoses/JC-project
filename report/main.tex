@@ -106,7 +106,7 @@ El jugador ha de conseguir claus, objectes equipables i resoldre trenca closques
 \end{figure}
 
 \section{Disseny}
-Per al disseny del joc no hem seguit un patró de disseny concret. El ``loop'' del joc incorpora una clase auxiliar que anomenada \textbf{gamestatemanager}. Aquesta conté una llista amb els estats necessaris. L'objectiu de gastar aquesta classe és poder anyadir i eliminar estats dinamicament. Per exemple, qual el jugador apreta ``escape'' i s'obre el menú, el que realment s'està fent és concatenar dos estats i sols permitir que el més alt en la jerarquia puga llegir els inputs i actualitzar-se en funció del temps. 
+Per al disseny del joc no hem seguit un patró de disseny concret. El ``loop'' del joc incorpora una clase auxiliar que anomenada \textbf{gamestatemanager}. Aquesta conté una llista amb els estats necessaris. L'objectiu de gastar aquesta classe és poder anyadir i eliminar estats dinamicament. Per exemple, quan el jugador apreta ``escape'' i s'obre el menú, el que realment s'està fent és concatenar dos estats i sols permitir que el més alt en la jerarquia puga llegir els inputs i actualitzar-se en funció del temps. 
 
 Cada estat es responsable del seu propi update, draw i inputs. Estan dissenyats de manera que poden ser creats i destruits sense afetar als elements globals del joc com els nivells o el jugador. El jugador es persistent encara que es surti del nivell (escape -> Exit -> Start) per aquesta mateixa raó.
 
@@ -248,60 +248,60 @@ La mort del jugador no esta implementada de forma que es considere part del loop
 
 
 
-\section{Examples}
-Code examples:
-\subsection{Text}
- Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet arcu aliquam, mattis sapien quis, faucibus ligula. Praesent facilisis felis libero, nec scelerisque est vestibulum a. Proin gravida tempor neque eget maximus. Aliquam vel ex arcu. Maecenas porta blandit leo, eget dapibus libero faucibus quis. Curabitur vel sapien pharetra, ultricies nulla sed, ullamcorper metus. Sed mauris sapien, dapibus et elit in, bibendum pellentesque dui. Donec consequat quam ut pulvinar sodales. Duis commodo ex pharetra mauris dictum, in ultricies purus facilisis. Donec id ornare sem. Nam diam erat, imperdiet et orci id, lacinia condimentum justo. Integer laoreet pulvinar nibh. Vivamus vel tellus lacus.
+% \section{Examples}
+% Code examples:
+% \subsection{Text}
+%  Lorem ipsum dolor sit amet, consectetur adipiscing elit. Donec sit amet arcu aliquam, mattis sapien quis, faucibus ligula. Praesent facilisis felis libero, nec scelerisque est vestibulum a. Proin gravida tempor neque eget maximus. Aliquam vel ex arcu. Maecenas porta blandit leo, eget dapibus libero faucibus quis. Curabitur vel sapien pharetra, ultricies nulla sed, ullamcorper metus. Sed mauris sapien, dapibus et elit in, bibendum pellentesque dui. Donec consequat quam ut pulvinar sodales. Duis commodo ex pharetra mauris dictum, in ultricies purus facilisis. Donec id ornare sem. Nam diam erat, imperdiet et orci id, lacinia condimentum justo. Integer laoreet pulvinar nibh. Vivamus vel tellus lacus.
 
-\begin{itemize}
-    \item one
-    \item one
-    \item one
-    \item one
-    \item one
+% \begin{itemize}
+%     \item one
+%     \item one
+%     \item one
+%     \item one
+%     \item one
     
-\end{itemize}
+% \end{itemize}
 
-Phasellus congue, massa in aliquet elementum, ipsum felis dictum enim, id maximus ante orci sit amet dui. Suspendisse blandit iaculis feugiat. Curabitur ante elit, tristique luctus hendrerit sed, posuere quis massa. Vivamus eu nunc vel neque egestas porttitor ac at nibh. Morbi odio justo, maximus sit amet elementum nec, finibus sed purus. Mauris eu posuere neque, at consequat elit. Praesent eu venenatis mauris, vel lobortis eros. Donec suscipit congue augue, ut aliquet metus volutpat ac. Vivamus mattis, nisl vel placerat euismod, tellus velit sollicitudin massa, nec sagittis nunc elit vel mauris. In id justo non nunc condimentum bibendum. Mauris scelerisque urna nisi, et lacinia justo posuere eget. 
-\begin{figure}[ht!]
-    \centering
-    \includegraphics[width=0.8\textwidth]{img/eg.png} % Example of adding a figure
-    \caption{Test results for circuit 1}
-    \label{fig:circuit1}
-\end{figure}
+% Phasellus congue, massa in aliquet elementum, ipsum felis dictum enim, id maximus ante orci sit amet dui. Suspendisse blandit iaculis feugiat. Curabitur ante elit, tristique luctus hendrerit sed, posuere quis massa. Vivamus eu nunc vel neque egestas porttitor ac at nibh. Morbi odio justo, maximus sit amet elementum nec, finibus sed purus. Mauris eu posuere neque, at consequat elit. Praesent eu venenatis mauris, vel lobortis eros. Donec suscipit congue augue, ut aliquet metus volutpat ac. Vivamus mattis, nisl vel placerat euismod, tellus velit sollicitudin massa, nec sagittis nunc elit vel mauris. In id justo non nunc condimentum bibendum. Mauris scelerisque urna nisi, et lacinia justo posuere eget. 
+% \begin{figure}[ht!]
+%     \centering
+%     \includegraphics[width=0.8\textwidth]{img/eg.png} % Example of adding a figure
+%     \caption{Test results for circuit 1}
+%     \label{fig:circuit1}
+% \end{figure}
 
-\begin{figure}[ht!]
-    \centering
-    \begin{minipage}{0.30\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{img/eg.png}
-        \caption{subimage1}
-        \label{fig:subimage1}
-    \end{minipage}
-    % \hfill
-    \begin{minipage}{0.30\linewidth}
-        \centering
-        \includegraphics[width=\linewidth]{img/eg.png}
-        \caption{subimage2}
-        \label{fig:subimage2}
-    \end{minipage}
-\end{figure}
+% \begin{figure}[ht!]
+%     \centering
+%     \begin{minipage}{0.30\linewidth}
+%         \centering
+%         \includegraphics[width=\linewidth]{img/eg.png}
+%         \caption{subimage1}
+%         \label{fig:subimage1}
+%     \end{minipage}
+%     % \hfill
+%     \begin{minipage}{0.30\linewidth}
+%         \centering
+%         \includegraphics[width=\linewidth]{img/eg.png}
+%         \caption{subimage2}
+%         \label{fig:subimage2}
+%     \end{minipage}
+% \end{figure}
 
 
-\subsection{Code}
-\begin{minted}{c}
-#define NB 2 // selected based on the number of threads
-...
-double relax_jacobi (double *u, double *utmp, unsigned sizex, unsigned sizey)
-{
-...
-    #pragma omp parallel for reduction(+:sum) private(diff)
-    for (int ii=0; ii<nbx; ii++) {
-        ...
-    }
-    return sum;
-}
-\end{minted}
+% \subsection{Code}
+% \begin{minted}{c}
+% #define NB 2 // selected based on the number of threads
+% ...
+% double relax_jacobi (double *u, double *utmp, unsigned sizex, unsigned sizey)
+% {
+% ...
+%     #pragma omp parallel for reduction(+:sum) private(diff)
+%     for (int ii=0; ii<nbx; ii++) {
+%         ...
+%     }
+%     return sum;
+% }
+% \end{minted}
 
 \newpage
 % Bibliography (if required)
