@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {1}Introducció}{2}{section.1}%
+\contentsline {section}{\numberline {2}Objectius}{2}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Mapa}{2}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Disseny}{2}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Nivells, elements i entitats}{2}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Mecàniques}{3}{subsection.3.2}%
+\contentsline {subsection}{\numberline {3.3}Triggers}{3}{subsection.3.3}%
+\contentsline {section}{\numberline {4}Trenca closques}{3}{section.4}%
+\contentsline {section}{\numberline {5}Enemics}{3}{section.5}%
+\contentsline {section}{\numberline {6}Examples}{3}{section.6}%
+\contentsline {subsection}{\numberline {6.1}Text}{3}{subsection.6.1}%
+\contentsline {subsection}{\numberline {6.2}Code}{5}{subsection.6.2}%

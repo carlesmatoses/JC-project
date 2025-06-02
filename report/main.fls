@@ -1,0 +1,281 @@
+PWD c:/Users/carle/Documents/github/JC-project/report
+INPUT c:/Program Files (x86)/texlive/2024/texmf.cnf
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/web2c/texmf.cnf
+INPUT c:/Program Files (x86)/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt
+INPUT c:/Users/carle/Documents/github/JC-project/report/main.tex
+OUTPUT main.log
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/article.cls
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/article.cls
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/size12.clo
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/size12.clo
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/size12.clo
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/map/fontname/texfonts.map
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/graphicx.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/graphicx.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/keyval.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/graphics.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/graphics.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/trig.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/trig.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics-cfg/graphics.cfg
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics-def/pdftex.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics-def/pdftex.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics-def/pdftex.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amsmath.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amsmath.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amsopn.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amstext.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amstext.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amsgen.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amsgen.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amsbsy.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amsbsy.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsmath/amsopn.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsfonts/amsfonts.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/geometry/geometry.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/geometry/geometry.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/iftex/ifvtex.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/iftex/ifvtex.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/iftex/iftex.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/iftex/iftex.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/fancyhdr/fancyhdr.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/setspace/setspace.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/setspace/setspace.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/titlesec/titlesec.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/titlesec/titlesec.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/hyperref.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/hyperref.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/kvsetkeys/kvsetkeys.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/kvdefinekeys/kvdefinekeys.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/pdfescape/pdfescape.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/ltxcmds/ltxcmds.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/pdftexcmds/pdftexcmds.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/infwarerr/infwarerr.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hycolor/hycolor.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hycolor/hycolor.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/nameref.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/nameref.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/refcount/refcount.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/refcount/refcount.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/gettitlestring/gettitlestring.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/kvoptions/kvoptions.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/etoolbox/etoolbox.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/stringenc/stringenc.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/stringenc/stringenc.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/pd1enc.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/pd1enc.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/pd1enc.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/intcalc/intcalc.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/intcalc/intcalc.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/puenc.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/puenc.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/puenc.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/url/url.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/url/url.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/bitset/bitset.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/bitset/bitset.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/bigintcalc/bigintcalc.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/atbegshi/atbegshi.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/atbegshi-ltx.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/hpdftex.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/hpdftex.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/hyperref/hpdftex.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/atveryend/atveryend.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/atveryend-ltx.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/atveryend-ltx.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/uniquecounter/uniquecounter.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/xcolor/xcolor.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/xcolor/xcolor.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics-cfg/color.cfg
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics-cfg/color.cfg
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics-cfg/color.cfg
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/mathcolor.ltx
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/minted/minted.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/minted/minted.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/catchfile/catchfile.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/catchfile/catchfile.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/etexcmds/etexcmds.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/fvextra/fvextra.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/fvextra/fvextra.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/fancyvrb/fancyvrb.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/upquote/upquote.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/upquote/upquote.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/lineno/lineno.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/lineno/lineno.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/latex2pydata/latex2pydata.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/latex2pydata/latex2pydata.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/pgf/utilities/pgfkeys.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfkeys.code.tex
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/generic/pgf/utilities/pgfkeyslibraryfiltered.code.tex
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/pgfopts/pgfopts.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/pgfopts/pgfopts.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/tools/shellesc.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/tools/shellesc.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/float/float.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/float/float.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/dirtytalk/dirtytalk.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/dirtytalk/dirtytalk.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/ifthen.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/base/ifthen.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/enumitem/enumitem.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/enumitem/enumitem.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
+INPUT ./main.aux
+INPUT ./main.aux
+INPUT main.aux
+OUTPUT main.aux
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/latexconfig/epstopdf-sys.cfg
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/graphics/color.sty
+INPUT ./main.out
+INPUT ./main.out
+INPUT main.out
+INPUT main.out
+OUTPUT main.pdf
+INPUT ./main.out
+INPUT ./main.out
+OUTPUT main.out
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
+INPUT ./fib.png
+INPUT ./fib.png
+INPUT ./fib.png
+INPUT ./fib.png
+INPUT ./fib.png
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr12.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmex10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsfonts/umsa.fd
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/tex/latex/amsfonts/umsb.fd
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/jknappen/ec/tcrm1000.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam5.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm5.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/jknappen/ec/tcrm0700.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/enc/dvips/cm-super/cm-super-ts1.enc
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr17.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT ./main.toc
+INPUT ./main.toc
+INPUT main.toc
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr8.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmr6.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi12.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi8.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmmi6.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy8.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmsy6.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmex10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex8.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/cmextra/cmex7.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msam7.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm10.tfm
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/amsfonts/symbols/msbm7.tfm
+OUTPUT main.toc
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmbx12.tfm
+INPUT ../imgs/recorregut.png
+INPUT ../imgs/recorregut.png
+INPUT ../imgs/recorregut.png
+INPUT ../imgs/recorregut.png
+INPUT ../imgs/recorregut.png
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmtt12.tfm
+INPUT ../imgs/global_to_local.png
+INPUT ../imgs/global_to_local.png
+INPUT ../imgs/global_to_local.png
+INPUT ../imgs/global_to_local.png
+INPUT ../imgs/global_to_local.png
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/jknappen/ec/tcrm1200.tfm
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+INPUT ./img/eg.png
+OUTPUT _FAD58DE7366495DB4650CFEFAC2FCD61.data.minted
+INPUT ./_FAD58DE7366495DB4650CFEFAC2FCD61.config.minted
+INPUT ./_FAD58DE7366495DB4650CFEFAC2FCD61.config.minted
+INPUT _FAD58DE7366495DB4650CFEFAC2FCD61.config.minted
+INPUT ./_minted/_FAD58DE7366495DB4650CFEFAC2FCD61.index.minted
+INPUT ./_minted/_FAD58DE7366495DB4650CFEFAC2FCD61.index.minted
+INPUT ./_minted/default.style.minted
+INPUT ./_minted/default.style.minted
+INPUT _minted/default.style.minted
+INPUT ./_minted/7F55D6DC4C000F4C363B5A180DABE145.highlight.minted
+INPUT ./_minted/7F55D6DC4C000F4C363B5A180DABE145.highlight.minted
+INPUT _minted/7F55D6DC4C000F4C363B5A180DABE145.highlight.minted
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/tfm/public/cm/cmitt10.tfm
+INPUT ./main.bbl
+INPUT ./main.bbl
+INPUT main.bbl
+INPUT main.aux
+INPUT ./main.out
+INPUT ./main.out
+OUTPUT _FAD58DE7366495DB4650CFEFAC2FCD61.data.minted
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx12.pfb
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmitt10.pfb
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmr12.pfb
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/type1/public/amsfonts/cm/cmtt12.pfb
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm0700.pfb
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1000.pfb
+INPUT c:/Program Files (x86)/texlive/2024/texmf-dist/fonts/type1/public/cm-super/sfrm1200.pfb
