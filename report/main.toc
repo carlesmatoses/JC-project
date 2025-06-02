@@ -1,12 +1,23 @@
-\contentsline {section}{\numberline {1}Introducció}{2}{section.1}%
-\contentsline {section}{\numberline {2}Objectius}{2}{section.2}%
-\contentsline {subsection}{\numberline {2.1}Mapa}{2}{subsection.2.1}%
-\contentsline {section}{\numberline {3}Disseny}{2}{section.3}%
-\contentsline {subsection}{\numberline {3.1}Nivells, elements i entitats}{2}{subsection.3.1}%
-\contentsline {subsection}{\numberline {3.2}Mecàniques}{3}{subsection.3.2}%
-\contentsline {subsection}{\numberline {3.3}Triggers}{3}{subsection.3.3}%
-\contentsline {section}{\numberline {4}Trenca closques}{3}{section.4}%
-\contentsline {section}{\numberline {5}Enemics}{3}{section.5}%
-\contentsline {section}{\numberline {6}Examples}{3}{section.6}%
-\contentsline {subsection}{\numberline {6.1}Text}{3}{subsection.6.1}%
-\contentsline {subsection}{\numberline {6.2}Code}{5}{subsection.6.2}%
+\contentsline {section}{\numberline {1}Introducció}{3}{section.1}%
+\contentsline {section}{\numberline {2}Objectius}{3}{section.2}%
+\contentsline {subsection}{\numberline {2.1}Mapa}{3}{subsection.2.1}%
+\contentsline {section}{\numberline {3}Disseny}{3}{section.3}%
+\contentsline {subsection}{\numberline {3.1}Detecció de colisions}{4}{subsection.3.1}%
+\contentsline {subsection}{\numberline {3.2}Nivells, elements i entitats}{4}{subsection.3.2}%
+\contentsline {subsubsection}{\numberline {3.2.1}Categories d'elements i entitats}{4}{subsubsection.3.2.1}%
+\contentsline {subsection}{\numberline {3.3}Mecàniques}{6}{subsection.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.1}Equipar Items}{6}{subsubsection.3.3.1}%
+\contentsline {subsubsection}{\numberline {3.3.2}Atacar}{6}{subsubsection.3.3.2}%
+\contentsline {subsubsection}{\numberline {3.3.3}Interactuar}{6}{subsubsection.3.3.3}%
+\contentsline {subsubsection}{\numberline {3.3.4}Tocar}{6}{subsubsection.3.3.4}%
+\contentsline {subsection}{\numberline {3.4}Triggers}{6}{subsection.3.4}%
+\contentsline {section}{\numberline {4}Trenca closques}{7}{section.4}%
+\contentsline {subsection}{\numberline {4.1}Lights Out}{7}{subsection.4.1}%
+\contentsline {subsection}{\numberline {4.2}Objectes Pesats}{7}{subsection.4.2}%
+\contentsline {subsection}{\numberline {4.3}Preguntes i Respostes}{8}{subsection.4.3}%
+\contentsline {section}{\numberline {5}Enemics}{8}{section.5}%
+\contentsline {section}{\numberline {6}Menus}{8}{section.6}%
+\contentsline {section}{\numberline {7}No Planejat}{8}{section.7}%
+\contentsline {section}{\numberline {8}Examples}{9}{section.8}%
+\contentsline {subsection}{\numberline {8.1}Text}{9}{subsection.8.1}%
+\contentsline {subsection}{\numberline {8.2}Code}{9}{subsection.8.2}%

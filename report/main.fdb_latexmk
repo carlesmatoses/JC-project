@@ -1,13 +1,14 @@
 # Fdb version 4
-["bibtex main"] 1748875928.36134 "main.aux" "main.bbl" "main" 1748875936.55627 0
+["bibtex main"] 1748884600.05063 "main.aux" "main.bbl" "main" 1748884608.04071 0
   "./references.bib" 1748871691 0 d41d8cd98f00b204e9800998ecf8427e ""
   "c:/Program Files (x86)/texlive/2024/texmf-dist/bibtex/bst/base/plain.bst" 1729866229 20613 bd3fbfa9f64872b81ac57a0dd2ed855f ""
-  "main.aux" 1748875933 2670 b2074667d274d2f90d249ad5cfcb6a7c "pdflatex"
+  "main.aux" 1748884605 4345 6010fd3b08c6441024d1b180695ebbae "pdflatex"
   (generated)
   "main.bbl"
   "main.blg"
   (rewritten before read)
-["pdflatex"] 1748875928.7916 "c:/Users/carle/Documents/github/JC-project/report/main.tex" "main.pdf" "main" 1748875936.55681 0
+["pdflatex"] 1748884600.4655 "c:/Users/carle/Documents/github/JC-project/report/main.tex" "main.pdf" "main" 1748884608.04123 0
+  "../imgs/exemple-trencaclosques.png" 1748876932 9896 18bad6d86250173e59ea500f45de3731 ""
   "../imgs/global_to_local.png" 1748875087 22579 f7063afeabebfec0c8d478b000321bd5 ""
   "../imgs/recorregut.png" 1748858262 163426 dfc4b249d66e210d175940f9a3f37911 ""
   "_minted/7F55D6DC4C000F4C363B5A180DABE145.highlight.minted" 1748871710 1132 2edc7615c396ee208dacef3c36cd8a37 ""
@@ -126,14 +127,14 @@
   "c:/Program Files (x86)/texlive/2024/texmf-var/fonts/map/pdftex/updmap/pdftex.map" 1729869959 5521176 cbfe833d4605e387a80e41e239f5392e ""
   "c:/Program Files (x86)/texlive/2024/texmf-var/web2c/pdftex/pdflatex.fmt" 1729870103 3326245 5b60d08598daf15d55a9697ffad15d88 ""
   "c:/Program Files (x86)/texlive/2024/texmf.cnf" 1729869941 713 614551405fc44b98efbf516466e3c909 ""
-  "c:/Users/carle/Documents/github/JC-project/report/main.tex" 1748875920 6751 6dd2b268905bccfd65000464d9da585b ""
+  "c:/Users/carle/Documents/github/JC-project/report/main.tex" 1748884583 16091 f0cd5fbe0f13dc23125ad3945ca6cef2 ""
   "fib.png" 1748871691 68636 545bc3835794e5737df5d0cda557c8a7 ""
   "img/eg.png" 1748871691 14771 27d17051aec13af88abdc04e8f0ee4e0 ""
-  "main.aux" 1748875933 2670 b2074667d274d2f90d249ad5cfcb6a7c "pdflatex"
-  "main.bbl" 1748875928 49 0eba253fc001332e731e8aba3f23127b "bibtex main"
-  "main.out" 1748875933 1196 f77045aec8f1809b67217cc06f8598ce "pdflatex"
-  "main.tex" 1748875920 6751 6dd2b268905bccfd65000464d9da585b ""
-  "main.toc" 1748875935 849 d27fcca73a46ac133aa89851b6c1571e "pdflatex"
+  "main.aux" 1748884605 4345 6010fd3b08c6441024d1b180695ebbae "pdflatex"
+  "main.bbl" 1748884600 49 0eba253fc001332e731e8aba3f23127b "bibtex main"
+  "main.out" 1748884605 2642 b190bb8d5527ff7167271074eb4a3cd6 "pdflatex"
+  "main.tex" 1748884583 16091 f0cd5fbe0f13dc23125ad3945ca6cef2 ""
+  "main.toc" 1748884607 1756 3d7aa64c416152ed0c0a5a071d80525a "pdflatex"
   (generated)
   "main.aux"
   "main.log"
