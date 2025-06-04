@@ -240,6 +240,7 @@ rotor7.onSolved = customOnSolved2;
 
 //Enemies
 const enemyOcto1 = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
+const enemyOrbMonsBlue = new OrbMonster(0.4, 0.4, TILEWIDTH, 1/9, undefined, "blue");
 
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
@@ -412,7 +413,7 @@ const dungeon_tile9 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHE
 
     keyB_chest,
 
-    new Enemy(0.4, 0.4, TILEWIDTH, 1/9), // Octorok enemy
+    new Octorok(0.4, 0.4, TILEWIDTH, 1/9), // Octorok enemy
 ];
 const dungeon_tile10 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 128+2, sWidth: 160, sHeight: 128}),
@@ -694,8 +695,9 @@ const dungeon_tile20 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     createVase(TILEWIDTH, 6*TILEHEIGHT),
     createVase(8*TILEWIDTH, 6*TILEHEIGHT),
 
-    new Enemy(TILEWIDTH*2, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
-    new Enemy(TILEWIDTH*4, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT),
+    //FIXME: Cambiarlo por el enemigo correspondiente
+    new Octorok(TILEWIDTH*2, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
+    new Octorok(TILEWIDTH*4, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT),
     gate1,
 ];
 const dungeon_tile21 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
@@ -780,6 +782,8 @@ const dungeon_tile23 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new Lights(TILEWIDTH*9, TILEHEIGHT*5, 3),
     new Lights(TILEWIDTH*7, TILEHEIGHT*7, 1),
     new Lights(TILEWIDTH*2, TILEHEIGHT*7, 1),
+    enemyOrbMonsBlue,
+    new Pipe(TILEWIDTH*3, TILEHEIGHT*6, "blue"),
 ];
 const dungeon_tile24 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 384+4, sWidth: 160, sHeight: 128})];
@@ -994,6 +998,16 @@ level29.onAllEnemiesDefeated = function(scene) {
     });
 }
 
+level24.onPuzzleSolved = function(scene) {
+    const allPipes = scene.levelContent.filter(obj => obj instanceof Pipe);
+    const allOccupied = allPipes.every(pipe => pipe.isOccupied());
+
+    if (allOccupied) {
+        console.log("¡Puzzle resuelto!");
+
+    }
+};
+
 level9.onAllEnemiesDefeated = function(scene) {
     const chest = scene.levelContent.find(obj => obj instanceof Chest);
     if (chest) {
@@ -1055,7 +1069,7 @@ level6.onEnter = function(scene) {
             });
         });
 
-        // Add THE BOSS
+        //TODO: Add THE BOSS
         const enemy1 = new Enemy(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
         const enemy2 = new Enemy(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
         enemy1.scene = scene;

@@ -325,7 +325,7 @@ class Player {
         this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, (width)/4, (height)/4);
 
         this.level_reference = 103;
-        this.mapID = 'overworld'; 
+        this.mapID = 'overworld'; //overworld 103  //'dungeon1' 22
 
         // inventory
         this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
@@ -466,13 +466,13 @@ class Player {
         //context.save(); 
 
         // Controlar transparencia según efectos
-        if (this.isFlashing) {
+        /*if (this.isFlashing) {
             //console.log("Daño recibido draw");
             const mod = Math.floor(this.flashTimer / this.flashInterval) % 2;
             context.globalAlpha = (mod === 0) ? 0 : 1;
         } else {
             context.globalAlpha = 1;
-        }
+        }*/
 
         this.sprite.x = this.x;
         this.sprite.y = this.y;
@@ -519,14 +519,14 @@ class Player {
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
 
-        if (this.isFlashing) {
+        /*if (this.isFlashing) {
             //console.log("Daño recibido");
             this.flashTimer += deltaTime;
             if (this.flashTimer >= this.flashDuration) {
                 this.isFlashing = false;
                 this.flashTimer = 0;
             }
-        }
+        }*/
 
 
 
@@ -988,7 +988,7 @@ class Player {
             return; // Ignore damage if immune
         }
 
-        this.isFlashing = true;
+        //this.isFlashing = true;
         this.flashTimer = 0;
 
         this.stats.health -= damage;

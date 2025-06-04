@@ -557,6 +557,7 @@ const tile120 = [
 	    new InvisibleWall(TILEWIDTH*0,3*TILEHEIGHT,TILEWIDTH,TILEHEIGHT*8),
 	    enemyOctoOver,
         enemyOrbMons0,
+        new SeaUrchin(0.2, 0.3, TILEWIDTH, 1/9),
 	    //enemyOctoOver1
 
 ];

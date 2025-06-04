@@ -43,6 +43,7 @@ const textures = {
 	enemy: new Texture("imgs/enemies/Octorok.png"),
 	octorok: new Texture("imgs/enemies/Octorok.png"),
 	orbmonster: new Texture("imgs/enemies/OrbMonster1.png"),
+	seaurchin: new Texture("imgs/enemies/SeaUrchin.png"),
 	hearts: new Texture("imgs/hearts.png"),
 	portcullis: new Texture("imgs/gate_right.png"),
 	portcullis_lock: new Texture("imgs/gate_lock.png"),

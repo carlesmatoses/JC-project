@@ -252,6 +252,7 @@ class Enemy {
         this.isFading = true;
         this.fadeAlpha = 1;
         console.log("Enemy died (fading out)");
+        this.drop();
     }
 
     setDirection(dx, dy) {
@@ -296,7 +297,62 @@ class Enemy {
         return this.life || this.isFading;
     }
 
+    drop() {
+        console.log("Drop");
+        const rand = Math.random(); // valor entre 0 y 1
+        const x = this.x;
+        const y = this.y;
 
+
+        if (rand < 0.2) { // 20% de soltar corazón
+            console.log("Drop Corazon");
+            const heart = new FloatingHeart(x, y);
+            this.scene.levelContent.push(heart);
+        } else if (rand < 0.7) { // 50% de soltar moneda
+            console.log("drop Moneda");
+            const money = new FloatingMoney(x, y);
+            this.scene.levelContent.push(money);
+        }
+        // 30% de no soltar nada
+    }
+
+
+}
+
+class SeaUrchin extends Enemy{
+    constructor(x, y, width, height, texture = textures.seaurchin){ 
+        super(x, y, width, height, texture );
+
+        this.stats =  new Stats(10, 2.0, 5, 5, 0.0000);
+
+        this.sprite = new Sprite(this.x, this.y, this.width, this.height, 10, texture); // 10 fps
+
+        this.animBasic = this.sprite.addAnimation();
+		this.sprite.addKeyframe(this.animBasic, [0, 0, 16, 16]); 
+		this.sprite.addKeyframe(this.animBasic, [16, 0, 16, 16]); // [x,y,w,h]
+        this.sprite.addKeyframe(this.animBasic, [32, 0, 16, 16]); // [x,y,w,h]
+        this.sprite.addKeyframe(this.animBasic, [48, 0, 16, 16]); // [x,y,w,h]
+
+        this.sprite.setAnimation(this.animBasic); // Animación por defecto
+
+
+    }
+
+    update(deltaTime) {
+        super.update(deltaTime); // Llama a la lógica de daño y fade del padre
+
+        if (!this.life) return;
+
+        // Actualizar animación
+        this.sprite.update(deltaTime);
+
+        const player = this.scene?.player;
+        if (player && player.boundingBox && this.boundingBox.isColliding(player.boundingBox)) {
+            if (player.takeDamage) {
+                player.takeDamage(this.stats.getTotalStats().attack);
+            }
+        }
+    }
 }
 
 class Octorok extends Enemy{
@@ -491,13 +547,11 @@ class OrbMonster extends Enemy{
         this.orbTimer = 0; // Time for whichs hitCounter is the OrbMons
         this.orbInterval = 5000; //ms
         this.canMove = true;
-        this.canPush = false;
-        
-        console.log(color);
-        this.colorOM = color;
-        console.log("color del OrbMons", this.colorOM);
+        this.isPushable = false;
 
-        this.stats = new Stats(40, 1.5, 5, 5, 0.0002); //(health, attack, defense, strength, speed) 
+        this.colorOM = color;
+
+        this.stats = new Stats(40, 1.0, 5, 5, 0.0002); //(health, attack, defense, strength, speed) 
         this.speed = 0.001; 
         this.direction = { x: 0, y: 0 }; // Normalized movement vector
         this.lastDirection = { x: 0, y: 0 };; // Direction the player is facing
@@ -508,7 +562,6 @@ class OrbMonster extends Enemy{
 		this.timeToChange = 1000 + Math.random() * 2000; // entre 1 y 3 segundos
 
         // Crear sprite 
-        //FIXME: Hacer que vaya mas lento las animaciones
 		this.sprite = new Sprite(this.x, this.y, this.width, this.height, 10, texture); // 10 fps
         console.log(this.sprite);
 
@@ -612,7 +665,6 @@ class OrbMonster extends Enemy{
         if (this.hitCounter > 0) {
             this.orbTimer += deltaTime;
 
-            //TODO: añadir && !this.isGrabbed al if de abajo para agarrarlo -> Hacer 
             if (this.orbTimer >= this.orbInterval) {
                 this.orbTimer = 0;
 
@@ -628,7 +680,8 @@ class OrbMonster extends Enemy{
                 } else if (this.hitCounter === 2) {
                     console.log("Hitcounter 2");
                     this.stats.health = 20;
-                    this.stats.attack = 1.5;
+                    this.stats.attack = 1.0;
+                    this.isPushable = false;
                     this.sprite.setAnimation(this.animSecondHit);
                 }
             }
@@ -651,6 +704,8 @@ class OrbMonster extends Enemy{
         this.moving = magnitude > 0;
 
         if (this.moving) {
+            this.orbTimer = 0;
+
             // Normalize movement
             this.direction.x /= magnitude;
             this.direction.y /= magnitude;
@@ -767,7 +822,7 @@ class OrbMonster extends Enemy{
             this.hitCounter = 3;
             this.sprite.setAnimation(this.animThirdHit);
             this.canMove = false;
-            this.canPush = true; //TODO: Revisar si hace falta
+            this.isPushable = true; //TODO: Revisar si hace falta
             this.orbTimer = 0;
             this.stats.attack = 0.0;
 
@@ -792,5 +847,44 @@ class OrbMonster extends Enemy{
         
     }
 
+    tryPush(direction, scene) {
+        const targetX = this.x + direction.x * TILEWIDTH;
+        const targetY = this.y + direction.y * TILEHEIGHT;
+    
+        // Create a temporary bounding box to simulate the move
+        const testBox = new BoundingBox(
+            targetX + this.width / 2,
+            targetY + this.height / 2,
+            this.width,
+            this.height
+        );
+    
+        // Check for collisions with other solid objects in the scene
+        let blocked = scene.levelContent.some(obj => {
+            if (obj === this || !obj.boundingBox) return false;
+            if (testBox.isColliding(obj.boundingBox)){
+                console.log("Colliding with: ", obj.type, "at", obj.x, obj.y);
+            }
+            return testBox.isColliding(obj.boundingBox);
+        });
+    
+        if (!blocked) {
+            this.x = targetX;
+            this.y = targetY;
+            this.defaultX = targetX;
+            this.defaultY = targetY;
+            this.boundingBox.setPosition(this.x + this.width / 2, this.y + this.height / 2);
+            if (this.callback) {
+                this.callback(); // Call the callback function if provided
+            }
+        } else {
+            console.log("Can't push there.");
+        }
+    }
+
+
 }
+
+
+
 
