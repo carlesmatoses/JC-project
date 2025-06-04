@@ -316,7 +316,6 @@ class Player {
 		this.y = y;
 		this.width = width;
 		this.height = height;
-		// this.speed = 0.0004;
 		this.direction = { x: 0, y: 0 };
 		this.lastDirection = { x: 0, y: 1 }; // mirando hacia abajo por defecto
 		this.moving = false;
@@ -342,7 +341,10 @@ class Player {
 
 
         //Audio
-        this.swordSwingAudio = AudioFX('audio/00005-LINK_PV002_SWORD_360_R2.wav')
+        this.swordSwingAudio = AudioFX('audio/00005-LINK_PV002_SWORD_360_R2.wav');
+        this.fullHealSound = AudioFX('audio/Pokemon Healing - Sound Effect (HD).wav' , {
+            volume: 0.6
+        }); //FIXME: Encontrar sonido correcto.
 
         // Pushing mechanics
         this.lastBlockedDirection = null;
@@ -357,6 +359,16 @@ class Player {
         //defend
         this.isDefending = false;
         this.defendingTimer = 0;
+
+        //Timers de daño y muerte
+        this.isFlashing = false;
+        this.flashTimer = 0;
+        this.flashDuration = 300; // ms
+        this.flashInterval = 100; // ms
+
+        //this.isFading = false;
+        //this.fadeAlpha = 1;
+        //this.fadeSpeed = 0.005; // por ms
 
         // Inmunity
         this.isImmune = false; // Immunity flag
@@ -619,6 +631,7 @@ class Player {
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
 
+
         // TODO: There is a mix of update and draw methods, We must check this later
         if (this.isAttacking) {
             this.attackTimer += deltaTime;
@@ -780,6 +793,12 @@ class Player {
         }
     }
 
+    fullHeal(){
+        console.log("Restaurando toda a vida!")
+        this.fullHealSound.play();
+        this.stats.health = this.stats.maxHealth;
+    }
+
     handleInput(keyboard) {
         // Leer teclas
         let direction = { x: 0, y: 0 };
@@ -842,6 +861,12 @@ class Player {
                 this.boundingBox.setPosition(this.center.x, this.center.y);
             }
         }       
+        //Health
+        if (keyboard.isPressed(KEY_HEAL)){
+            console.log("Intentando curar al player")
+            this.fullHeal();
+        }
+
     }
 
     sameDirection(dir1, dir2) {
@@ -921,6 +946,9 @@ class Player {
             }
         }
 
+        //this.isFlashing = true;
+        this.flashTimer = 0;
+
         this.stats.health -= damage;
         // Prevent health from going below 0
         if (this.stats.health < 0) this.stats.health = 0;
@@ -931,6 +959,7 @@ class Player {
         if (this.stats.health <= 0) {
             this.playerDied();
         }
+
 
         // Activate immunity after taking damage
         this.isImmune = true;

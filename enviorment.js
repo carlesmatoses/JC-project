@@ -765,6 +765,51 @@ class FloatingFloor extends BackgroundElement{
     }
 }
 
+class Pipe extends BackgroundElement{
+    constructor(x,y, color){
+        super(x, y, TILEWIDTH, TILEHEIGHT, "pipe", true, null, color, null);
+        //this.colorPipe = color;
+        this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH*0.2, TILEHEIGHT*0.2);
+        this.occupied = false;
+
+        
+        
+    }
+
+    // update(scene) {
+    //     if (this.occupied) return;
+
+    //     // Buscar orbmonsters colisionando con el área de presión
+    //     let orbs = scene.levelContent.filter(obj =>
+    //         obj instanceof OrbMonster &&
+    //         obj.isOrbState && // suponiendo que tienes esta propiedad cuando están en forma de bola
+    //         obj.boundingBox.isColliding(this.boundingBoxPressure)
+    //     );
+
+    //     for (let orb of orbs) {
+    //         if (orb.color === this.color) {
+    //             this.occupied = true;
+    //             if (this.onOccupy) this.onOccupy(); // callback opcional
+    //             break;
+    //         }
+    //     }
+    // }
+
+    
+
+    isOccupied() {
+        return this.occupied;
+    }
+
+    draw(context){
+        //super.draw(context);
+
+        this.boundingBoxPressure.draw(context);
+    }
+
+
+}
+
 class FloatingHeart extends BackgroundElement{
     constructor(x, y){
         super(x, y, TILEWIDTH, TILEHEIGHT, "floating_heart", true, textures.floating_heart, "blue", null);
@@ -1069,7 +1114,15 @@ class Level{
                 copy.boundingBoxPressure = element.boundingBoxPressure; 
                 copy.callback = element.callback; 
                 return copy;
-            } else if (element instanceof Lights) {
+            }else if(element instanceof Pipe){
+                let copy = new Pipe(
+                    element.x, element.y, element.color
+                );
+                copy.globalReference = element;
+                copy.boundingBoxPressure = element.boundingBoxPressure; 
+                copy.callback = element.callback; 
+                return copy;
+            }else if (element instanceof Lights) {
                 // Create a new Lights instance
                 let copy = new Lights(
                     element.x, element.y, element.direction
@@ -1092,7 +1145,15 @@ class Level{
                 copy.update = element.update; // Copy the update method
                 return copy;
             } else if (element instanceof Enemy){
-                return new Enemy(element.x, element.y, element.width, element.height, element.texture); 
+                return new element.constructor(
+                    element.x,
+                    element.y,
+                    element.width,
+                    element.height,
+                    element.texture,
+                    element.color
+                );
+                //return new Enemy(element.x, element.y, element.width, element.height, element.texture); 
             } else if (element instanceof Projectile){
                 console.log("El elemento es un projectile");
                 return new Projectile(element.center, element.width, element.height);
