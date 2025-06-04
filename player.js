@@ -820,8 +820,14 @@ class Player {
         
         // Detect KeyX pressed and released for defending state
         if (keyboard.isPressed('KeyX')) {
+            if (
+                (this.inventory.equipped.left.getItem() && this.inventory.equipped.left.getItem().name === "Shield") ||
+                (this.inventory.equipped.right.getItem() && this.inventory.equipped.right.getItem().name === "Shield")
+            ) {
             this.isDefending = true;
+            }
         }
+        
         if (keyboard.isReleased && keyboard.isReleased('KeyX')) {
             this.isDefending = false;
         }
@@ -886,7 +892,7 @@ class Player {
         this.boundingBox.setPosition(this.center.x, this.center.y);
     }
 
-    takeDamage(damage) {
+    takeDamage(damage, attackerPosition = null) {
         if (typeof CREATIVE_MODE !== "undefined" && CREATIVE_MODE) {
             console.log("Player is in CREATIVE_MODE, no damage taken!");
             return;
@@ -894,6 +900,25 @@ class Player {
         if (this.isImmune) {
             console.log("Player is immune to damage!");
             return; // Ignore damage if immune
+        }
+
+        // Defending logic
+        if (this.isDefending && attackerPosition) {
+            // Vector from player to attacker
+            const dx = attackerPosition.x - this.center.x;
+            const dy = attackerPosition.y - this.center.y;
+            // Normalize
+            const mag = Math.sqrt(dx*dx + dy*dy);
+            const attackDir = { x: Math.round(dx/mag), y: Math.round(dy/mag) };
+
+            // If attack direction is opposite to player's facing direction, block damage
+            if (
+                attackDir.x === this.lastDirection.x &&
+                attackDir.y === this.lastDirection.y
+            ) {
+                console.log("Attack blocked by shield!");
+                return;
+            }
         }
 
         this.stats.health -= damage;
@@ -904,7 +929,6 @@ class Player {
         if (this.stats.health > maxHealth) this.stats.health = maxHealth;
 
         if (this.stats.health <= 0) {
-            console.log("Player has died");
             this.playerDied();
         }
 

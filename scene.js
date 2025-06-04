@@ -115,11 +115,11 @@ class Scene{
 
 		// Check for damage collisions
 		this.levelContent.forEach((element) => {
-			if (element.type === "enemy" && element.boundingBox.isColliding(this.player.boundingBox, 0.04)) {
-				this.player.takeDamage(element.stats.attack); // Player takes damage from enemy
+			if (element.type === "enemy" && element.boundingBox.isColliding(this.player.boundingBox, 0.01)) {
+				this.player.takeDamage(element.stats.attack, element.center); // Player takes damage from enemy
 			}
 			// Check for collisions of projectiles with the player
-			if (element instanceof Projectile && element.boundingBox.isColliding(this.player.boundingBox, -0.04)) {
+			if (element instanceof Projectile && element.boundingBox.isColliding(this.player.boundingBox, -0.01)) {
 				if (typeof element.onHit === "function") {
 					element.onHit(this.player, this);
 				}
