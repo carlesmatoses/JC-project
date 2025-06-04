@@ -868,6 +868,19 @@ class Player {
             this.fullHeal();
         }
 
+        //Obtain Special Objects
+        if (keyboard.isPressed(KEY_OBTAIN_SP_OBJECT)){
+            if(this.inventory.getItemQuantity(BraceletStrength) == 0){
+                this.inventory.addItem(BraceletStrength);
+                this.inventory.assignToEmptySlot(BraceletStrength);
+            }
+            if(this.inventory.getItemQuantity(Feather) == 0){
+                this.inventory.addItem(Feather);
+                this.inventory.assignToEmptySlot(Feather);
+            }
+            
+        }
+
     }
 
     sameDirection(dir1, dir2) {

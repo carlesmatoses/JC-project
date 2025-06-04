@@ -19,7 +19,7 @@ const KEY_DOWN             = "ArrowDown";
 const KEY_LEFT             = "ArrowLeft";
 const KEY_RIGHT            = "ArrowRight"; 
 const KEY_DEBUBG           = "KeyK";  
-const KEY_INVENTORY        = "KeyI";  //FIXME: Modificar tecla a otra
+const KEY_INVENTORY        = "KeyU";
 const KEY_INVULNERABLE     = "KeyG"; 
 const BOSS1                = "KeyM"; 
 const BOSS2                = "KeyP"; 
@@ -27,14 +27,14 @@ const BOSS3                = "KeyB";
 const REMOVE_HITBOX        = "KeyL"; 
 const KEY_HEAL             = "KeyH";
 const KEY_SHIELD           = "KeyX";
+const KEY_OBTAIN_SP_OBJECT = "KeyI"; 
 const KEY_ESCAPE            = "Escape";
 /*
 //TODO: Quitar hardcode y poner bien las global variables
 const KEY_USE_SP_OBJECT    = "KeyC"; 
 
-const KEY_SKIP_MBOSS       = "KeyM"; 
-const KEY_SKIP_FBOSS       = "KeyB";
-const KEY_OBTAIN_SP_OBJECT = "KeyI"; 
+
+
 const KEY_SWORD            = "KeyZ"; 
 
 

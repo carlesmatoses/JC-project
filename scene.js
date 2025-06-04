@@ -144,7 +144,7 @@ class Scene{
 			console.log("Pressed B!");
 			DEBUG = !DEBUG;
 		}
-		if (input.isPressed('KeyI')) { //
+		if (input.isPressed(KEY_INVENTORY)) { //
 			this.gameStateManager.pushState(this.menu); 
         }
 		if (input.isPressed('KeyT')) { // add a 
@@ -838,6 +838,7 @@ class MenuInstructionsState {
 			"Shield: " + KEY_SHIELD,
 			"Escape/Menu: " + KEY_ESCAPE,
 			"Remove Hitbox: " + REMOVE_HITBOX,
+			"Obtain Special Obj: " + KEY_OBTAIN_SP_OBJECT,
 		];
 	}
 

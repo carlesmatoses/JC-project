@@ -27,7 +27,7 @@ class Menu{
     update(timedelta){}
 
     handleInput(event) {
-        if (event.isPressed("KeyI")) {
+        if (event.isPressed(KEY_INVENTORY )) {
             this.gameStateManager.popState();
         }
         if (event.isPressed("ArrowUp")) {
