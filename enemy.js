@@ -100,7 +100,7 @@ class Projectile {
     }
     onHit(target, scene){
         if (target.takeDamage) {
-            target.takeDamage(this.attack);
+            target.takeDamage(this.attack, this.center);
         }
         //this.destroy(scene);
         this.isFading = true;

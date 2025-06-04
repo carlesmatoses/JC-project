@@ -25,7 +25,7 @@ class Scene{
 		this.player = player;
 		this.player.scene = this; // Set the scene reference in the player object
 		
-		this.levelID = this.player.level_reference; // Current level ID
+		this.levelID = this.player.levelID; // Current level ID
 		this.mapID = this.player.mapID; // Current map ID
 
 		// level variables
@@ -115,11 +115,11 @@ class Scene{
 
 		// Check for damage collisions
 		this.levelContent.forEach((element) => {
-			if (element.type === "enemy" && element.boundingBox.isColliding(this.player.boundingBox, 0.04)) {
-				this.player.takeDamage(element.stats.attack); // Player takes damage from enemy
+			if (element.type === "enemy" && element.boundingBox.isColliding(this.player.boundingBox, 0.01)) {
+				this.player.takeDamage(element.stats.attack, element.center); // Player takes damage from enemy
 			}
 			// Check for collisions of projectiles with the player
-			if (element instanceof Projectile && element.boundingBox.isColliding(this.player.boundingBox, -0.04)) {
+			if (element instanceof Projectile && element.boundingBox.isColliding(this.player.boundingBox, -0.01)) {
 				if (typeof element.onHit === "function") {
 					element.onHit(this.player, this);
 				}
@@ -275,7 +275,7 @@ class Scene{
 		// It can be a fade out, slide, etc.
 		// It should return when the transition is done and the new level is loaded
 		this.levelID = to;
-		this.player.level_reference = to; 
+		this.player.levelID = to; 
 		this.levelContent = new Array().concat(world.maps[this.mapID].getLevelElements(to)); // Load new level content
 
 		// Initialize level contents

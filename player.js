@@ -324,8 +324,8 @@ class Player {
         this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*0.9, height*0.9); // 90% of the size
         this.handBoundingBox = new BoundingBox(this.center.x, this.center.y, (width)/4, (height)/4);
 
-        this.level_reference = 103;
-        this.mapID = 'overworld'; //overworld 103  //'dungeon1' 22
+        this.levelID = 103;
+        this.mapID = 'overworld'; 
 
         // inventory
         this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
@@ -333,7 +333,7 @@ class Player {
         // this.inventory.addItem(Shield);
         // this.inventory.assignToEmptySlot(Shield); 
         this.inventory.addItem(Sword);
-        this.inventory.assignToEmptySlot(Sword);
+        this.inventory.equipItem(Sword, "right");
         // this.inventory.addItem(BraceletStrength);
         // this.inventory.assignToEmptySlot(BraceletStrength);
         // this.inventory.addItem(Feather);
@@ -383,6 +383,8 @@ class Player {
         this.swordTexture = new Texture(texture);
         this.swordSprite = new Sprite(x, y, width, height, 10, this.swordTexture);
 
+        this.anim_facing = "down"; 
+
 		// Creamos animaciones (puedes añadir más si tienes otras direcciones o acciones)
         this.ANIM_DOWN = this.sprite.addAnimation(); // 0
 		this.sprite.addKeyframe(this.ANIM_DOWN, [0, 0, 15, 16]);
@@ -425,15 +427,20 @@ class Player {
         //Animaciones Defensa Player
         this.ANIM_DEFEND_DOWN = this.sprite.addAnimation();
         this.sprite.addKeyframe(this.ANIM_DEFEND_DOWN,[32, 64, 15, 16]);
+        this.sprite.addKeyframe(this.ANIM_DEFEND_DOWN,[48, 64, 15, 16]);
 
         this.ANIM_DEFEND_UP = this.sprite.addAnimation();
         this.sprite.addKeyframe(this.ANIM_DEFEND_UP,[64, 64, 15, 16]);
+        this.sprite.addKeyframe(this.ANIM_DEFEND_UP,[80, 64, 15, 16]);
 
         this.ANIM_DEFEND_LEFT = this.sprite.addAnimation();
         this.sprite.addKeyframe(this.ANIM_DEFEND_LEFT,[96, 64, 15, 16]);
+        this.sprite.addKeyframe(this.ANIM_DEFEND_LEFT,[112, 64, 15, 16]);
 
         this.ANIM_DEFEND_RIGHT = this.sprite.addAnimation();
         this.sprite.addKeyframe(this.ANIM_DEFEND_RIGHT,[128, 64, 15, 16]);
+        this.sprite.addKeyframe(this.ANIM_DEFEND_RIGHT,[144, 64, 15, 16]);
+
         
         //Animaciones Sword
         // Simple
@@ -457,33 +464,121 @@ class Player {
         this.swordSprite.addKeyframe(this.SWORD_RIGHT, [160, 112, 16, 16]);
         this.swordSprite.addKeyframe(this.SWORD_RIGHT, [144, 112, 16, 16]);
 
-        
+        this.swordAttackOffsets = {
+            down:   [ {x: -1, y: -1}, {x: -0.5, y: 0}, {x: 0, y: 0} ],
+            up:     [ {x: 1, y: 1}, {x: 0.5, y: 0}, {x: 0, y: 0} ],
+            left:   [ {x: 1, y: -1}, {x: 0, y: -0.5}, {x: 0, y: 0} ],
+            right:  [ {x: -1, y: -1}, {x: 0, y: -0.5}, {x: 0, y: 0} ]
+        };  
+        this.sword_direction= "down"; 
 
     }
 
     draw(context) {
-        //FIXME: Si se activa se ve mal el escenario...
-        //context.save(); 
+        // Lets control animations in the draw method, otherwise the code is unreadable and causes issues
+        
+        // WALKING STATE
+        // Prioritize horizontal movement over vertical to prevent animation flickering
+        if (!this.isAttacking && !this.isDefending) {
+            if (this.lastDirection.x !== 0) {
+                if (this.lastDirection.x === -1 && this.sprite.currentAnimation !== this.ANIM_LEFT) {
+                    this.sprite.setAnimation(this.ANIM_LEFT);
+                } else if (this.lastDirection.x === 1 && this.sprite.currentAnimation !== this.ANIM_RIGHT) {
+                    this.sprite.setAnimation(this.ANIM_RIGHT);
+                }
+            } else if (this.lastDirection.y !== 0) {
+                if (this.lastDirection.y === -1 && this.sprite.currentAnimation !== this.ANIM_UP) {
+                    this.sprite.setAnimation(this.ANIM_UP);
+                } else if (this.lastDirection.y === 1 && this.sprite.currentAnimation !== this.ANIM_DOWN) {
+                    this.sprite.setAnimation(this.ANIM_DOWN);
+                }
+            }
+        }
 
-        // Controlar transparencia según efectos
-        /*if (this.isFlashing) {
-            //console.log("Daño recibido draw");
-            const mod = Math.floor(this.flashTimer / this.flashInterval) % 2;
-            context.globalAlpha = (mod === 0) ? 0 : 1;
-        } else {
-            context.globalAlpha = 1;
-        }*/
+        // DEFENDING STATE
+        if (this.isDefending) {
+            if (this.lastDirection.x !== 0) {
+                if (this.lastDirection.x === -1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_LEFT) {
+                    this.sprite.setAnimation(this.ANIM_DEFEND_LEFT);
+                } else if (this.lastDirection.x === 1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_RIGHT) {
+                    this.sprite.setAnimation(this.ANIM_DEFEND_RIGHT);
+                }
+            } else if (this.lastDirection.y !== 0) {
+                if (this.lastDirection.y === -1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_UP) {
+                    this.sprite.setAnimation(this.ANIM_DEFEND_UP);
+                } else if (this.lastDirection.y === 1 && this.sprite.currentAnimation !== this.ANIM_DEFEND_DOWN) {
+                    this.sprite.setAnimation(this.ANIM_DEFEND_DOWN);
+                }
+            }
+        }
 
+        // ATTACKING STATE
+        if (this.isAttacking && !this._attackDrawn) {
+                if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_ATTACK_LEFT);
+                else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_ATTACK_RIGHT);
+                else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_ATTACK_UP);
+                else if (this.lastDirection.y === 1) this.sprite.setAnimation(this.ANIM_ATTACK_DOWN);
+                if (this.lastDirection.x === -1 && this.swordSprite.currentAnimation !== this.SWORD_LEFT) {
+                    this.swordSprite.setAnimation(this.SWORD_LEFT);
+                    this.sword_direction = "left";
+                } else if (this.lastDirection.x === 1 && this.swordSprite.currentAnimation !== this.SWORD_RIGHT) {
+                    this.swordSprite.setAnimation(this.SWORD_RIGHT);
+                    this.sword_direction = "right";
+                }
+                if (this.lastDirection.y === -1 && this.swordSprite.currentAnimation !== this.SWORD_UP) {
+                    this.swordSprite.setAnimation(this.SWORD_UP);
+                    this.sword_direction = "up";
+                } else if (this.lastDirection.y === 1 && this.swordSprite.currentAnimation !== this.SWORD_DOWN) {
+                    this.swordSprite.setAnimation(this.SWORD_DOWN);
+                    this.sword_direction = "down";
+                }
+            this.swordSprite.currentKeyframe = 0;
+            this.swordSprite.timeInKeyframe= 0;
+            this.swordSprite.elapsedTime = 0;
+            this.sprite.currentKeyframe = 0;
+            this.sprite.timeInKeyframe= 0;
+            this.sprite.elapsedTime = 0;
+            this._attackDrawn = true;
+        }
+        if (this.isAttacking){
+            // Use this.sword_direction to decide the dir
+            let swordDir = this.sword_direction;
+
+            // Prevent diagonal sword direction: only allow one axis at a time
+            // (sword_direction should already be set to "left", "right", "up", or "down")
+
+            let dir = { x: 0, y: 0 };
+            if (swordDir === "left") dir.x = -1;
+            else if (swordDir === "right") dir.x = 1;
+            else if (swordDir === "up") dir.y = -1;
+            else dir.y = 1;
+
+            let swordCenter = {
+            x: this.center.x + (dir.x * (this.boundingBox.width)) - this.swordSprite.width / 2,
+            y: this.center.y + (dir.y * (this.boundingBox.height)) - this.swordSprite.height / 2,
+            };
+
+            let frameIdx = this.swordSprite.currentKeyframe;
+            let offset = this.swordAttackOffsets[swordDir][frameIdx];
+
+            this.swordSprite.x = swordCenter.x + offset.x * TILEWIDTH;
+            this.swordSprite.y = swordCenter.y + offset.y * TILEHEIGHT;
+            this.swordSprite.update(deltaTime);
+            this.sprite.update(deltaTime);
+        }
+
+        if (!this.isAttacking) {
+            this._attackDrawn = false;
+            this.swordSprite.currentKeyframe = 0;
+            this.swordSprite.timeInKeyframe= 0;
+            this.swordSprite.elapsedTime = 0;
+        }
+
+        // decide what to draw
         this.sprite.x = this.x;
         this.sprite.y = this.y;
         this.sprite.draw();
-
-        if (this.isAttacking) {
-            //console.log("dibujando espada");
-            this.swordSprite.draw(); // dibujar espada encima si estamos atacando        
-        }
-
-        //context.restore();
+        if(this.isAttacking) this.swordSprite.draw();
         
         if (DEBUG){
             this.boundingBox.draw(context);
@@ -503,6 +598,24 @@ class Player {
                 context.fillStyle = "blue";
                 context.fill();
             }
+
+            // Draw the sword bounding box
+            let swordCenter = {
+                x: this.center.x + (this.lastDirection.x * (this.boundingBox.width  )),
+                y: this.center.y + (this.lastDirection.y * (this.boundingBox.height  )),
+            };
+            this.swordSprite.x = swordCenter.x - this.swordSprite.width / 2;
+            this.swordSprite.y = swordCenter.y - this.swordSprite.height / 2;
+
+            swordCenter = transform(swordCenter.x, swordCenter.y, context);
+            context.beginPath();
+            context.arc(swordCenter.x, swordCenter.y, 4, 0, 2 * Math.PI);
+            context.fillStyle = "green";
+            context.fill();
+
+            // draw the sword sprite on frame 0
+            this.swordSprite.draw();
+
         }
     }
 
@@ -515,28 +628,13 @@ class Player {
                 this.immunityTimer = 0; // Reset timer
             }
         }
-
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
 
-        /*if (this.isFlashing) {
-            //console.log("Daño recibido");
-            this.flashTimer += deltaTime;
-            if (this.flashTimer >= this.flashDuration) {
-                this.isFlashing = false;
-                this.flashTimer = 0;
-            }
-        }*/
 
-
-
-        //console.log(this.isAttacking);
+        // TODO: There is a mix of update and draw methods, We must check this later
         if (this.isAttacking) {
             this.attackTimer += deltaTime;
-            this.sprite.update(deltaTime); // animación del cuerpo
-            this.swordSprite.update(deltaTime); // animación de la espada también
-            //console.log(this.swordSprite.x + " " + this.swordSprite.y);
-
             this.swordSwingAudio.play();
         
             if (this.attackTimer >= this.attackDuration) {
@@ -545,136 +643,11 @@ class Player {
                 this.checkAttackCollision();
             }
         
-            // Posicionar espada dependiendo de dirección
-            let offset = transform(this.center.x, this.center.y , context); 
-            offset = {x:this.center.x - this.width/2.0 ,y:this.center.y - this.height/2.0};
-        
-            
-            if (this.lastDirection.x === -1) {
-                if (this.swordSprite.currentAnimation != this.SWORD_LEFT){
-                    this.swordSprite.setAnimation(this.SWORD_LEFT);
-                }
-                
-                switch (this.swordSprite.currentKeyframe) {
-                    case 0:
-                        this.swordSprite.x = offset.x;  
-                        this.swordSprite.y = offset.y - this.height;
-                        break;
-                    case 1:
-                        this.swordSprite.x = offset.x - this.width ;  
-                        this.swordSprite.y = offset.y - this.height;
-                        break;
-                    case 2:
-                        this.swordSprite.x = offset.x - this.width;
-                        this.swordSprite.y = offset.y;
-                        break;
-                    default:
-                        this.swordSprite.x = offset.x - this.width;
-                        this.swordSprite.y = offset.y;
-                        break;
-                }
-
-                //this.swordSprite.x = offset.x - this.width;
-                //this.swordSprite.y = offset.y;
-            } else if (this.lastDirection.x === 1) {
-                if (this.swordSprite.currentAnimation != this.SWORD_RIGHT){
-                    this.swordSprite.setAnimation(this.SWORD_RIGHT);
-                }
-
-                
-                switch (this.swordSprite.currentKeyframe) {
-                    case 0:
-                        this.swordSprite.x = offset.x;  
-                        this.swordSprite.y = offset.y - this.height;
-                        break;
-                    case 1:
-                        this.swordSprite.x = offset.x + this.width ;  
-                        this.swordSprite.y = offset.y - this.height;
-                        break;
-                    case 2:
-                        this.swordSprite.x = offset.x + this.width;
-                        this.swordSprite.y = offset.y;
-                        break;
-                    default:
-                        this.swordSprite.x = offset.x + this.width;
-                        this.swordSprite.y = offset.y;
-                        break;
-                }
-
-                //this.swordSprite.x = offset.x + this.width;
-                //this.swordSprite.y = offset.y;
-            } else if (this.lastDirection.y === -1) {
-                if (this.swordSprite.currentAnimation != this.SWORD_UP){
-                    this.swordSprite.setAnimation(this.SWORD_UP);
-                }
-                
-                switch (this.swordSprite.currentKeyframe) {
-                    case 0:
-                        this.swordSprite.x = offset.x + this.width;  
-                        this.swordSprite.y = offset.y;
-                        break;
-                    case 1:
-                        this.swordSprite.x = offset.x + this.width ;  
-                        this.swordSprite.y = offset.y - this.height;
-                        break;
-                    case 2:
-                        this.swordSprite.x = offset.x;
-                        this.swordSprite.y = offset.y - this.height;
-                        break;
-                    default:
-                        this.swordSprite.x = offset.x;
-                        this.swordSprite.y = offset.y - this.height;
-                        break;
-                }
-
-
-                //this.swordSprite.x = offset.x;
-                //this.swordSprite.y = offset.y - this.height;
-            } else if (this.lastDirection.y === 1) {
-                if (this.swordSprite.currentAnimation != this.SWORD_DOWN){
-                    this.swordSprite.setAnimation(this.SWORD_DOWN);
-                }
-                // Mostrar correctamente el sprite de la espada
-                switch (this.swordSprite.currentKeyframe) {
-                    case 0:
-                        this.swordSprite.x = offset.x - this.width;  
-                        this.swordSprite.y = offset.y ;
-                        break;
-                    case 1:
-                        this.swordSprite.x = offset.x - this.width ;  
-                        this.swordSprite.y = offset.y + this.height;
-                        break;
-                    case 2:
-                        this.swordSprite.x = offset.x;  
-                        this.swordSprite.y = offset.y + this.height;
-                        break;
-                    default:
-                        this.swordSprite.x = offset.x;  
-                        this.swordSprite.y = offset.y + this.height;
-                        break;
-                }
-                
-                //this.swordSprite.x = offset.x;  
-                //this.swordSprite.y = offset.y + this.height;
-            }
-        
             return; // no mover durante ataque
-        }
-
-
-        if (this.isDefending) {
-            if (this.direction.x === -1) this.sprite.setAnimation(this.ANIM_DEFEND_LEFT);
-            else if (this.direction.x === 1) this.sprite.setAnimation(this.ANIM_DEFEND_RIGHT);
-            else if (this.direction.y === -1) this.sprite.setAnimation(this.ANIM_DEFEND_UP);
-            else if (this.direction.y === 1) this.sprite.setAnimation(this.ANIM_DEFEND_DOWN);
-        
-            this.sprite.update(deltaTime);
-            return;
         }
         
         // Scripted movement handling
         if (this._scriptedMove) {
-            console.log("Handling scripted movement");
             let move = this._scriptedMove;
             move.elapsed += deltaTime;
             let totalTime = Math.min(move.elapsed, move.duration);
@@ -779,36 +752,17 @@ class Player {
                 this.lastBlockedDirection = null;
             }
 
-            
-            // Cambiar animación si cambia la dirección
-            if (this.direction.x === -1 && this.sprite.currentAnimation !== this.ANIM_LEFT) {
-                this.sprite.setAnimation(this.ANIM_LEFT);
-            } else if (this.direction.x === 1 && this.sprite.currentAnimation !== this.ANIM_RIGHT) {
-                this.sprite.setAnimation(this.ANIM_RIGHT);
-            } else if (this.direction.y === -1 && this.sprite.currentAnimation !== this.ANIM_UP) {
-                this.sprite.setAnimation(this.ANIM_UP);
-            } else if (this.direction.y === 1 && this.sprite.currentAnimation !== this.ANIM_DOWN) {
-                this.sprite.setAnimation(this.ANIM_DOWN);
-            }
-    
             this.lastDirection = { ...this.direction };
         } else {
             // Quieto: mantener dirección anterior pero detener la animación en el primer frame
             this.direction = { x: 0, y: 0 };
-            
-            if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_LEFT);
-            else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_RIGHT);
-            else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_UP);
-            else if (this.lastDirection.y === 1) this.sprite.setAnimation(this.ANIM_DOWN);
-    
-            // Congelar animación en primer frame
-            this.sprite.currentKeyframe = 0;
-            this.sprite.elapsedTime = 0; // <- importante para que no avance por deltaTime
         }
-    
-        // Solo actualizar sprite si está en movimiento
-        if (this.moving) {
+
+        // set the rendering frame
+        if (this.moving && !this.isAttacking) {
             this.sprite.update(deltaTime);
+        } else{
+            this.sprite.currentKeyframe = 0;
         }
 
 
@@ -879,49 +833,32 @@ class Player {
         
         //New: Attack press button
         if (keyboard.isPressed('KeyZ') && !this.isAttacking && !this.isDefending) {
-            //console.log("atacando");
             this.isAttacking = true;
             this.attackTimer = 0;
-        
-            if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_ATTACK_LEFT);
-            else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_ATTACK_RIGHT);
-            else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_ATTACK_UP);
-            else if (this.lastDirection.y === 1) this.sprite.setAnimation(this.ANIM_ATTACK_DOWN);
-        
-            this.sprite.currentKeyframe = 0;
-            this.sprite.elapsedTime = 0;
         }
         
-        //Defense
-        if (keyboard.isHeld('KeyX') && !this.isDefending) {
-            
-            if (!this.isDefending) {
-                this.isDefending = true;
+        // Detect KeyX pressed and released for defending state
+        if (keyboard.isPressed('KeyX')) {
+            if (
+                (this.inventory.equipped.left.getItem() && this.inventory.equipped.left.getItem().name === "Shield") ||
+                (this.inventory.equipped.right.getItem() && this.inventory.equipped.right.getItem().name === "Shield")
+            ) {
+            this.isDefending = true;
             }
-            
-            if (this.lastDirection.x === -1) this.sprite.setAnimation(this.ANIM_DEFEND_LEFT);
-            else if (this.lastDirection.x === 1) this.sprite.setAnimation(this.ANIM_DEFEND_RIGHT);
-            else if (this.lastDirection.y === -1) this.sprite.setAnimation(this.ANIM_DEFEND_UP);
-            else if (this.lastDirection.y === 1) this.sprite.setAnimation(this.ANIM_DEFEND_DOWN);
+        }
         
-            this.sprite.currentKeyframe = 0;
-            this.sprite.elapsedTime = 0;
-        }else{
-            if (this.isDefending) {
-                this.isDefending = false;
-            }
+        if (keyboard.isReleased && keyboard.isReleased('KeyX')) {
+            this.isDefending = false;
         }
 
         if (keyboard.isPressed(REMOVE_HITBOX)) {
             // we will remove the bounding box or add it back
             if (this.boundingBox.width > 0 && this.boundingBox.height > 0) {
                 this.removeBundingBox();
-                console.log("Bounding box removed");
             } else {
                 this.boundingBox.width = this.width * 0.9; // 90% of the size
                 this.boundingBox.height = this.height * 0.9;
                 this.boundingBox.setPosition(this.center.x, this.center.y);
-                console.log("Bounding box added");
             }
         }       
         //Health
@@ -943,9 +880,11 @@ class Player {
         this.direction.y = dy;
 
         // Only update lastDirection if there's movement
-        if (dx !== 0 || dy !== 0) {
-            this.lastDirection.x = dx;
-            this.lastDirection.y = dy;
+        if (!this.isAttacking){
+            if (dx !== 0 || dy !== 0) {
+                this.lastDirection.x = dx;
+                this.lastDirection.y = dy;
+            }
         }
     }
 
@@ -978,7 +917,7 @@ class Player {
         this.boundingBox.setPosition(this.center.x, this.center.y);
     }
 
-    takeDamage(damage) {
+    takeDamage(damage, attackerPosition = null) {
         if (typeof CREATIVE_MODE !== "undefined" && CREATIVE_MODE) {
             console.log("Player is in CREATIVE_MODE, no damage taken!");
             return;
@@ -986,6 +925,25 @@ class Player {
         if (this.isImmune) {
             console.log("Player is immune to damage!");
             return; // Ignore damage if immune
+        }
+
+        // Defending logic
+        if (this.isDefending && attackerPosition) {
+            // Vector from player to attacker
+            const dx = attackerPosition.x - this.center.x;
+            const dy = attackerPosition.y - this.center.y;
+            // Normalize
+            const mag = Math.sqrt(dx*dx + dy*dy);
+            const attackDir = { x: Math.round(dx/mag), y: Math.round(dy/mag) };
+
+            // If attack direction is opposite to player's facing direction, block damage
+            if (
+                attackDir.x === this.lastDirection.x &&
+                attackDir.y === this.lastDirection.y
+            ) {
+                console.log("Attack blocked by shield!");
+                return;
+            }
         }
 
         //this.isFlashing = true;
@@ -999,7 +957,6 @@ class Player {
         if (this.stats.health > maxHealth) this.stats.health = maxHealth;
 
         if (this.stats.health <= 0) {
-            console.log("Player has died");
             this.playerDied();
         }
 
@@ -1015,8 +972,10 @@ class Player {
 
     playerDied() {
         // set menu view 
+        this.levelID = 103;
+        this.mapID = 'overworld'; 
         this.scene.gameStateManager.pushState(new DeathMenuState(this.scene.gameStateManager));
-
+        
         // Reset player position or handle death logic
         this.setPosition(TILEWIDTH, TILEHEIGHT*4); 
         this.stats.health = this.stats.getHealth().maxHealth; 
