@@ -563,7 +563,11 @@ class Player {
 
             this.swordSprite.x = swordCenter.x + offset.x * TILEWIDTH;
             this.swordSprite.y = swordCenter.y + offset.y * TILEHEIGHT;
-            this.swordSprite.update(deltaTime);
+
+            if (frameIdx !== 2)   {
+                this.swordSprite.update(deltaTime);
+            }
+
             this.sprite.update(deltaTime);
         }
 
@@ -598,24 +602,6 @@ class Player {
                 context.fillStyle = "blue";
                 context.fill();
             }
-
-            // Draw the sword bounding box
-            let swordCenter = {
-                x: this.center.x + (this.lastDirection.x * (this.boundingBox.width  )),
-                y: this.center.y + (this.lastDirection.y * (this.boundingBox.height  )),
-            };
-            this.swordSprite.x = swordCenter.x - this.swordSprite.width / 2;
-            this.swordSprite.y = swordCenter.y - this.swordSprite.height / 2;
-
-            swordCenter = transform(swordCenter.x, swordCenter.y, context);
-            context.beginPath();
-            context.arc(swordCenter.x, swordCenter.y, 4, 0, 2 * Math.PI);
-            context.fillStyle = "green";
-            context.fill();
-
-            // draw the sword sprite on frame 0
-            this.swordSprite.draw();
-
         }
     }
 
@@ -631,8 +617,6 @@ class Player {
         let magnitude = Math.sqrt(this.direction.x ** 2 + this.direction.y ** 2);
         this.moving = magnitude > 0;
 
-
-        // TODO: There is a mix of update and draw methods, We must check this later
         if (this.isAttacking) {
             this.attackTimer += deltaTime;
             this.swordSwingAudio.play();
