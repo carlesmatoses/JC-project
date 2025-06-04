@@ -1168,11 +1168,6 @@ level1.onEnter = function(scene) {
 
 level28.onLeave = function(scene) {
         scene.player.scriptedMovement({x: 0, y: -1.1}, TILEWIDTH, 1000, () => {
-            scene.levelContent.forEach(obj => {
-                if (obj instanceof Portcullis) {
-                        obj.close();
-                }
-            });
         });
 }
 
