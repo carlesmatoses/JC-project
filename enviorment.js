@@ -768,7 +768,8 @@ class FloatingFloor extends BackgroundElement{
 class Pipe extends BackgroundElement{
     constructor(x,y, color){
         super(x, y, TILEWIDTH, TILEHEIGHT, "pipe", true, null, color, null);
-        //this.colorPipe = color;
+        this.colorPipe = color;
+        this.center = { x: x, y: y};
         this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH*0.2, TILEHEIGHT*0.2);
         this.occupied = false;
 
@@ -776,26 +777,6 @@ class Pipe extends BackgroundElement{
         
     }
 
-    // update(scene) {
-    //     if (this.occupied) return;
-
-    //     // Buscar orbmonsters colisionando con el área de presión
-    //     let orbs = scene.levelContent.filter(obj =>
-    //         obj instanceof OrbMonster &&
-    //         obj.isOrbState && // suponiendo que tienes esta propiedad cuando están en forma de bola
-    //         obj.boundingBox.isColliding(this.boundingBoxPressure)
-    //     );
-
-    //     for (let orb of orbs) {
-    //         if (orb.color === this.color) {
-    //             this.occupied = true;
-    //             if (this.onOccupy) this.onOccupy(); // callback opcional
-    //             break;
-    //         }
-    //     }
-    // }
-
-    
 
     isOccupied() {
         return this.occupied;

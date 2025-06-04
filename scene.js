@@ -215,6 +215,35 @@ class Scene{
 					element.steptOn(this.player); 
 				}
     		}
+
+			if(element instanceof Pipe){
+				let orbs = this.levelContent.filter(obj => obj instanceof OrbMonster && obj.isOrb() && obj.colorOM === element.colorPipe);
+				let index = {"red": 0, "blue": 1, "green": 2};
+				//console.log("element pipe", orbs);
+				for (let orb of orbs) {
+					if(element.boundingBoxPressure.isColliding(orb.boundingBox)){
+						this.levelContent.push(new BackgroundElement(element.center.x,element.center.y, TILEWIDTH, TILEHEIGHT, "orbmonster", false, textures.orbmonster, null, {sx: 144, sy: 16*index[orb.colorOM], sWidth: 16, sHeight: 16}));
+						element.occupied = true;
+
+						orb.die();
+						break;
+					}
+					
+					
+				}
+				
+			}
+
+			if (this.levelContent.filter(obj => obj instanceof Pipe).length  == this.levelContent.filter(obj => obj instanceof Pipe && obj.isOccupied()).length && this.levelContent.filter(obj => obj instanceof Pipe).length > 0) {
+				this.levelContent = this.levelContent.filter(e => !(e instanceof Pipe));
+				
+				this.levelContent.forEach(obj => {
+					if (obj instanceof Portcullis) {
+						obj.open();
+					}
+				});
+			}
+
 		});
 
 		// Check for remaining enemies
