@@ -1079,11 +1079,10 @@ level6.onEnter = function(scene) {
         });
 
         //TODO: Add THE BOSS
-        const enemy1 = new SeaUrchin(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH *2, TILEHEIGHT *2);
-        const enemy2 = new SeaUrchin(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH *2, TILEHEIGHT*2);
-        enemy1.scene = scene;
-        enemy2.scene = scene;
-        scene.levelContent.push(enemy1, enemy2);
+        const boss = new SeaUrchinBoss(TILEWIDTH*4, TILEHEIGHT*1, TILEWIDTH*2, TILEHEIGHT*2);   
+        boss.scene = scene;
+
+        scene.levelContent.push(boss);
         
         this.firstTimeEntering = false;
 

@@ -1,11 +1,11 @@
 class Projectile {
-    constructor(center, width, height, direction, parent) {
+    constructor(center, width, height, direction, parent, damage = 0.5) {
         this.width = width; 
         this.height = height; 
         this.center = { x: center.x, y: center.y };
         this.lastCenter = { x: center.x, y: center.y }; // Last position for collision detection
         this.boundingBox = new BoundingBox(this.center.x, this.center.y, width, height);
-        this.attack = 0.5;
+        this.attack = damage;
         this.speed = 0.0004;
         this.direction = direction;   
         this.render_layer = -1;
@@ -96,7 +96,6 @@ class Projectile {
 
     destroy(scene) {
         scene.levelContent = scene.levelContent.filter(e => e !== this);
-        console.log("Projectile destroyed");
     }
     onHit(target, scene){
         if (target.takeDamage) {
@@ -354,6 +353,286 @@ class SeaUrchin extends Enemy{
     }
 }
 
+class SeaUrchinBoss extends Enemy {
+    constructor(x, y, width, height, texture = textures.seaurchin) {
+        super(x, y, width, height, texture);
+        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width*1, height*1);
+        this.center = { x: x + width / 2, y: y + height / 2 }; // local center
+        
+        this.stats = new Stats(300, 1.5, 5, 5, 0.0000);
+        this.sprite = new Sprite(this.x, this.y, this.width, this.height, 5, texture); // 10 fps
+        this.animBasic = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.animBasic, [0, 0, 16, 16]);
+        this.sprite.addKeyframe(this.animBasic, [16, 0, 16, 16]);
+        this.sprite.addKeyframe(this.animBasic, [32, 0, 16, 16]);
+        this.sprite.addKeyframe(this.animBasic, [48, 0, 16, 16]);
+        this.sprite.setAnimation(this.animBasic);
+
+        // Phase and timers
+        this.phase = 1;
+        this.attackTimer = 0;
+        this.cooldownTimer = 0;
+        this.projectilesFired = 0;
+        this.isAttacking = false;
+        this.moveTarget = null;
+        this.moveSpeed = 0.0005; // adjust for smooth movement (pixels/ms)
+        this.waiting = false;
+        this.semicircleTimer = 0;
+        this.semicircleProjectiles = 0;
+        this.side = "left";
+    }
+
+    update(deltaTime) {
+        super.update(deltaTime);
+        if (!this.life) return;
+        this.sprite.update(deltaTime);
+
+        // Add 4 seconds of waiting once spawned
+        if (this.spawnWait === undefined) {
+            this.spawnWait = 0;
+        }
+        if (this.spawnWait < 4000) {
+            this.spawnWait += deltaTime;
+            return;
+        }
+
+        this.hp = this.stats.getTotalStats().health; 
+
+        // Detect phase change
+        let prevPhase = this._lastPhase || 1;
+        let currentPhase;
+        if (this.hp > 200) {
+            currentPhase = 1;
+        } else if (this.hp > 100) {
+            currentPhase = 2;
+        } else {
+            currentPhase = 3;
+        }
+        if (currentPhase !== prevPhase) {
+            console.log(`SeaUrchinBoss phase changed: ${prevPhase} -> ${currentPhase}`);
+            this._lastPhase = currentPhase;
+            this.projectilesFired = 0; 
+            // Optionally reset timers or state here if needed
+        }
+
+        // Phase selection
+        if (currentPhase === 1) {
+            this.phase1Logic(deltaTime);
+        } else if (currentPhase === 2) {
+            this.phase2Logic(deltaTime);
+        } else {
+            this.phase3Logic(deltaTime);
+        }
+
+        // Contact damage
+        const player = this.scene?.player;
+        if (player && player.boundingBox && this.boundingBox.isColliding(player.boundingBox)) {
+            if (player.takeDamage) {
+                player.takeDamage(this.stats.getTotalStats().attack);
+            }
+        }
+    }
+
+    // PHASE 1: 3 projectiles towards player, 1.5s burst, 1.5s cooldown
+    phase1Logic(deltaTime) {
+        if (!this.phase1Timer) this.phase1Timer = 0;
+        if (!this.projectilesFired) this.projectilesFired = 0;
+
+        this.phase1Timer += deltaTime;
+
+        // Fire projectile every 500ms, max 3 projectiles
+        if (this.projectilesFired < 3 && this.phase1Timer >= this.projectilesFired * 500) {
+            this.fireProjectileAtPlayer(); // assume this method exists
+            this.projectilesFired++;
+        }
+
+        // After 3 projectiles + 1.5s pause, reset
+        if (this.phase1Timer >= 1500 + 1500) {
+            this.phase1Timer = 0;
+            this.projectilesFired = 0;
+        }
+    }
+
+    phase2Logic(deltaTime) {
+        console.log("State", {
+            isAttacking: this.isAttacking,
+            projectilesFired: this.projectilesFired,
+            moveTarget: this.moveTarget,
+        });
+        const center = { x: TILEWIDTH * 4, y: TILEHEIGHT * 6 };
+        const returnPosition = { x: TILEWIDTH * 4, y: TILEHEIGHT * 2 };
+
+        // Move to center
+        if (!this.moveTarget && !this.isAttacking && this.projectilesFired === 0) {
+            this.moveTarget = center;
+        }
+
+        // Moving logic
+        if (this.moveTarget) {
+            this.moveTowards(this.moveTarget, deltaTime);
+            if (this.reachedTarget(this.moveTarget)) {
+                this.moveTarget = null;
+                if (this.projectilesFired === 0) {
+                    this.isAttacking = true;
+                    this.attackTimer = 0;
+                    this.projectilesFired = 1;
+                    this.fireProjectilesInCircle(8);
+                    this.cooldownTimer = 0;
+                    return; // prevent cooldownTimer increment in same frame
+                }
+            }
+            return;
+        }
+
+        // Cooldown after circular shot
+        if (this.projectilesFired === 1) {
+            this.cooldownTimer += deltaTime;
+            if (this.cooldownTimer >= 3500) {
+                this.projectilesFired = 2;
+                this.moveTarget = returnPosition;
+                this.isAttacking = false;
+            }
+            return;
+        }
+
+        // After returning to position, fire semi-circle over 2 seconds
+        if (!this.isAttacking && this.projectilesFired === 2 && this.reachedTarget(returnPosition)) {
+            this.isAttacking = true;
+            this.semicircleTimer = 0;
+            this.semicircleProjectiles = 0;
+        }
+
+        if (this.isAttacking && this.projectilesFired === 2) {
+            this.semicircleTimer += deltaTime;
+            const totalProjectiles = 8;
+            const interval = 2000 / totalProjectiles;
+
+            while (this.semicircleProjectiles < totalProjectiles &&
+                this.semicircleTimer >= this.semicircleProjectiles * interval) {
+                const angle = Math.PI + (this.semicircleProjectiles / (totalProjectiles - 1)) * Math.PI;
+                this.fireProjectileAtAngle(-angle); // still flipping?
+                this.semicircleProjectiles++;
+            }
+
+            if (this.semicircleTimer >= 2000) {
+                this.isAttacking = false;
+                this.projectilesFired = 0;
+                this.moveTarget = null; // start phase again
+            }
+        }
+    }
+
+
+    // PHASE 3: Move left, fire all, cooldown, move right, fire all, repeat
+    phase3Logic(deltaTime) {
+        const left = { x: TILEWIDTH * 2, y: TILEHEIGHT * 2 };
+        const right = { x: TILEWIDTH * 6, y: TILEHEIGHT * 2 };
+
+        if (!this.phase3Side) this.phase3Side = 'left'; // Track which side to go next
+        if (!this.cooldownTimer) this.cooldownTimer = 0;
+
+        if (!this.moveTarget) {
+            this.moveTarget = (this.phase3Side === 'left') ? left : right;
+        }
+
+        this.moveTowards(this.moveTarget, deltaTime, 100); // smooth movement, speed = 100 px/sec
+
+        if (this.reachedTarget(this.moveTarget)) {
+            this.cooldownTimer += deltaTime;
+
+            if (this.cooldownTimer === deltaTime) {
+                this.fireProjectilesInCircle(12); // fire on arrival
+            }
+
+            if (this.cooldownTimer >= 2000) {
+                this.cooldownTimer = 0;
+                this.phase3Side = (this.phase3Side === 'left') ? 'right' : 'left';
+                this.moveTarget = null;
+            }
+        }
+    }
+
+    // Helper: move smoothly towards a target
+    moveTowards(target, deltaTime) {
+        const dx = target.x - this.center.x;
+        const dy = target.y - this.center.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+
+        if (dist < 0.01) {
+            console.log("Reached target position");
+            this.setPosition(target.x, target.y);
+            return;
+        }
+        
+        this.translatePosition(dx * this.moveSpeed * deltaTime, dy * this.moveSpeed * deltaTime);
+
+        // console.log(`Moving towards target: ${target.x}, ${target.y}`);
+        // const step = this.moveSpeed * deltaTime;
+        // this.x += (dx / dist) * Math.min(step, dist);
+        // this.y += (dy / dist) * Math.min(step, dist);
+        // this.center.x = this.x + this.width / 2;
+        // this.center.y = this.y + this.height / 2;
+        // this.boundingBox.setPosition(this.center.x, this.center.y);
+    }
+
+    reachedTarget(target) {
+        return Math.abs(this.center.x - target.x) < 0.01 && Math.abs(this.center.y - target.y) < 0.01;
+    }
+
+    // Fire a projectile at the player
+    fireProjectileAtPlayer() {
+        const player = this.scene?.player;
+        if (!player) return;
+        const dx = player.center.x - this.center.x;
+        const dy = player.center.y - this.center.y;
+        const mag = Math.sqrt(dx * dx + dy * dy);
+        if (mag === 0) return;
+        const direction = { x: dx / mag, y: dy / mag };
+        const projectile = new Projectile(
+            { x: this.center.x, y: this.center.y },
+            TILEWIDTH, TILEHEIGHT,
+            direction,
+            this,
+            this.stats.getTotalStats().attack
+        );
+        this.scene.levelContent.push(projectile);
+    }
+
+    // Fire projectiles in a circle (all directions)
+    fireProjectilesInCircle(count) {
+        for (let i = 0; i < count; i++) {
+            const angle = (2 * Math.PI * i) / count;
+            this.fireProjectileAtAngle(angle);
+        }
+    }
+
+    // Fire a projectile at a specific angle (radians)
+    fireProjectileAtAngle(angle) {
+        // Offset the projectile spawn position slightly in the direction to avoid overlap
+        const offsetDistance = TILEWIDTH * .6;
+        const direction = { x: Math.cos(angle), y: Math.sin(angle) };
+        const spawnX = this.center.x + direction.x * offsetDistance;
+        const spawnY = this.center.y + direction.y * offsetDistance;
+        const projectile = new Projectile(
+            { x: spawnX, y: spawnY },
+            TILEWIDTH*.6, TILEHEIGHT*.6,
+            direction,
+            this,
+            this.stats.getTotalStats().attack
+        );
+        this.scene.levelContent.push(projectile);
+    }
+
+    setPosition(x, y) {
+        this.center.x = x;
+        this.center.y = y;
+        this.x = this.center.x - this.width / 2;
+        this.y = this.center.y - this.height / 2;
+        this.boundingBox.setPosition(x, y);
+    }
+
+}
+
 class Octorok extends Enemy{
     //Ver como añadir stats personalizados
     constructor(x, y, width, height, texture = textures.octorok){ 
@@ -562,7 +841,6 @@ class OrbMonster extends Enemy{
 
         // Crear sprite 
 		this.sprite = new Sprite(this.x, this.y, this.width, this.height, 10, texture); // 10 fps
-        console.log(this.sprite);
 
         if (this.colorOM == "blue"){
             // Agregar animaciones propias del enemigo. Por defecto
@@ -622,10 +900,6 @@ class OrbMonster extends Enemy{
 
             this.sprite.setAnimation(this.animDown); // Animación por defecto*/
         }else{
-
-            //sera red por defecto
-            console.log("El color es red");
-            
             this.animDown = this.sprite.addAnimation();
             this.sprite.addKeyframe(this.animDown, [0, 0, 24, 16]);
             this.sprite.addKeyframe(this.animDown, [24, 0, 24, 16]);

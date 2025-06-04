@@ -921,7 +921,6 @@ class Player {
             return;
         }
         if (this.isImmune) {
-            console.log("Player is immune to damage!");
             return; // Ignore damage if immune
         }
 
@@ -931,16 +930,22 @@ class Player {
             const dx = attackerPosition.x - this.center.x;
             const dy = attackerPosition.y - this.center.y;
             // Normalize
-            const mag = Math.sqrt(dx*dx + dy*dy);
-            const attackDir = { x: Math.round(dx/mag), y: Math.round(dy/mag) };
-
-            // If attack direction is opposite to player's facing direction, block damage
-            if (
-                attackDir.x === this.lastDirection.x &&
-                attackDir.y === this.lastDirection.y
-            ) {
+            const mag = Math.sqrt(dx * dx + dy * dy);
+            if (mag > 0) {
+            const attackDir = { x: dx / mag, y: dy / mag };
+            const facing = { x: this.lastDirection.x, y: this.lastDirection.y };
+            // Normalize facing
+            const facingMag = Math.sqrt(facing.x * facing.x + facing.y * facing.y);
+            if (facingMag > 0) {
+                facing.x /= facingMag;
+                facing.y /= facingMag;
+            }
+            // Dot product: > 0 means attacker is in front of player (within 180 degrees)
+            const dot = attackDir.x * facing.x + attackDir.y * facing.y;
+            if (dot > 0) {
                 console.log("Attack blocked by shield!");
                 return;
+            }
             }
         }
 
