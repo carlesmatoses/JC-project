@@ -78,6 +78,8 @@ const gate15_2 = new Portcullis(4 * TILEWIDTH, 7 * TILEHEIGHT, 1);
 const gate0_1 = new Portcullis(9 * TILEWIDTH, 3 * TILEHEIGHT, 2);
 const gate0_2 = new Portcullis(4 * TILEWIDTH, 7 * TILEHEIGHT, 1);
 
+const gate_22 = new Portcullis(4 * TILEWIDTH, 0 * TILEHEIGHT, 0);
+
 gate4.open();
 gate5.open();
 gate11_1.open();
@@ -240,7 +242,7 @@ rotor7.onSolved = customOnSolved2;
 
 //Enemies
 const enemyOcto1 = new Enemy(0.4, 0.4, TILEWIDTH, 1/9); //En caso de querer añadir texturas añadirlo como ultimo parametro.
-const enemyOrbMonsBlue = new OrbMonster(0.4, 0.4, TILEWIDTH, 1/9, undefined, "blue");
+const enemyOrbMonsBlue = new OrbMonster(TILEWIDTH*4, TILEHEIGHT*6, TILEWIDTH, TILEHEIGHT, undefined, "blue");
 
 // The map contains 6x5 tiles, each tile is 160x128 pixels but they have a 1px gap between them
 // ROW1
@@ -782,8 +784,15 @@ const dungeon_tile23 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new Lights(TILEWIDTH*9, TILEHEIGHT*5, 3),
     new Lights(TILEWIDTH*7, TILEHEIGHT*7, 1),
     new Lights(TILEWIDTH*2, TILEHEIGHT*7, 1),
-    enemyOrbMonsBlue,
-    new Pipe(TILEWIDTH*3, TILEHEIGHT*6, "blue"),
+    
+    new OrbMonster(TILEWIDTH*2, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT, undefined, "red"),
+    new OrbMonster(TILEWIDTH*7, TILEHEIGHT*5, TILEWIDTH, TILEHEIGHT, undefined, "green"),
+
+    new Pipe(TILEWIDTH*2, TILEHEIGHT*2, "red"),
+    new Pipe(TILEWIDTH*7, TILEHEIGHT*5, "green"),
+
+    gate_22
+
 ];
 const dungeon_tile24 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 384+4, sWidth: 160, sHeight: 128})];
@@ -1070,8 +1079,8 @@ level6.onEnter = function(scene) {
         });
 
         //TODO: Add THE BOSS
-        const enemy1 = new Enemy(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
-        const enemy2 = new Enemy(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
+        const enemy1 = new SeaUrchin(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH *2, TILEHEIGHT *2);
+        const enemy2 = new SeaUrchin(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH *2, TILEHEIGHT*2);
         enemy1.scene = scene;
         enemy2.scene = scene;
         scene.levelContent.push(enemy1, enemy2);

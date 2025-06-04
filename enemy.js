@@ -881,6 +881,9 @@ class OrbMonster extends Enemy{
         }
     }
 
+    isOrb(){
+        return this.hitCounter === 3;
+    }
 
 }
 
