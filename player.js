@@ -975,11 +975,17 @@ class Player {
 
     playerDied() {
         // set menu view 
-        this.levelID = 103;
-        this.mapID = 'overworld'; 
+
         this.scene.gameStateManager.pushState(new DeathMenuState(this.scene.gameStateManager));
         
         // Reset player position or handle death logic
+        // this.setPosition(TILEWIDTH, TILEHEIGHT*4); 
+        // this.stats.health = this.stats.getHealth().maxHealth; 
+    }
+    playerRespawn() {
+        // Reset player position or handle respawn logic
+        this.levelID = 103;
+        this.mapID = 'overworld'; 
         this.setPosition(TILEWIDTH, TILEHEIGHT*4); 
         this.stats.health = this.stats.getHealth().maxHealth; 
     }

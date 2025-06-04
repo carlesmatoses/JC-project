@@ -961,8 +961,10 @@ class DeathMenuState {
             if (this.options[this.selectedOption] === "Start Again") {
                 this.gameStateManager.popState(); // Remove death menu
                 this.gameStateManager.popState(); // Remove current scene
-                this.gameStateManager.pushState(new Scene(this.gameStateManager)); // Start new scene
-            } else if (this.options[this.selectedOption] === "Exit") {
+                player.playerRespawn(this.gameStateManager); // Respawn player
+				this.gameStateManager.pushState(new Scene(this.gameStateManager)); // Start new scene
+				
+			} else if (this.options[this.selectedOption] === "Exit") {
                 this.gameStateManager.popState(); // Remove death menu
                 this.gameStateManager.popState(); // Remove current scene
                 this.gameStateManager.pushState(new MenuState(this.gameStateManager)); // Go to main menu
