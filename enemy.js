@@ -129,7 +129,6 @@ class Enemy {
         //Effect Sounds
         this.takeDamageSound = AudioFX("audio/Minecraft_Damage-SoundEffect.wav");
 
-
         //Stats
         this.life = true; // CSi la unidad esta viva o muerta
         this.stats = new Stats(20, 0.5, 5, 5, 0.00005); //(health, attack, defense, strength, speed)    
@@ -365,7 +364,7 @@ class Octorok extends Enemy{
         this.shootInterval = 10000; // ms 
 
         // movementS
-        this.speed = 0.001; //TODO: Revisar velocidad correcta para que no vaya ni muy lento ni muy rapido. Tambien revisar sis e usa esto
+        this.speed = 0.001; 
         this.direction = { x: 0, y: 0 }; // Normalized movement vector
         this.lastDirection = { x: 0, y: 0 };; // Direction the player is facing
         this.moving = false; // Whether the player is moving
@@ -809,7 +808,7 @@ class OrbMonster extends Enemy{
         
         if(this.stats.health <= 0) return;
 
-        //TODO: Probar si funciona todo correctamente sin esto
+        
         const hp = this.stats.health;
 
         if (hp <= 0) {
@@ -822,7 +821,7 @@ class OrbMonster extends Enemy{
             this.hitCounter = 3;
             this.sprite.setAnimation(this.animThirdHit);
             this.canMove = false;
-            this.isPushable = true; //TODO: Revisar si hace falta
+            this.isPushable = true; 
             this.orbTimer = 0;
             this.stats.attack = 0.0;
 

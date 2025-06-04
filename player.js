@@ -328,7 +328,7 @@ class Player {
         this.mapID = 'overworld'; 
 
         // inventory
-        this.stats = new Stats(3, 10, 5, 5, 0.0004); // health, attack, defense, strength, speed
+        this.stats = new Stats(3, 0, 5, 5, 0.0004); // health, attack, defense, strength, speed
         this.inventory = new Inventory(this);
         // this.inventory.addItem(Shield);
         // this.inventory.assignToEmptySlot(Shield); 
@@ -780,6 +780,7 @@ class Player {
         for (let element of this.scene.levelContent) {
             if (element.boundingBox && attackBox.isColliding(element.boundingBox)) {
                 if (element.takeDamage) {
+                    console.log(this.stats.getTotalStats().attack);
                     element.takeDamage(this.stats.getTotalStats().attack);
                 }
                 if (element.onAttackCollision) {
