@@ -256,6 +256,8 @@ const dungeon_tile1 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHE
         new InvisibleWall(0*TILEWIDTH, 3.5*TILEHEIGHT, 1*TILEWIDTH, 8*TILEHEIGHT ), // top
         new InvisibleWall(9*TILEWIDTH, 8*TILEHEIGHT, 1*TILEWIDTH, 8*TILEHEIGHT ), // top
         new InvisibleWall(9*TILEWIDTH, 1*TILEHEIGHT, 1*TILEWIDTH, 4*TILEHEIGHT ), // top
+
+        
 ];
 const dungeon_tile2 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128}),
@@ -300,6 +302,8 @@ const dungeon_tile5 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHE
     rock1,
     rock2,
     rock3,
+
+    
 
 ];
 const dungeon_tile6 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
@@ -364,6 +368,9 @@ const dungeon_tile7 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHE
     new FloatingFloor(TILEWIDTH*6, TILEHEIGHT*5, 0),
     new FloatingFloor(TILEWIDTH*7, TILEHEIGHT*5, 0),
 
+    new SeaUrchin(TILEWIDTH*8, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
+    new Octorok(TILEWIDTH*7, TILEHEIGHT*6, TILEWIDTH, TILEHEIGHT),
+
 ];
 const dungeon_tile8 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 160+2, sy: 128+2, sWidth: 160, sHeight: 128}),
@@ -379,6 +386,12 @@ const dungeon_tile8 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHE
     createFirePlace(TILEWIDTH*7, TILEHEIGHT*0),
     
     locked_gate2,
+
+    new Octorok(TILEWIDTH*3, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
+    new Octorok(TILEWIDTH*6, TILEHEIGHT*5, TILEWIDTH, TILEHEIGHT),
+
+    new SeaUrchin(TILEWIDTH*3, TILEHEIGHT*5, TILEWIDTH, TILEHEIGHT),
+    new SeaUrchin(TILEWIDTH*6, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
 
 ];
 const dungeon_tile9 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
@@ -415,7 +428,8 @@ const dungeon_tile9 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHE
 
     keyB_chest,
 
-    new Octorok(0.4, 0.4, TILEWIDTH, 1/9), // Octorok enemy
+    new Octorok(TILEWIDTH*4, TILEHEIGHT*5, TILEWIDTH, TILEHEIGHT), // Octorok enemy
+    new Octorok(TILEWIDTH*6, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT), // Octorok enemy
 ];
 const dungeon_tile10 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 128+2, sWidth: 160, sHeight: 128}),
@@ -428,6 +442,16 @@ const dungeon_tile10 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
 
     new Lights(TILEWIDTH*2, TILEHEIGHT*0),
     new Lights(TILEWIDTH*7, TILEHEIGHT*0),
+
+    new OrbMonster(TILEWIDTH*3, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT, undefined, "green"),
+    new OrbMonster(TILEWIDTH*6, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT, undefined, "red"),
+    new OrbMonster(TILEWIDTH*2, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT, undefined, "blue"),
+    new OrbMonster(TILEWIDTH*7, TILEHEIGHT*5, TILEWIDTH, TILEHEIGHT, undefined, "green"),
+
+    new Pipe(TILEWIDTH*2, TILEHEIGHT*2, "green"),
+    new Pipe(TILEWIDTH*7, TILEHEIGHT*2, "red"),
+    new Pipe(TILEWIDTH*2, TILEHEIGHT*5, "blue"),
+    new Pipe(TILEWIDTH*7, TILEHEIGHT*5, "green"),
 
     keyC_chest,
 
@@ -454,6 +478,8 @@ const dungeon_tile11 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     rotor5,
     rotor6,
     rotor7,
+
+    new SeaUrchin(TILEWIDTH*5, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT),
     
     gate3,
 ];   
@@ -539,6 +565,10 @@ const dungeon_tile14 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     BIGrotor8,
     BIGrotor9,
     gate13,
+
+    new OrbMonster(TILEWIDTH*7, TILEHEIGHT*5, TILEWIDTH, TILEHEIGHT, undefined, "red"),
+    new OrbMonster(TILEWIDTH*7, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT, undefined, "red"),
+
 ];
 const dungeon_tile15 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 320+3, sy: 256+3, sWidth: 160, sHeight: 128}),
@@ -590,6 +620,8 @@ const dungeon_tile15 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new FloatingFloor(5*TILEWIDTH, 6*TILEHEIGHT, 0),
     new FloatingFloor(6*TILEWIDTH, 6*TILEHEIGHT, 0),
 
+    new Octorok(TILEWIDTH*2, TILEHEIGHT*1, TILEWIDTH, TILEHEIGHT),
+    new Octorok(TILEWIDTH*7, TILEHEIGHT*6, TILEWIDTH, TILEHEIGHT),
 ];
 const dungeon_tile16 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 480+4, sy: 256+3, sWidth: 160, sHeight: 128}),
@@ -645,6 +677,12 @@ const dungeon_tile17 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new FloatingFloor(1*TILEWIDTH, 3*TILEHEIGHT,0),
     new FloatingFloor(8*TILEWIDTH, 3*TILEHEIGHT,0),
     new FloatingFloor(8*TILEWIDTH, 4*TILEHEIGHT,0),
+
+    new OrbMonster(TILEWIDTH*4, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT, undefined, "red"),
+    new OrbMonster(TILEWIDTH*6, TILEHEIGHT*5, TILEWIDTH, TILEHEIGHT, undefined, "blue"),
+
+    new SeaUrchin(TILEWIDTH*2, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
+    new SeaUrchin(TILEWIDTH*7, TILEHEIGHT*5, TILEWIDTH, TILEHEIGHT),    
 ];
 const dungeon_tile18 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 800+6, sy: 256+3, sWidth: 160, sHeight: 128})];
@@ -697,7 +735,7 @@ const dungeon_tile20 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     createVase(TILEWIDTH, 6*TILEHEIGHT),
     createVase(8*TILEWIDTH, 6*TILEHEIGHT),
 
-    //FIXME: Cambiarlo por el enemigo correspondiente
+    
     new Octorok(TILEWIDTH*2, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
     new Octorok(TILEWIDTH*4, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT),
     gate1,
@@ -717,6 +755,10 @@ const dungeon_tile21 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     rotor2, 
     rotor3, 
     hidden_chest,
+
+    new Octorok(TILEWIDTH*3, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT),
+    new Octorok(TILEWIDTH*4, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT),
+    new Octorok(TILEWIDTH*5, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
 
 ];
 const dungeon_tile22 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
@@ -761,6 +803,8 @@ const dungeon_tile22 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new FloatingFloor(7*TILEWIDTH, 6*TILEHEIGHT,3),
 
     locked_gate1,
+
+    new Octorok(TILEWIDTH*6, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT),
 ];
 const dungeon_tile23 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
     drawing_settings={sx: 640+5, sy: 384+4, sWidth: 160, sHeight: 128}),
@@ -863,6 +907,9 @@ const dungeon_tile27 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new FloatingMoney(TILEWIDTH*5, TILEHEIGHT*6),
     new FloatingMoney(TILEWIDTH*4, TILEHEIGHT*6),
     new FloatingMoney(TILEWIDTH*3, TILEHEIGHT*6),
+
+    new OrbMonster(TILEWIDTH*4, TILEHEIGHT*3, TILEWIDTH, TILEHEIGHT, undefined, "blue"),
+    new OrbMonster(TILEWIDTH*2, TILEHEIGHT*6, TILEWIDTH, TILEHEIGHT, undefined, "blue"),
     
 
 ];
@@ -907,6 +954,9 @@ const dungeon_tile28 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new Lights(TILEWIDTH*6, TILEHEIGHT*0, 0),
 
     shield_chest,
+
+    new OrbMonster(TILEWIDTH*6, TILEHEIGHT*2, TILEWIDTH, TILEHEIGHT, undefined, "green"),
+    
 
 ];
 const dungeon_tile29 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
@@ -954,7 +1004,7 @@ const dungeon_tile29 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENH
     new Lights(TILEWIDTH*7, TILEHEIGHT*0, 0),
 
     gate2,
-    new Enemy(0.4, 0.4, TILEWIDTH, 1/9),
+    new Octorok(TILEWIDTH*3, TILEHEIGHT*4, TILEWIDTH, TILEHEIGHT),
 
 ];
 const dungeon_tile30 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black",
@@ -1078,7 +1128,7 @@ level6.onEnter = function(scene) {
             });
         });
 
-        //TODO: Add THE BOSS
+        
         const boss = new SeaUrchinBoss(TILEWIDTH*4, TILEHEIGHT*1, TILEWIDTH*2, TILEHEIGHT*2);   
         boss.scene = scene;
 
@@ -1104,11 +1154,16 @@ level12.onEnter = function(scene) {
         });
 
         // Add two enemies to the scene content
-        const enemy1 = new Enemy(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
-        const enemy2 = new Enemy(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
+        const enemy1 = new Octorok(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
+        const enemy2 = new OrbMonster(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
+        const enemy3 = new OrbMonster(TILEWIDTH * 3, TILEHEIGHT * 6, TILEWIDTH, TILEHEIGHT, undefined, "green");
+        const enemy4 = new OrbMonster(TILEWIDTH * 5, TILEHEIGHT * 3, TILEWIDTH, TILEHEIGHT, undefined, "blue");
+        
         enemy1.scene = scene;
         enemy2.scene = scene;
-        scene.levelContent.push(enemy1, enemy2);
+        enemy3.scene = scene;
+        enemy4.scene = scene;
+        scene.levelContent.push(enemy1, enemy2, enemy3, enemy4);
         
         this.firstTimeEntering = false;
     }
@@ -1128,8 +1183,9 @@ level16.onEnter = function(scene) {
         });
 
         // Add two enemies to the scene content
-        const enemy1 = new Enemy(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
-        const enemy2 = new Enemy(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
+        // TODO: Definir MidBoss 
+        const enemy1 = new Octorok(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
+        const enemy2 = new Octorok(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
         enemy1.scene = scene;
         enemy2.scene = scene;
         scene.levelContent.push(enemy1, enemy2);
@@ -1164,6 +1220,7 @@ level1.onEnter = function(scene) {
         });
 
         // Add two enemies to the scene content
+        //TODO: Quitar enemy poner final boss
         const enemy1 = new Enemy(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
         const enemy2 = new Enemy(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
         enemy1.scene = scene;

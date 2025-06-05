@@ -784,8 +784,9 @@ class Pipe extends BackgroundElement{
 
     draw(context){
         //super.draw(context);
-
-        this.boundingBoxPressure.draw(context);
+        if (DEBUG) {
+            this.boundingBoxPressure.draw(context);
+        }
     }
 
 

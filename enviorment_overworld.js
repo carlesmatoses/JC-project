@@ -37,8 +37,7 @@ principal_chest.callback = function() {
 }
 
 const enemyOctoOver = new Octorok(0.4, 0.4, TILEWIDTH, 1/9);
-const enemyOctoOver0 = new Octorok(0.3, 0.4, TILEWIDTH, 1/9);
-const enemyOctoOver1 = new Octorok(0.2, 0.4, TILEWIDTH, 1/9);
+const enemyOctoOver1 = new Octorok(TILEWIDTH*7, TILEHEIGHT*5, TILEWIDTH, TILEHEIGHT);
 const enemyOrbMons0 = new OrbMonster(0.3, 0.4, TILEWIDTH, 1/9, textures.orbmonster, "red");
 
 
