@@ -117,31 +117,20 @@ class Scene{
 		this.levelContent.forEach((element) => {
 			if (element.type === "enemy" && element.boundingBox.isColliding(this.player.boundingBox, 0.01)) {
 				this.player.takeDamage(element.stats.attack, element.center); // Player takes damage from enemy
-				// // Push the player away from the enemy for 250ms
-				// const dx = this.player.center.x - element.center.x;
-				// const dy = this.player.center.y - element.center.y;
-				// const length = Math.sqrt(dx * dx + dy * dy) || 1;
-				// const pushStrength = 0.05; // Adjust as needed for push distance
-
-				// const pushX = (dx / length) * pushStrength;
-				// const pushY = (dy / length) * pushStrength;
-
-				// if (!this.player._isBeingPushed) {
-				// 	this.player._isBeingPushed = true;
-				// 	const originalUpdate = this.player.update.bind(this.player);
-				// 	let pushTime = 0;
-
-				// 	this.player.update = (dt) => {
-				// 		if (pushTime < 250) {
-				// 			this.player.translatePosition(pushX, pushY); // Move the player away from the enemy
-				// 			pushTime += dt * 1000;
-				// 		} else {
-				// 			this.player.update = originalUpdate;
-				// 			this.player._isBeingPushed = false;
-				// 		}
-				// 		originalUpdate(dt);
-				// 	};
-				// }
+				// In case the player and the enemy bounding box are overlapping we must move the player
+				// to a safe position in the opposite direction of the enemy with player.center and element.center
+				if (this.player.boundingBox.isColliding(element.boundingBox)) {
+					let dx = this.player.center.x - element.center.x;
+					let dy = this.player.center.y - element.center.y;
+					let distance = Math.sqrt(dx * dx + dy * dy);
+					if (distance > 0) {
+						// Normalize the direction vector and move the player away from the enemy
+						this.player.setPosition(
+							this.player.x + (dx / distance) * 0.01, 
+							this.player.y + (dy / distance) * 0.01
+						);
+					}
+				}
 			}
 			// Check for collisions of projectiles with the player
 			if (element instanceof Projectile && element.boundingBox.isColliding(this.player.boundingBox, -0.01)) {
@@ -253,10 +242,7 @@ class Scene{
 						orb.die();
 						break;
 					}
-					
-					
 				}
-				
 			}
 
 			if (this.levelContent.filter(obj => obj instanceof Pipe).length  == this.levelContent.filter(obj => obj instanceof Pipe && obj.isOccupied()).length && this.levelContent.filter(obj => obj instanceof Pipe).length > 0) {
@@ -275,13 +261,6 @@ class Scene{
 		const enemiesLeft = this.levelContent.some(e => e.type === "enemy");
 		if (!enemiesLeft && typeof world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated === "function") {
 			world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated(this);
-			// this.levelContent.forEach(element => {
-			// 	if (element.type === "portcullis" && typeof element.open === "function") {
-			// 		element.open();
-			// 	}
-			// });
-			// Prevent multiple triggers
-			// world.maps[this.mapID].getLevel(this.levelID).onAllEnemiesDefeated = null;
 		}
 	}
 
