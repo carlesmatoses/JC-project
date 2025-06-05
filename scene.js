@@ -228,7 +228,17 @@ class Scene{
 				if (element.boundingBoxPressure.isColliding(this.player.boundingBox)) {
 					element.steptOn(this.player); 
 				}
-    		}
+				const hasEnemies = this.levelContent.some(e => e.type === "enemy");
+				if (hasEnemies) {
+					for (let enemy of this.levelContent.filter(e => e.type === "enemy")) {
+						if (element.boundingBoxPressure.isColliding(enemy.boundingBox)) {
+							element.steptOn(enemy); 
+						}
+					}
+				}
+			}
+
+
 
 			if(element instanceof Pipe){
 				let orbs = this.levelContent.filter(obj => obj instanceof OrbMonster && obj.isOrb() && obj.colorOM === element.colorPipe);
