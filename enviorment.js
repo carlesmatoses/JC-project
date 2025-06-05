@@ -824,6 +824,7 @@ class FloatingMoney extends BackgroundElement{
 
     steptOn(player) {
         if (player && typeof player.takeDamage === "function") {
+            if (player.addMoney === undefined) return;
             player.addMoney(1); // Heal the player by 10 health points
 
             // remove the floating heart from the scene
