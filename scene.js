@@ -117,31 +117,31 @@ class Scene{
 		this.levelContent.forEach((element) => {
 			if (element.type === "enemy" && element.boundingBox.isColliding(this.player.boundingBox, 0.01)) {
 				this.player.takeDamage(element.stats.attack, element.center); // Player takes damage from enemy
-				// Push the player away from the enemy for 250ms
-				const dx = this.player.center.x - element.center.x;
-				const dy = this.player.center.y - element.center.y;
-				const length = Math.sqrt(dx * dx + dy * dy) || 1;
-				const pushStrength = 0.05; // Adjust as needed for push distance
+				// // Push the player away from the enemy for 250ms
+				// const dx = this.player.center.x - element.center.x;
+				// const dy = this.player.center.y - element.center.y;
+				// const length = Math.sqrt(dx * dx + dy * dy) || 1;
+				// const pushStrength = 0.05; // Adjust as needed for push distance
 
-				const pushX = (dx / length) * pushStrength;
-				const pushY = (dy / length) * pushStrength;
+				// const pushX = (dx / length) * pushStrength;
+				// const pushY = (dy / length) * pushStrength;
 
-				if (!this.player._isBeingPushed) {
-					this.player._isBeingPushed = true;
-					const originalUpdate = this.player.update.bind(this.player);
-					let pushTime = 0;
+				// if (!this.player._isBeingPushed) {
+				// 	this.player._isBeingPushed = true;
+				// 	const originalUpdate = this.player.update.bind(this.player);
+				// 	let pushTime = 0;
 
-					this.player.update = (dt) => {
-						if (pushTime < 250) {
-							this.player.translatePosition(pushX, pushY); // Move the player away from the enemy
-							pushTime += dt * 1000;
-						} else {
-							this.player.update = originalUpdate;
-							this.player._isBeingPushed = false;
-						}
-						originalUpdate(dt);
-					};
-				}
+				// 	this.player.update = (dt) => {
+				// 		if (pushTime < 250) {
+				// 			this.player.translatePosition(pushX, pushY); // Move the player away from the enemy
+				// 			pushTime += dt * 1000;
+				// 		} else {
+				// 			this.player.update = originalUpdate;
+				// 			this.player._isBeingPushed = false;
+				// 		}
+				// 		originalUpdate(dt);
+				// 	};
+				// }
 			}
 			// Check for collisions of projectiles with the player
 			if (element instanceof Projectile && element.boundingBox.isColliding(this.player.boundingBox, -0.01)) {
