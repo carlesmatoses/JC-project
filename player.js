@@ -916,6 +916,8 @@ class Player {
     }
 
     takeDamage(damage, attackerPosition = null) {
+        this.damageSound = AudioFX('audio/00012 - WAV_12_GUESS_SE_LINK_PV004_WALL_HIT_R1.wav');
+
         if (typeof CREATIVE_MODE !== "undefined" && CREATIVE_MODE) {
             console.log("Player is in CREATIVE_MODE, no damage taken!");
             return;
@@ -953,6 +955,8 @@ class Player {
         this.flashTimer = 0;
 
         this.stats.health -= damage;
+        this.damageSound.play();
+
         // Prevent health from going below 0
         if (this.stats.health < 0) this.stats.health = 0;
         // Prevent health from going above maxHealth

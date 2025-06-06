@@ -155,7 +155,9 @@ BIGrotor9.onSolved = customOnSolved2;
 
 const hidden_chest =  new Chest(TILEWIDTH*12, TILEHEIGHT*12);
 hidden_chest.content = keyA;
+const hidden_chest_sound = AudioFX('audio/The Legend of Zelda Ocarina of Time - Secret Sound.wav');
 hidden_chest.callback = function() {
+    hidden_chest_sound.play();
     hidden_chest.open();
 }
 
