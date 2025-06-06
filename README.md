@@ -10,7 +10,7 @@ Utilizar clau del boss per accedir a la pantalla del boss [x]
 Porta especial utilizant la clau especial [x]
 Pantalla final boss [ ]
 Enemic Final Boss utilizant mecaniques del joc  [ ]
-Drop instrument al matar al final Boss [ ]
+Drop instrument al matar al final Boss [x]
 
 Representacio Enemic 1 [x] -> Octorok
 Representacio Enemic 2 [x] -> OrbMonster

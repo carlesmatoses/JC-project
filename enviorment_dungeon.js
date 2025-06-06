@@ -1204,6 +1204,7 @@ level2.onEnter = function(scene) {
     scene.player.scriptedMovement({x: 1.5, y: 0}, TILEWIDTH, 700*1.5, () => {
         scene.player.scriptedMovement({x: 0, y: 1.1}, TILEWIDTH, 700*1.1, () => {
             scene.player.scriptedMovement({x: 2, y: 0}, TILEWIDTH, 700*2, () => {
+                gamestatemanager.pushState(new EndGameMenuState(gamestatemanager, 5000));
             });
         });
     });
