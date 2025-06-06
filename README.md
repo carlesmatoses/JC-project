@@ -1,9 +1,9 @@
 Dungeon minimo 15 pantallas  [x]
 3 Puzzles minimo usando el objecte especial que bloquean el paso al final boss ("lights off","kill all enemyes in a room","blocked tombs" )[x]
 
-Pantalla Mid Boss (1/2) [ ]
-Enemic Mid Boss utilitzant mecaniques del joc [ ]
-Drop item especial [ ]
+Pantalla Mid Boss (2/2) [x]
+Enemic Mid Boss utilitzant mecaniques del joc [x]
+Drop item especial [x]
 
 Obtenir la clau especial en un cofre random de la dungeon [x]
 Utilizar clau del boss per accedir a la pantalla del boss [x]
@@ -15,7 +15,7 @@ Drop instrument al matar al final Boss [ ]
 Representacio Enemic 1 [x] -> Octorok
 Representacio Enemic 2 [x] -> OrbMonster
 Representacio Enemic 3 [x] -> SeaUchurin 
-Totes les pantalles amb enemics [ ] ?
+Totes les pantalles amb enemics [x]
 
 Tenir funcionalitat espassa [x] 
 Atacar amb l'espassa amb la tecla Z [x]
@@ -42,6 +42,6 @@ So - Musica de fons i efectes especial [x] -> Falta efectos
 
 Interfície gràfica avançada amb objectes equipats, vida, monedes, mini-mapa. [x]
 
-Polit del joc. Tot esdeveniment del joc (entitat movent-se o xocant amb algun altre objecte, ...) hauria d’anar acompanyat d’una o més animacions, sons o altres, tot seguint el comportament del joc original. [ ] -> Preguntar
+Polit del joc. Tot esdeveniment del joc (entitat movent-se o xocant amb algun altre objecte, ...) hauria d’anar acompanyat d’una o més animacions, sons o altres, tot seguint el comportament del joc original. [x]
 
-Memòria descrivint el projecte. [ ]
+Memòria descrivint el projecte. [ ] -> Falta parte enemigos

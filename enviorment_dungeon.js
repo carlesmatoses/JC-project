@@ -1182,7 +1182,7 @@ level16.onEnter = function(scene) {
     // Additional setup for level 11 can be done here
 
     if (this.firstTimeEntering === undefined) {
-        scene.player.scriptedMovement({x: 0, y: -1}, TILEWIDTH, 500, () => {
+        scene.player.scriptedMovement({x: 0, y: -1.1}, TILEWIDTH, 500, () => {
             scene.levelContent.forEach(obj => {
                 if (obj instanceof Portcullis) {
                         obj.close();
@@ -1190,13 +1190,10 @@ level16.onEnter = function(scene) {
             });
         });
 
-        // Add two enemies to the scene content
-        // TODO: Definir MidBoss 
-        const enemy1 = new Octorok(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
-        const enemy2 = new Octorok(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
-        enemy1.scene = scene;
-        enemy2.scene = scene;
-        scene.levelContent.push(enemy1, enemy2);
+        const midboss_stonehinox = new StoneHinox(TILEWIDTH * 4, TILEHEIGHT * 1, TILEWIDTH*2, TILEHEIGHT*2); //Como es 32x32 -> TILEWIDTH*2, TILEHEIGHT*2
+        midboss_stonehinox.scene = scene;
+        scene.levelContent.push(midboss_stonehinox);
+
         
         this.firstTimeEntering = false;
     }
