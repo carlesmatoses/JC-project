@@ -516,6 +516,10 @@ class GameStateManager {
     }
 
     render(context) {
+		context.imageSmoothingEnabled = false;
+		context.mozImageSmoothingEnabled = false;
+		context.webkitImageSmoothingEnabled = false;
+		context.msImageSmoothingEnabled = false;
         for (let state of this.stateStack) {
             state.draw(context);
         }
