@@ -1074,3 +1074,44 @@ class EndGameMenuState {
 		}
 	}
 }
+
+class InstrumentState {
+	constructor(gameStateManager, instrument) {
+		this.gameStateManager = gameStateManager;
+		this.instrument = instrument; // Assuming Instrument is a class that handles the instrument logic
+		this.speed = 0.0001; 
+	}
+
+	update(deltaTime) {
+		// Move the instrument towards the center (0.5, 0.5) of the screen
+		const target = { x: 0.5, y: 0.2 };
+		const center = this.instrument.center || { x: this.instrument.x, y: this.instrument.y };
+		const dx = target.x - center.x;
+		const dy = target.y - center.y;
+		const distance = Math.sqrt(dx * dx + dy * dy);
+
+		if (distance > 0.01) {
+			// Normalize direction and move by speed * deltaTime, but not past the target
+			const moveDist = Math.min(this.speed * deltaTime, distance - 0.01);
+			const moveX = (dx / distance) * moveDist;
+			const moveY = (dy / distance) * moveDist;
+			this.instrument.translatePosition(moveX, moveY);
+		}
+		else{
+			setTimeout(() => {
+				gamestatemanager.pushState(new EndGameMenuState(gamestatemanager, 5000));
+			}, 2000);
+		}
+
+	}
+
+	draw(context) {
+		this.instrument.draw(context); // Draw the instrument
+	}
+
+	handleInput(input) {
+		if (input.isPressed("Escape")) {
+			this.gameStateManager.popState();
+		}
+	}
+}

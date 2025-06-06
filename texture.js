@@ -63,4 +63,5 @@ const textures = {
 	feather: new Texture("imgs/feather.png"),
 	rock: new Texture("imgs/rock.png"),
 	projectile: new Texture("imgs/enemies/projectile.png"),
+	instrument: new Texture("imgs/instrument.png"),
 }

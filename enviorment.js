@@ -836,6 +836,40 @@ class FloatingMoney extends BackgroundElement{
     }
 }
 
+class Instrument extends BackgroundElement{
+    constructor(x, y){
+        super(x, y, TILEWIDTH, TILEHEIGHT, "instrument", true, textures.instrument, "green");
+        this.boundingBoxPressure = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT);
+    }
+
+    draw(context) {
+        super.draw(context); // Draw the floating money texture
+        if (DEBUG) {
+            this.boundingBoxPressure.draw(context); // Draw the bounding box for debugging
+        }
+    }
+
+    steptOn(player) {
+        if (player instanceof Player){
+
+            // remove the floating heart from the scene
+            player.scene.levelContent = player.scene.levelContent.filter(element => element !== this);
+
+            // remove the floating money from the permanent scene
+            const global_level = player.scene.getLevel();
+            global_level.removeElement(this.globalReference); 
+
+            gamestatemanager.pushState(new InstrumentState(gamestatemanager, this)); // Transition to the InstrumentState
+        }
+    }
+
+    translatePosition(x, y) {
+        super.translatePosition(x, y); // Call the parent method to update position
+        this.boundingBoxPressure.setPosition(this.x + 0.5 * TILEWIDTH, this.y + 0.5 * TILEHEIGHT); // Update bounding box position
+        this.center = { x: this.x + 0.5 * TILEWIDTH, y: this.y + 0.5 * TILEHEIGHT }; // Update center position
+    }
+}
+
 function createVase(x, y){
     let element =  new BackgroundElement(x, y, TILEWIDTH, TILEHEIGHT, "vase", false, texture = textures.vase, color = null, drawing_settings={sx:0, sy:0, sWidth:16, sHeight:16});
     element.boundingBox = new BoundingBox(x+0.5*TILEWIDTH, y+0.5*TILEHEIGHT, TILEWIDTH, TILEHEIGHT); // Bounding box for collision detection
@@ -1000,6 +1034,15 @@ class Level{
                 copy.globalReference = element;
                 copy.isOpen = element.isOpen; // Copy the isOpen state
                 copy.content = element.content; // Copy the content of the chest
+                copy.callback = element.callback; 
+                return copy;
+            } else if (element instanceof Instrument) {
+                // Create a new Instrument instance
+                let copy = new Instrument(
+                    element.x, element.y
+                );
+                copy.globalReference = element;
+                copy.boundingBoxPressure = element.boundingBoxPressure; 
                 copy.callback = element.callback; 
                 return copy;
             } else if (element instanceof Tombstone) {
