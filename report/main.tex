@@ -80,10 +80,10 @@ Carles Matoses Gimenez\\
 \newpage
 
 \section{Introducció}
-Aquest document descriu el desenvolupament d'un videojoc 2D creat com a part de l'assignatura “Jocs per Computador”. A continuació es detallen els objectius, el disseny, les mecàniques i els reptes implementats durant el projecte.
+Aquest document descriu el desenvolupament d'un videojoc 2D creat com a part de l'assignatura ``Jocs per Computador''. A continuació es detallen els objectius, el disseny, les mecàniques i els reptes implementats durant el projecte.
 
 \section{Objectius}
-L'objectiu principal és guiar el jugador a través de diferents pantalles (nivells), on ha d'aconseguir claus, equipar objectes i resoldre trencaclosques per accedir a l'enfrontament final amb el cap de nivell. El mapa del joc es mostra a la figura \ref{fig:mapa}. El jugador comença a l'"overworld" i ha d'accedir a la "dungeon1". Les possibles rutes es mostren en roig; altres colors indiquen dependències entre nivells.
+L'objectiu principal és guiar el jugador a través de diferents pantalles (nivells), on ha d'aconseguir claus, equipar objectes i resoldre trencaclosques per accedir a l'enfrontament final amb el cap de nivell. El mapa del joc es mostra a la figura \ref{fig:mapa}. El jugador comença a l'``overworld'' i ha d'accedir a la ``dungeon1''. Les possibles rutes es mostren en roig; altres colors indiquen dependències entre nivells.
 
 \begin{figure}[ht!]
     \centering
@@ -112,14 +112,14 @@ No s'ha seguit un patró concret, però s'ha utilitzat una classe auxiliar anome
 Cada estat es responsable de gestionar la seva pròpia lògica i renderització, permetent una separació clara de responsabilitats. Estan composts de tres components principals: draw(), update() i handleInput(). Això facilita la implementació de nous estats i la seva integració al joc.
 
 \subsection{Gestió de Col·lisions}
-Els objectes del joc tenen una "bounding box" i es comprova el solapament entre elles per detectar col·lisions. Aquestes poden ser:
+Els objectes del joc tenen una ``boundingBox'' i es comprova el solapament entre elles per detectar col·lisions. Aquestes poden ser:
 \begin{itemize}
     \item \textbf{onCollide(item)}: quan dos objectes col·lisionen.
-    \item \textbf{SteppedOn}: per saber si el jugador està damunt d'un cert objecte.
+    \item \textbf{SteppedOn}: per saber si l'entitat està damunt d'un cert objecte.
 \end{itemize}
 Els atacs també generen una bounding box temporal per detectar col·lisions amb enemics o objectes.
 
-La col.lisio es comproba cada fotograma en el update de Scene. L'unica excepció es l'atac del jugador que comprova les col·lisions dins del propi usuari.
+La col.lisio es comproba cada fotograma en el update de Scene. L'unica excepció es l'atac del jugador que comprova les col·lisions dins del propi ``Player'' sols en el moment d'atacar. D'aquesta manera evitem comprovar col·lisions innecessàries quan el jugador no està atacant.
 
 \subsection{Nivells i Escenes}
 La jerarquia del joc consisteix en:
@@ -146,7 +146,6 @@ La jerarquia del joc consisteix en:
     \item \textbf{Entitats}: Jugador, Enemics, Bosses, NPCs
 \end{itemize}
 
-Els elements equipables proporcionen ``Effects''. Aquests es gasten per saber com de fort es el jugador (que pot moure), l'atac, la defensa i si pot volar.
 
 \section{Mecàniques de Joc}
 
@@ -161,15 +160,28 @@ Els items es poden equipar a través de l'inventari. Proporcionen habilitats (fo
     \item \texttt{Slots}: Classe que gestiona els slots d'equipament del jugador.
 \end{itemize}    
 
+Els elements equipables proporcionen ``Effects''. Aquests es poden llegir per saber com de fort es el jugador (que pot moure), l'atac (almagatzemat en l'espassa), si pot defendres (escut equipat), la defensa i si pot volar.
+
+Encara que no es fa servir, també es poden declarar estats temporals com una reducció de la velocitat del jugador, que baixe la vida durant ``t'' segons a mig cor per tick, etc. 
 
 \subsection{Combat}
 El jugador pot atacar amb la seva arma i interactuar amb certs objectes com els rotors o enemics.
 
+L'escut permet al jugador defensar-se dels atacs dels enemics que provenen en la direcció en la que està mirant (dot producte de la posició del jugador i la direcció de l'enemic). També pot bloquejar el moviment del enemic. Addicionalment, moviments no bloquejables mouran al jugador.
+
 \subsection{Interacció}
 Amb la tecla principal, el jugador pot obrir cofres, parlar amb NPCs, activar portes, etc.
 
+Mantenim un seguiment de la direcció i moviment del jugador per a poder determinar si està empentant un objecte. Despres de ``t'' segons intentant moures en una direcció bloquejada, s'executa un trigger per intentar moure el que te davant. Quatre resultats possibles:
+\begin{itemize}
+    \item L'objecte no es interactiu (no pasa res).
+    \item No es pot moure per falta de força (Genera un dialeg).
+    \item Es mou un objecte (ex: una làpida).
+    \item L'objecte es pot moure però no te lloc per a desplaçar-se (no pasa res).
+\end{itemize}
+ 
 \subsection{Triggers}
-\textbf{Triggers} disponibles:
+\textbf{Triggers} disponibles d'un nivell:
 \begin{itemize}
     \item \texttt{onEnter}: adicionalment podem saber si es la primera vegada que entrem.
     \item \texttt{onExit}
@@ -179,7 +191,11 @@ Amb la tecla principal, el jugador pot obrir cofres, parlar amb NPCs, activar po
 
 Normalment aquests triggers es vinculen amb portes. En alguns casos es pot executar un scriptedAnimation per a moure el personatge d'una forma especial.
 
+Altres triggers poden ser: OnPush, OnHit, OnSteptOn i OnCollide. Aquests son utilitzats principalment per a objectes. Els enemics tenen altres triggers com OnDeath, OnHit, OnCollide, OnSteppedOn i OnAttack.
+
 \section{Trencaclosques Implementats}
+Hem implementat tres trencaclosques diferents al llarg del joc: Lights Out, Objectes Pesats, Preguntes i respostes. No contem com trencaclosques secuencies de combat o triggers, es dir, matar tots els enemics d'una sala es un event i no un trencaclosques.
+
 
 \subsection{Lights Out}
 Un trencaclosques basat en el clàssic joc de taula. Es resol apagant totes les llums d'una graella interactiva. En la nostra implementació, els ``rotors'' presenten quatre estats: roig, verd, blau,groc. El jugador ha de fer que tots estiguen del mateix color. Per a poder utilitzar aquest trencaclosques multiples vegades, al definir un rotor hem de dirli el color inicial i l'identificador dels rotors que s'han de canviar junt a ell.
@@ -194,9 +210,9 @@ Considerem una llista de regions $[R_1, R_2, R_3, \ldots, R_N]$, on cada $R_i$ p
 \end{figure}
 
 \subsection{Objectes Pesats}
-Alguns objectes (com làpides o pedres) es poden empènyer amb un item específic (Braçalet) que proporciona força. Exemples:
+Alguns objectes (com làpides o pedres) es poden empènyer amb un item específic (Braçalet) que proporciona força. També poden tindre moviments restringits en certes direccions. Exemples:
 \begin{itemize}
-    \item Làpida de la cova de la mort (obri pas a la "dungeon1")
+    \item Làpida de la cova de la mort (obri pas a la "dungeon1", sols cap a dalt baix o esquerra)
     \item Pedres que bloquegen l'accés a la "Feather"
 \end{itemize}
 
