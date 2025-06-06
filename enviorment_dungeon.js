@@ -1204,7 +1204,7 @@ level2.onEnter = function(scene) {
     scene.player.scriptedMovement({x: 1.5, y: 0}, TILEWIDTH, 700*1.5, () => {
         scene.player.scriptedMovement({x: 0, y: 1.1}, TILEWIDTH, 700*1.1, () => {
             scene.player.scriptedMovement({x: 2, y: 0}, TILEWIDTH, 700*2, () => {
-                gamestatemanager.pushState(new EndGameMenuState(gamestatemanager, 5000));
+                //gamestatemanager.pushState(new EndGameMenuState(gamestatemanager, 5000));
             });
         });
     });
@@ -1226,11 +1226,10 @@ level1.onEnter = function(scene) {
 
         // Add two enemies to the scene content
         //TODO: Quitar enemy poner final boss
-        const enemy1 = new Enemy(TILEWIDTH * 2, TILEHEIGHT * 2, TILEWIDTH, TILEHEIGHT);
-        const enemy2 = new Enemy(TILEWIDTH * 7, TILEHEIGHT * 5, TILEWIDTH, TILEHEIGHT);
-        enemy1.scene = scene;
-        enemy2.scene = scene;
-        scene.levelContent.push(enemy1, enemy2);
+
+        const evilOrbBoss = new EvilOrbBoss(TILEWIDTH * 4, TILEHEIGHT * 1, TILEWIDTH*2, TILEHEIGHT*3);
+        evilOrbBoss.scene = scene;
+        scene.levelContent.push(evilOrbBoss);
         
         this.firstTimeEntering = false;
     }

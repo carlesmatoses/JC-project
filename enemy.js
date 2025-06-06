@@ -306,7 +306,7 @@ class Enemy {
             console.log("Drop Corazon");
             const heart = new FloatingHeart(x, y);
             this.scene.levelContent.push(heart);
-        } else if (rand < 0.7) { // 50% de soltar moneda
+        } else if (rand < 0.5) { // 50% de soltar moneda
             console.log("drop Moneda");
             const money = new FloatingMoney(x, y);
             this.scene.levelContent.push(money);
@@ -371,22 +371,6 @@ class StoneHinox extends Enemy{
     update(deltaTime){
         super.update(deltaTime);
         if (!this.life) return;
-
-        // if (this.isShooting) {
-        //     console.log("Estoy disparando");
-        //     this.animationTimer += deltaTime;
-        //     if (this.animationTimer <= 200) {
-        //         console.log("PIU PIU");
-        //         this.sprite.setAnimation(this.animAttack);
-        //     } else {
-        //         console.log("Cambiando animacion IDLE");
-        //         this.sprite.setAnimation(this.animDown); // volver a idle después del disparo
-        //         this.isShooting = false;
-        //     }
-        // }
-
-
-        //this.sprite.update(deltaTime);
 
         // Add 4 seconds of waiting once spawned
         if (this.spawnWait === undefined) {
@@ -556,15 +540,8 @@ class StoneHinox extends Enemy{
         
         if (!this.phase1Initialized) {
             // Reposicionamiento al inicio
-            //TODO: FIXME: ARREGLA ESTO RAPIDO
-            console.log("Heyyy");
-            console.log("Initial pos: ", this.initialPosition.x, this.initialPosition.y );
-            console.log("Pos antes del traslado", this.x, this.y);
             this.setPosition(this.initialPosition.x, this.initialPosition.y);
             console.log("Pos despues del traslado", this.x, this.y);
-            //this.boundingBox.setPosition(this.center.x, this.center.y);
-            //this.boundingBox.setPosition(TILEWIDTH * 4, TILEHEIGHT * 1);
-            console.log('boundingbox despues tras', this.boundingBox );
             
             this.phase1Initialized = true;
             this.projectileTimer = 0;
@@ -647,6 +624,280 @@ class SeaUrchin extends Enemy{
             }
         }
     }
+}
+
+
+class EvilOrbBoss extends Enemy{
+    constructor(x, y, width, height, texture = textures.evilorb){
+        super(x, y, width, height, texture);
+        this.center = { x: x + width / 2, y: y + height / 2 }; // local center
+        this.boundingBox = new BoundingBox(this.center.x, this.center.y, width, height);
+        
+
+        this.stats = new Stats(160, 1.5, 5, 5, 0.0004);
+        this.sprite = new Sprite(this.x, this.y, this.width, this.height, 5, texture); // 10 fps
+        this.lastDirection = { x: 0, y: 0 };
+        this.projectileTimer = 0;
+
+        this.phase = 0;
+        this.attackTimer = 0;
+        this.cooldownTimer = 0;
+        this.phase0Step = 0;
+        this.phase0StepTimer = 0;
+        this.phase0Direction = -1;
+
+        this.spawnTimer = 0;
+        this.phase1Step = 0;
+        this.phase1StepTimer = 0;
+        this.phase1Direction = -1;
+
+        this.animBlueR = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.animBlueR, [0, 0, 32, 48]);
+        this.sprite.addKeyframe(this.animBlueR, [32, 0, 32, 48]);
+
+        this.animYellowR = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.animYellowR, [256, 0, 32, 48]);
+        this.sprite.addKeyframe(this.animYellowR, [288, 0, 32, 48]);
+
+        this.animRedR = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.animRedR, [448, 0, 32, 48]);
+        this.sprite.addKeyframe(this.animRedR, [480, 0, 32, 48]);
+
+
+        this.animBlueL = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.animBlueL, [32, 0, 32, 48]);
+        this.sprite.addKeyframe(this.animBlueL, [0, 0, 32, 48]);
+        
+        this.animYellowL = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.animYellowL, [288, 0, 32, 48]);
+        this.sprite.addKeyframe(this.animYellowL, [256, 0, 32, 48]);
+
+        this.animRedL = this.sprite.addAnimation();
+        this.sprite.addKeyframe(this.animRedL, [480, 0, 32, 48]);
+        this.sprite.addKeyframe(this.animRedL, [448, 0, 32, 48]);
+        
+    }
+
+
+    update(deltaTime){
+        super.update(deltaTime);
+        
+        if (!this.life) return;
+
+        // Add 2 seconds of waiting once spawned
+        if (this.spawnWait === undefined) {
+            this.spawnWait = 0;
+        }
+        if (this.spawnWait < 2000) {
+            this.spawnWait += deltaTime;
+            return;
+        }
+
+        // Actualiza fase
+        const hp = this.stats.health;
+        // if (hp <= 50) this.phase = 2;
+        // else if (hp <= 75) this.phase = 1;
+        // else this.phase = 0;
+
+        if (hp <= 110) this.phase = 1;
+        else this.phase = 0;
+
+
+        // Comportamiento por fase
+        switch (this.phase) {
+            case 0:
+                this.phase0_behavior(deltaTime);
+                break;
+            case 1:
+                this.phase1_behavior(deltaTime);
+                break;
+            // case 2:
+            //     this.phase2_behavior(deltaTime);
+            //     break;
+        }
+
+        this.sprite.update(deltaTime);
+
+        const player = this.scene?.player;
+        if (player && player.boundingBox && this.boundingBox.isColliding(player.boundingBox)) {
+            if (player.takeDamage) {
+                player.takeDamage(this.stats.getTotalStats().attack);
+            }
+        }
+
+    }
+
+    phase0_behavior(deltaTime) {
+        this.phase0StepTimer += deltaTime;
+
+        const speed = this.stats.getTotalStats().speed;
+        let offsetX = 0;
+
+        switch (this.phase0Step) {
+            case 0: // Movimiento lateral
+                if (this.phase0StepTimer < 800) {
+                    offsetX = this.phase0Direction * speed * deltaTime;
+                    this.sprite.setAnimation(this.phase0Direction === -1 ? this.animBlueL : this.animBlueR);
+                } else {
+                    this.phase0StepTimer = 0;
+                    this.phase0Step = 1;
+                }
+                break;
+
+            case 1: // Parado
+                if (this.phase0StepTimer >= 300) {
+                    this.phase0StepTimer = 0;
+                    this.phase0Direction = Math.random() < 0.5 ? -1 : 1;
+                    this.phase0Step = 0;
+                }
+                break;
+        }
+
+        // Movimiento con detección de colisión en X
+        if (offsetX !== 0) {
+            this.translatePosition(offsetX, 0);
+            let collided = false;
+
+            for (let element of this.scene.levelContent) {
+                if (element === this) continue;
+                if (element.boundingBox && element.isActive && element.isActive()) {
+                    if (this.boundingBox.isColliding(element.boundingBox)) {
+                        this.translatePosition(-offsetX, 0);
+                        collided = true;
+                        if (element.onCollision) element.onCollision({ scene: this.scene });
+                        break;
+                    }
+                }
+            }
+
+            if (!collided && this.scene.player.boundingBox && this.boundingBox.isColliding(this.scene.player.boundingBox)) {
+                this.translatePosition(-offsetX, 0);
+            }
+
+            if (this.x < 0 || this.x > 1) {
+                this.translatePosition(-offsetX, 0);
+            }
+        }
+        
+        this.projectileTimer += deltaTime;
+
+        if (this.projectileTimer >= 600 ) {
+            this.projectileTimer = 0;
+
+            const minX = TILEWIDTH*1.5, maxX = TILEWIDTH*8.5;
+            const xSpawn = Math.random() * (maxX - minX) + minX;
+
+            const ySpawn = TILEHEIGHT * 2; // Fila 2 de la mazmorra
+
+            const direction = { x: 0, y: 1 }; // Disparo hacia abajo
+
+            const projectile = new Projectile(
+                { x: xSpawn, y: ySpawn },
+                TILEWIDTH,
+                TILEHEIGHT,
+                direction,
+                this
+            );
+
+            this.scene.levelContent.push(projectile);
+            
+        }
+
+        
+        //this.sprite.update(deltaTime);
+        
+        
+        this.animationTimer = 0;
+        this.isShooting = true;
+
+
+
+    }
+
+    phase1_behavior(deltaTime) {
+        this.spawnTimer += deltaTime;
+
+        const speed = this.stats.getTotalStats().speed;
+        let offsetX = 0;
+
+        switch (this.phase1Step) {
+            case 0: // Movimiento lateral
+                if (this.phase1StepTimer < 800) {
+                    offsetX = this.phase0Direction * speed * deltaTime;
+                    this.sprite.setAnimation(this.phase0Direction === -1 ? this.animRedL : this.animRedR);
+                    this.phase1StepTimer += deltaTime;
+                } else {
+                    this.phase1StepTimer = 0;
+                    this.phase1Step = 1;
+                }
+                break;
+
+            case 1: // Parado y cambio de dirección
+                if (this.phase1StepTimer >= 300) {
+                    this.phase1StepTimer = 0;
+                    this.phase0Direction = Math.random() < 0.5 ? -1 : 1;
+                    this.phase1Step = 0;
+                } else {
+                    this.phase1StepTimer += deltaTime;
+                }
+                break;
+        }
+
+        // Movimiento con colisiones en X
+        if (offsetX !== 0) {
+            this.translatePosition(offsetX, 0);
+            let collided = false;
+
+            for (let element of this.scene.levelContent) {
+                if (element === this) continue;
+                if (element.boundingBox && element.isActive && element.isActive()) {
+                    if (this.boundingBox.isColliding(element.boundingBox)) {
+                        this.translatePosition(-offsetX, 0);
+                        collided = true;
+                        if (element.onCollision) element.onCollision({ scene: this.scene });
+                        break;
+                    }
+                }
+            }
+
+            if (!collided && this.scene.player.boundingBox && this.boundingBox.isColliding(this.scene.player.boundingBox)) {
+                this.translatePosition(-offsetX, 0);
+            }
+
+            if (this.x < 0 || this.x > 1) {
+                this.translatePosition(-offsetX, 0);
+            }
+        }
+
+        // Spawneo de OrbMonsters
+        if (this.spawnTimer >= 4000) {
+            console.log("Entro");
+            this.spawnTimer = 0;
+
+            const colors = ["red", "green", "blue"];
+            const color = colors[Math.floor(Math.random() * colors.length)];
+
+            const minX = TILEWIDTH * 1.5;
+            const maxX = TILEWIDTH * 8.5;
+            const xSpawn = Math.random() * (maxX - minX) + minX;
+            const ySpawn = TILEHEIGHT * 4;
+
+            const orb = new OrbMonster(xSpawn, ySpawn, TILEWIDTH, TILEHEIGHT, textures.orbmonster,  color);
+            orb.scene = this.scene;
+            this.scene.levelContent.push(orb);
+            console.log(this.scene.levelContent);
+
+            
+        }
+
+        //this.sprite.update(deltaTime);
+        this.animationTimer = 0;
+        this.isShooting = true;
+        }
+
+
+
+
 }
 
 class SeaUrchinBoss extends Enemy {
@@ -1115,7 +1366,6 @@ class Octorok extends Enemy{
 class OrbMonster extends Enemy{
     //Ver como añadir stats personalizados
     constructor(x, y, width, height, texture = textures.orbmonster, color = "red"){ 
-
         super(x, y, width, height, texture, color);
         this.hitCounter = 0;
         this.orbTimer = 0; // Time for whichs hitCounter is the OrbMons
