@@ -185,6 +185,9 @@ keyC_chest.callback = function() {
 }
 
 
+// INSTRUMENTS
+const instrument1 = new Instrument(TILEWIDTH*4, TILEHEIGHT*4.5);
+
 function customOnSolved(player) {
     // Possible chest positions
     const positions = [
@@ -261,7 +264,12 @@ const dungeon_tile1 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHE
 ];
 const dungeon_tile2 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
     drawing_settings={sx: 160+2, sy: 1, sWidth: 160, sHeight: 128}),
+    instrument1,
 
+    new Lights(TILEWIDTH*2, TILEHEIGHT*0),
+    new Lights(TILEWIDTH*7, TILEHEIGHT*0),
+    new Lights(TILEWIDTH*2, TILEHEIGHT*7, 1),
+    new Lights(TILEWIDTH*7, TILEHEIGHT*7, 1),
 
 ];
 const dungeon_tile3 = [new BackgroundElement(0, 0, PLAYSCREENWIDTH, PLAYSCREENHEIGHT, "ground", true, texture=textures.dungeon1, color="black", 
@@ -1199,7 +1207,6 @@ level2.onEnter = function(scene) {
     scene.player.scriptedMovement({x: 1.5, y: 0}, TILEWIDTH, 700*1.5, () => {
         scene.player.scriptedMovement({x: 0, y: 1.1}, TILEWIDTH, 700*1.1, () => {
             scene.player.scriptedMovement({x: 2, y: 0}, TILEWIDTH, 700*2, () => {
-                gamestatemanager.pushState(new EndGameMenuState(gamestatemanager, 5000));
             });
         });
     });
