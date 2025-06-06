@@ -982,6 +982,10 @@ class Player {
 
         this.scene.gameStateManager.pushState(new DeathMenuState(this.scene.gameStateManager));
         
+        // get current level and map
+        const level = world.maps[this.mapID].getLevel(this.levelID);
+        level.firstTimeEntering = undefined; 
+
         // Reset player position or handle death logic
         // this.setPosition(TILEWIDTH, TILEHEIGHT*4); 
         // this.stats.health = this.stats.getHealth().maxHealth; 
